@@ -1,4 +1,4 @@
-{% extends 'rr_app/auth/auth_base.html' %}
+{% extends 'rr_app/auth_base.html' %}
 {% load static %}
 
 {% block title %}Forgot Password - Restaurant Reservation{% endblock %}
@@ -13,5 +13,5 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'rr_app/js/auth/forgotPassword.js' %}"></script>
+<script src="{% static 'rr_app/js/forgotPassword.js' %}"></script>
 {% endblock %}
