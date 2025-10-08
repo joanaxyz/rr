@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta author="Mga Bulakbol">
+  <title>{% block title %}Restaurant Reservation{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'rr_app/css/auth.css' %}">
+</head>
+<body>
+    {% block body %}{% endblock %}
+    <script src="{% static 'rr_app/js/init.js' %}"></script>
+    <script src="{% static 'rr_app/js/SupabaseAuth.js' %}"></script>
+    <script src="{% static 'rr_app/js/DataManager.js' %}"></script>
+    {% block js %}{% endblock %}
+</body>
+</html>
