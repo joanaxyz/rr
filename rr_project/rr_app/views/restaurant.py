@@ -113,8 +113,9 @@ def restaurants_view(request):
     cuisines = Cuisine.objects.all().order_by('name')
     tags = Tags.objects.all().order_by('tag')
     
+    restaurant_list = [r.to_dict() for r in restaurants]
     context = {
-        'restaurants': restaurants,
+        'restaurants': restaurant_list,
         'cuisines': cuisines,
         'tags': tags,
     }

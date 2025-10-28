@@ -5,34 +5,31 @@
 <link rel="stylesheet" href="{% static 'rr_app/css/dashboard.css' %}">
 {% endblock %}
 
-
 {% block rr_base_content %}
 
 <div class="background"></div>
 
-    <div class="search-card">
-      <form class="search-form">
-        <div class="search-field">
-          <input type="text" placeholder="Enter city or address" class="location-input">
-        </div>
-        <div class="search-field">
-          <input type="date" class="date-input">
-        </div>
-        <div class="search-field">
-          <select class="guests-select">
-            <option value="2">2 guests</option>
-            <option value="1">1 guest</option>
-            <option value="3">3 guests</option>
-            <option value="4">4 guests</option>
-            <option value="5">5 guests</option>
-            <option value="6">6+ guests</option>
-          </select>
-        </div>
-        <button type="submit" class="search-button">FIND RESTAURANTS</button>
-      </form>
+<div class="search-card">
+  <form class="search-form">
+    <div class="search-field">
+      <input type="text" placeholder="Enter city or address" class="location-input">
     </div>
-  </div>
-</section>
+    <div class="search-field">
+      <input type="date" class="date-input">
+    </div>
+    <div class="search-field">
+      <select class="guests-select">
+        <option value="2">2 guests</option>
+        <option value="1">1 guest</option>
+        <option value="3">3 guests</option>
+        <option value="4">4 guests</option>
+        <option value="5">5 guests</option>
+        <option value="6">6+ guests</option>
+      </select>
+    </div>
+    <button type="submit" class="search-button">FIND RESTAURANTS</button>
+  </form>
+</div>
 
 <section class="featured-restaurants-section">
   <div class="featured-restaurants-content">
@@ -40,35 +37,31 @@
     <p class="section-subtitle">Discover our handpicked exceptional dining selections</p>
     
     <div class="restaurant-swiper-container">
-        
       <div class="restaurant-swiper" id="restaurantSwiper">
         {% for restaurant in restaurants %}
         <div class="restaurant-card{% if forloop.first %} active{% endif %}">
           {% if restaurant.image %}
-          <div class="restaurant-card-left"
-            style="background-image: url('{{ restaurant.image.url }}')">
+          <div class="restaurant-card-left" style="background-image: url('{{ restaurant.image.url }}')">
           {% else %}
-          <div class="restaurant-card-left"
-            style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))">
+          <div class="restaurant-card-left" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))">
           {% endif %}
-          
             <div class="restaurant-card-overlay">
-  <h3 class="restaurant-name">{{ restaurant.name }}</h3>
-  <div class="restaurant-actions">
-    <button class="book-button" onclick="bookRestaurant('{{ restaurant.id }}')">BOOK NOW</button>
-    <button class="bookmark-button" onclick="bookmarkRestaurant('{{ restaurant.id }}')" title="Bookmark this restaurant">
-      <svg viewBox="0 0 24 24">
-        <path d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
-      </svg>
-    </button>
-    <!-- Manage Layout button inside the card -->
-    <a href="{% url 'rr_app:admin_restaurant_layout' restaurant.id %}" class="btn-manage-card">
-      Manage Layout
-    </a>
-  </div>
-</div>
-  
+              <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+              <div class="restaurant-actions">
+                <button class="book-button" onclick="bookRestaurant('{{ restaurant.id }}')">BOOK NOW</button>
+                <button class="bookmark-button" onclick="bookmarkRestaurant('{{ restaurant.id }}')" title="Bookmark this restaurant">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
+                  </svg>
+                </button>
+                <!-- Manage Layout button inside the card -->
+                <a href="{% url 'rr_app:admin_restaurant_layout' restaurant.id %}" class="btn-manage-card">
+                  Manage Layout
+                </a>
+              </div>
+            </div>
           </div>
+
           <div class="restaurant-card-right">
             <div class="restaurant-info">
               <h3>{{ restaurant.name }}</h3>
@@ -90,9 +83,35 @@
                   <svg viewBox="0 0 24 24">
                     <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />
                   </svg>
-                  {% for cuisine in restaurant.cuisines.all %}
-                    {{ cuisine }}{% if not forloop.last %}, {% endif %}
-                  {% endfor %}
+                  <div class="cuisine-list">
+                    {% for cuisine in restaurant.cuisines.all %}
+                      <span class="cuisine-tag">{{ cuisine }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="detail-item price-item">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M13,9H11V11H9V13H11V15H13V13H15V11H13V9Z" />
+                  </svg>
+                  <span class="price-range-text">{{ restaurant.price_range_display }}</span>
+                </div>
+
+                <div class="detail-item">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
+                  </svg>
+                  <span class="{% if restaurant.is_open_now %}status-open{% else %}status-closed{% endif %}">
+                    {% if restaurant.is_open_now %}
+                      Open until {{ restaurant.closing_time|time:"g:i A" }}
+                    {% else %}
+                      {% if restaurant.opening_time %}
+                        Opens at {{ restaurant.opening_time|time:"g:i A" }}
+                      {% else %}
+                        Hours not available
+                      {% endif %}
+                    {% endif %}
+                  </span>
                 </div>
               </div>
 
@@ -100,7 +119,7 @@
 
               <div class="restaurant-tags">
                 {% for tag in restaurant.tags.all %}
-                <span class="tag">{{ tag.tag }}</span>
+                  <span class="tag">{{ tag.tag }}</span>
                 {% endfor %}
               </div>
             </div>
@@ -111,8 +130,8 @@
 
       <div class="swiper-pagination" id="swiperPagination">
         {% for restaurant in restaurants %}
-        <div class="pagination-dot{% if forloop.first %} active{% endif %}"
-            onclick="goToSlide('{{ forloop.counter0 }}')"></div>
+          <div class="pagination-dot{% if forloop.first %} active{% endif %}"
+               onclick="goToSlide('{{ forloop.counter0 }}')"></div>
         {% endfor %}
       </div>
     </div>
@@ -157,5 +176,3 @@
 <script src="{% static 'rr_app/js/dashboard/stars.js' %}"></script>
 <script src="{% static 'rr_app/js/dashboard/book.js' %}"></script>
 {% endblock %}
-
-

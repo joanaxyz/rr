@@ -358,6 +358,51 @@ body, html {
   flex-shrink: 0;
 }
 
+.detail-item .status-open {
+  color: var(--color-success);
+  font-weight: var(--font-weight-semibold);
+}
+
+.detail-item .status-closed {
+  color: var(--color-error);
+  font-weight: var(--font-weight-semibold);
+}
+
+.cuisine-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.cuisine-tag {
+  display: inline-block;
+  background: rgba(212, 83, 10, 0.15);
+  color: var(--color-primary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.price-item {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(252, 165, 165, 0.08) 100%);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-base);
+  border-left: 3px solid var(--color-primary);
+  transition: all var(--transition-base);
+}
+
+.price-item:hover {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.12) 0%, rgba(252, 165, 165, 0.12) 100%);
+  transform: translateX(2px);
+}
+
+.price-range-text {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
 .restaurant-tags {
   display: flex;
   flex-wrap: wrap;

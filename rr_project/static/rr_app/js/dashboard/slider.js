@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("✅ Dashboard loaded");
     const restaurantData = JSON.parse(document.getElementById('context').textContent);
     const restaurantLength = restaurantData.count;
     setInterval(() => {
@@ -29,7 +28,7 @@ function nextSlide(restaurantLength) {
     goToSlide(nextIndex);
 }
 
-function prevSlide() {
+function prevSlide(restaurantLength) {
     const prevIndex = currentSlide === 0 ? restaurantLength - 1 : currentSlide - 1;
     goToSlide(prevIndex);
 }

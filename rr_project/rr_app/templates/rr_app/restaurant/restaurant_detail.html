@@ -40,7 +40,12 @@
                         {% for cuisine in restaurant.cuisines.all %}
                             <span class="cuisine">{{ cuisine }}</span>
                         {% endfor %}
-                        <span class="price-range">P{{ restaurant.price|floatformat:0 }} per person</span>
+                    </div>
+                    <div class="price-range-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M13,9H11V11H9V13H11V15H13V13H15V11H13V9Z"/>
+                        </svg>
+                        <span>{{ restaurant.price_range_display }}</span>
                     </div>
                     <div class="location-info">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -69,7 +74,7 @@
                     {% if restaurant.tags.all %}
                     <div class="tags-info">
                         {% for tag in restaurant.tags.all %}
-                            <span class="restaurant-tag">{{ tag.name }}</span>
+                            <span class="restaurant-tag">{{ tag.tag }}</span>
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -287,7 +292,6 @@
         <div class="reservation-form-card">
             <div class="form-header">
                 <h3>Make Reservation</h3>
-                <div class="price-info">P{{ restaurant.price|floatformat:0 }} per person</div>
             </div>
             
             <form id="reservation-form" class="reservation-form" method="post">

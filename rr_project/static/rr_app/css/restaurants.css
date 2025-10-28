@@ -339,7 +339,8 @@
 }
 
 .card .restaurant-address,
-.card .restaurant-hours {
+.card .restaurant-hours,
+.card .restaurant-price {
   font-size: var(--font-xs);
   color: var(--color-gray-500);
   display: flex;
@@ -348,7 +349,8 @@
 }
 
 .card .restaurant-address svg,
-.card .restaurant-hours svg {
+.card .restaurant-hours svg,
+.card .restaurant-price svg {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
@@ -361,6 +363,28 @@
 
 .card .restaurant-hours.closed {
   color: var(--color-error);
+}
+
+.card .restaurant-price-wrapper {
+  margin-top: var(--space-2);
+}
+
+.card .restaurant-price {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(252, 165, 165, 0.1) 100%);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-base);
+  border-left: 3px solid var(--color-primary);
+  transition: var(--transition-base);
+}
+
+.card .restaurant-price:hover {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(252, 165, 165, 0.15) 100%);
+  transform: translateX(2px);
 }
 
 .card .restaurant-tags {
