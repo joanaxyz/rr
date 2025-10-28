@@ -5,15 +5,10 @@
 <link rel="stylesheet" href="{% static 'rr_app/css/dashboard.css' %}">
 {% endblock %}
 
-{% block rr_base_content %}
-<!-- Background -->
-<div class="background"></div>
 
-<!-- Hero Section -->
-<section class="hero-section">
-  <div class="hero-content">
-    <h1 class="hero-title">Discover Amazing Restaurants</h1>
-    <p class="hero-subtitle">Find and book the perfect dining experience from thousands of restaurants in your city</p>
+{% block rr_base_content %}
+
+<div class="background"></div>
 
     <div class="search-card">
       <form class="search-form">
@@ -39,35 +34,40 @@
   </div>
 </section>
 
-<!-- Featured Restaurants Section -->
 <section class="featured-restaurants-section">
   <div class="featured-restaurants-content">
     <h2 class="section-title">Featured Restaurants</h2>
-    <p class="section-subtitle">Discover our handpicked selection of exceptional dining experiences</p>
-
+    <p class="section-subtitle">Discover our handpicked exceptional dining selections</p>
+    
     <div class="restaurant-swiper-container">
+        
       <div class="restaurant-swiper" id="restaurantSwiper">
         {% for restaurant in restaurants %}
         <div class="restaurant-card{% if forloop.first %} active{% endif %}">
           {% if restaurant.image %}
           <div class="restaurant-card-left"
-            style= "background-image: url('{{ restaurant.image.url }}')">
+            style="background-image: url('{{ restaurant.image.url }}')">
           {% else %}
           <div class="restaurant-card-left"
-            style= "background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)')">
-           {% endif %}
+            style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))">
+          {% endif %}
+          
             <div class="restaurant-card-overlay">
-              <h3 class="restaurant-name">{{ restaurant.name }}</h3>
-              <div class="restaurant-actions">
-                <button class="book-button" onclick="bookRestaurant('{{ restaurant.id }}')">BOOK NOW</button>
-                <button class="bookmark-button" onclick="bookmarkRestaurant('{{ restaurant.id }}')"
-                  title="Bookmark this restaurant">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+  <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+  <div class="restaurant-actions">
+    <button class="book-button" onclick="bookRestaurant('{{ restaurant.id }}')">BOOK NOW</button>
+    <button class="bookmark-button" onclick="bookmarkRestaurant('{{ restaurant.id }}')" title="Bookmark this restaurant">
+      <svg viewBox="0 0 24 24">
+        <path d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
+      </svg>
+    </button>
+    <!-- Manage Layout button inside the card -->
+    <a href="{% url 'rr_app:admin_restaurant_layout' restaurant.id %}" class="btn-manage-card">
+      Manage Layout
+    </a>
+  </div>
+</div>
+  
           </div>
           <div class="restaurant-card-right">
             <div class="restaurant-info">
@@ -76,25 +76,23 @@
               <div class="restaurant-rating">
                 <div class="stars" data-rating="{{ restaurant.avg_rating|default:0 }}"></div>
                 <span class="rating-text">{{ restaurant.avg_rating|floatformat:1 }} ({{ restaurant.review_count }} reviews)</span>
-              </div>
+              </div>  
 
               <div class="restaurant-details">
                 <div class="detail-item">
                   <svg viewBox="0 0 24 24">
-                    <path
-                      d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" />
+                    <path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" />
                   </svg>
                   {{ restaurant.address }}
                 </div>
+
                 <div class="detail-item">
                   <svg viewBox="0 0 24 24">
-                    <path
-                      d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />
+                    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />
                   </svg>
                   {% for cuisine in restaurant.cuisines.all %}
-                  {{ cuisine }}
+                    {{ cuisine }}{% if not forloop.last %}, {% endif %}
                   {% endfor %}
-                  P {{ restaurant.price|floatformat:2 }}
                 </div>
               </div>
 
@@ -121,31 +119,28 @@
   </div>
 </section>
 
-<!-- How It Works Section -->
 <section class="how-it-works-section">
   <div class="how-it-works-content">
     <h2 class="section-title">How It Works</h2>
-    <p class="section-subtitle">Book your dining experience in just three simple steps</p>
+    <p class="section-subtitle">Book the perfect dining experience in 3 easy steps</p>
 
     <div class="steps-container">
       <div class="step-card">
         <div class="step-number">1</div>
         <h3 class="step-title">Search & Discover</h3>
-        <p class="step-description">Browse thousands of restaurants in your city. Use filters to find exactly what
-          you're looking for.</p>
+        <p class="step-description">Explore the best restaurants near you.</p>
       </div>
 
       <div class="step-card">
         <div class="step-number">2</div>
         <h3 class="step-title">Book Your Table</h3>
-        <p class="step-description">Select your preferred date and time. Our system will confirm your reservation
-          instantly.</p>
+        <p class="step-description">Choose a date and time that works for you.</p>
       </div>
 
       <div class="step-card">
         <div class="step-number">3</div>
         <h3 class="step-title">Enjoy Your Meal</h3>
-        <p class="step-description">Show up and enjoy your dining experience. Rate and review to help others.</p>
+        <p class="step-description">Dine and leave feedback to help others.</p>
       </div>
     </div>
   </div>
@@ -153,14 +148,14 @@
 {% endblock %}
 
 {% block rr_base_js %}
-   {% if restaurants %}
-  <script id="context" type="application/json">
-    {
-      "count": {{ restaurants|length }}
-    }
-  </script>
-  {% endif %}
+{% if restaurants %}
+<script id="context" type="application/json">
+  { "count": {{ restaurants|length }} }
+</script>
+{% endif %}
 <script src="{% static 'rr_app/js/dashboard/slider.js' %}"></script>
 <script src="{% static 'rr_app/js/dashboard/stars.js' %}"></script>
 <script src="{% static 'rr_app/js/dashboard/book.js' %}"></script>
 {% endblock %}
+
+

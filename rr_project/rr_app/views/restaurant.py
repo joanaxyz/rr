@@ -11,6 +11,9 @@ from django.db.models import Avg, Count
 from datetime import datetime, timedelta
 from django.utils import timezone
 from ..models import Cuisine, Tags
+from django.views.decorators.http import require_POST, require_GET
+import json
+from django.contrib.auth.decorators import login_required
 
 # @login_required
 def dashboard_view(request):
@@ -117,3 +120,55 @@ def restaurants_view(request):
     }
     return render(request, 'rr_app/restaurant/restaurants.html', context)
 
+@login_required
+def admin_restaurant_layout(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    context = {
+        'restaurant': restaurant
+    }
+    return render(request, 'rr_app/restaurant/admin/adminlayout.html', context)
+
+
+@login_required
+@require_POST
+def save_restaurant_layout(request, restaurant_id):
+    """
+    Save JSON layout sent by admin (AJAX POST).
+    Expects JSON: { items: [ ... ] }
+    """
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    # Optional: check that request.user is allowed to edit (admin role) - you can add your permission logic here
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("Authentication required")
+
+    try:
+        # request.body contains raw JSON; parse it
+        payload = json.loads(request.body.decode('utf-8'))
+        layout = payload.get('items', payload)  # accept {items: [...] } or raw [...]
+        # Save into restaurant.layout
+        restaurant.layout = layout
+        restaurant.save(update_fields=['layout'])
+        return JsonResponse({'success': True, 'message': 'Layout saved'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+
+@login_required
+@require_GET
+def load_restaurant_layout(request, restaurant_id):
+    """
+    Return the layout JSON for restaurant (used by the UI to load saved layout).
+    """
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    layout = restaurant.layout or []
+    return JsonResponse({'success': True, 'layout': layout})
+
+def api_save_layout(request, restaurant_id):
+    if request.method == 'POST':
+        # Save the layout here
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'error': 'invalid method'}, status=400)
+
+def api_load_layout(request, restaurant_id):
+    # Load layout logic
+    return JsonResponse({'layout': []})

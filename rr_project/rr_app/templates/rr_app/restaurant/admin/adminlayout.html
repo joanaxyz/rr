@@ -1,0 +1,268 @@
+{% extends "rr_app/restaurant/rr_base.html" %}
+{% load static %}
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'rr_app/css/dashboard.css' %}">
+<style>
+  :root{--grid-size:40px}
+  .admin-layout{display:flex;gap:20px;padding:18px}
+  .admin-left{width:72%}
+  .admin-right{width:28%}
+  .canvas-wrap{height:720px;position:relative;overflow:auto}
+  .canvas{width:1600px;height:1200px;background-image:linear-gradient(transparent 39px, rgba(0,0,0,0.03) 40px), linear-gradient(90deg, transparent 39px, rgba(0,0,0,0.03) 40px); background-size: var(--grid-size) var(--grid-size); border-radius:8px; border:1px dashed rgba(10,20,40,0.06);}
+
+  .table-item{position:absolute;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff}
+  .table-rect{border-radius:6px;padding:6px 10px}
+  .table-round{border-radius:50%;padding:10px}
+  .status.available{background:#10b981}
+  .status.reserved{background:#f59e0b}
+  .status.occupied{background:#ef4444}
+  .controls-panel input, .controls-panel select{box-shadow:none}
+  .btn {    
+    background: var(--accent, #2563eb);
+    color: white; padding:8px 10px; border-radius:8px; border:0; cursor:pointer;
+  }
+  .ghost { background:transparent; border:1px solid #e6eef8; color:#6b7280; padding:8px 10px; border-radius:8px; }
+</style>
+{% endblock %}
+
+{% block rr_base_content %}
+<section class="featured-restaurants-section">
+  <div class="featured-restaurants-content">
+    <h2 class="section-title">Admin — Seating Layout for {{ restaurant.name }}</h2>
+    <p class="section-subtitle muted">Drag & drop tables, set seats and state. Save to database when finished.</p>
+
+    <div class="admin-layout">
+      <div class="admin-left card">
+        <div class="canvas-wrap" id="canvasWrap">
+          <div class="canvas" id="canvas"></div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+          <button class="btn" id="exportBtn">Export JSON</button>
+          <button class="btn" id="saveDbBtn">Save to DB</button>
+          <button class="ghost" id="clearBtn">Clear All</button>
+          <div style="margin-left:auto" class="muted">Tip: Drag items to move — they snap to grid.</div>
+        </div>
+      </div>
+
+      <aside class="admin-right card controls-panel">
+        <div>
+          <label>Table label</label>
+          <input type="text" id="newLabel" placeholder="Table A1">
+        </div>
+        <div>
+          <label>Seats</label>
+          <input type="number" id="newSeats" value="4" min="1">
+        </div>
+        <div>
+          <label>Shape</label>
+          <select id="newShape">
+            <option value="rect">Rectangle</option>
+            <option value="round">Round</option>
+          </select>
+        </div>
+        <div>
+          <label>State</label>
+          <select id="newState">
+            <option value="available">Available</option>
+            <option value="reserved">Reserved</option>
+            <option value="occupied">Occupied</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px; margin-top:8px">
+          <button class="btn" id="addTable">Add Table</button>
+          <button class="ghost" id="toggleGrid">Toggle Grid</button>
+        </div>
+
+        <hr>
+        <h3 style="margin:0 0 8px">Selected Table</h3>
+        <div id="selectedPanel" style="display:none">
+          <div class="row"><label style="flex:1">Label</label><input id="selLabel" type="text" style="flex:2"></div>
+          <div class="row"><label style="flex:1">Seats</label><input id="selSeats" type="number" style="flex:2" min="1"></div>
+          <div class="row"><label style="flex:1">State</label>
+            <select id="selState" style="flex:2">
+              <option value="available">Available</option>
+              <option value="reserved">Reserved</option>
+              <option value="occupied">Occupied</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" id="applyBtn">Apply</button>
+            <button class="ghost" id="deleteBtn">Delete</button>
+          </div>
+        </div>
+
+        <hr>
+        <h3 style="margin:0 0 8px">Reservations (Mock)</h3>
+        <div id="reservationsList"></div>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block rr_base_js %}
+<script>
+// --- CSRF helpers (reads cookie) ---
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const c = cookies[i].trim();
+      if (c.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(c.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+const restaurantId = {{ restaurant.id }};
+const saveUrl = "{% url 'rr_app:api_save_layout' restaurant_id=restaurant.id %}";
+const loadUrl = "{% url 'rr_app:api_load_layout' restaurant_id=restaurant.id %}";
+
+const gridSize = 40;
+const canvas = document.getElementById('canvas');
+let items = [];
+let selectedId = null;
+
+function snap(n){ return Math.round(n / gridSize) * gridSize; }
+
+function render(){
+  canvas.innerHTML = '';
+  for(const it of items){
+    const el = document.createElement('div');
+    el.className = 'table-item ' + (it.shape==='round'?'table-round table-rect':'table-rect');
+    el.style.left = it.x + 'px';
+    el.style.top = it.y + 'px';
+    el.dataset.id = it.id;
+    el.dataset.state = it.state;
+    el.style.width = (it.shape==='round'? 80 : Math.max(60, it.width || 100)) + 'px';
+    el.style.height = (it.shape==='round'? 80 : Math.max(40, it.height || 60)) + 'px';
+    el.innerHTML = `<div style="text-align:center"><div class="table-label">${it.label}</div><div style="font-size:12px;opacity:0.9">${it.seats} seats</div><div style="margin-top:6px;" class="status ${it.state}">${it.state}</div></div>`;
+    if(it.state==='available'){ el.style.background = '#10b981'; }
+    else if(it.state==='reserved'){ el.style.background = '#f59e0b'; }
+    else if(it.state==='occupied'){ el.style.background = '#ef4444'; }
+
+    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener('dblclick', ()=>{ selectItem(it.id); });
+
+    canvas.appendChild(el);
+  }
+}
+
+document.getElementById('addTable').addEventListener('click', ()=>{
+  const label = document.getElementById('newLabel').value || ('T'+(items.length+1));
+  const seats = parseInt(document.getElementById('newSeats').value) || 2;
+  const shape = document.getElementById('newShape').value;
+  const state = document.getElementById('newState').value;
+  const id = Date.now();
+  const w = shape==='round'? 80 : Math.max(80, seats*12 + 40);
+  const h = shape==='round'? 80 : 60;
+  const it = {id,label,seats,shape,state,x: snap(40 + Math.random()*400), y: snap(40 + Math.random()*200), width:w, height:h };
+  items.push(it); render();
+});
+
+function selectItem(id){
+  selectedId = id;
+  const it = items.find(i=>i.id==id);
+  if(!it) return;
+  document.getElementById('selectedPanel').style.display='block';
+  document.getElementById('selLabel').value = it.label;
+  document.getElementById('selSeats').value = it.seats;
+  document.getElementById('selState').value = it.state;
+}
+
+document.getElementById('applyBtn').addEventListener('click', ()=>{
+  const it = items.find(i=>i.id==selectedId);
+  if(!it) return;
+  it.label = document.getElementById('selLabel').value;
+  it.seats = parseInt(document.getElementById('selSeats').value) || it.seats;
+  it.state = document.getElementById('selState').value;
+  render();
+});
+
+document.getElementById('deleteBtn').addEventListener('click', ()=>{
+  items = items.filter(i=>i.id!==selectedId);
+  selectedId = null;
+  document.getElementById('selectedPanel').style.display='none';
+  render();
+});
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{ if(confirm('Clear all tables?')){ items=[]; render(); }});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(items, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='layout.json'; a.click();
+});
+
+// Save to DB (AJAX POST)
+document.getElementById('saveDbBtn').addEventListener('click', async ()=>{
+  try{
+    const res = await fetch(saveUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify({items})
+    });
+    const j = await res.json();
+    if(j.success) alert('Layout saved!');
+    else alert('Save failed: ' + (j.error || 'unknown'));
+  } catch(err){
+    alert('Save error: ' + err);
+  }
+});
+
+// Drag logic
+let dragState = null;
+function onPointerDown(e){
+  const el = e.currentTarget; const id = +el.dataset.id; el.setPointerCapture(e.pointerId);
+  const it = items.find(x=>x.id===id);
+  dragState = {id, startX: e.clientX, startY:e.clientY, origX:it.x, origY:it.y};
+  el.style.zIndex = 999;
+  function moveFn(ev){
+    const dX = ev.clientX - dragState.startX;
+    const dY = ev.clientY - dragState.startY;
+    let nx = dragState.origX + dX; let ny = dragState.origY + dY;
+    nx = Math.max(0, Math.min(nx, canvas.clientWidth - (it.shape==='round'?80:it.width)));
+    ny = Math.max(0, Math.min(ny, canvas.clientHeight - (it.shape==='round'?80:it.height)));
+    it.x = snap(nx); it.y = snap(ny); render();
+  }
+  function upFn(ev){ e.currentTarget.releasePointerCapture(e.pointerId); dragState = null; document.removeEventListener('pointermove', moveFn); document.removeEventListener('pointerup', upFn); }
+  document.addEventListener('pointermove', moveFn); document.addEventListener('pointerup', upFn);
+}
+
+document.getElementById('toggleGrid').addEventListener('click', ()=>{
+  const css = canvas.style.backgroundImage;
+  if(css && css.includes('linear-gradient')) canvas.style.backgroundImage = 'none';
+  else canvas.style.backgroundImage = "linear-gradient(transparent 39px, rgba(0,0,0,0.03) 40px), linear-gradient(90deg, transparent 39px, rgba(0,0,0,0.03) 40px)";
+});
+
+// Load saved layout on open
+(async function loadSaved(){
+  try{
+    const res = await fetch(loadUrl, {credentials:'same-origin', headers: {'X-CSRFToken': csrftoken}});
+    const j = await res.json();
+    if(j.success){
+      items = j.layout || [];
+      // make sure coordinates exist and are numbers (fallback demo)
+      if(!items.length){
+        items = [{id:101,label:'A1',seats:4,shape:'rect',state:'available',x:snap(80),y:snap(80),width:140,height:60}];
+      }
+      render();
+    } else {
+      console.warn('Could not load layout', j);
+    }
+  } catch(err){
+    console.warn('Load error', err);
+    items = [{id:101,label:'A1',seats:4,shape:'rect',state:'available',x:snap(80),y:snap(80),width:140,height:60}];
+    render();
+  }
+})();
+</script>
+{% endblock %}

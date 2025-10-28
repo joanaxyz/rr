@@ -584,4 +584,21 @@ body, html {
     min-width: auto;
     padding: 0 var(--space-4);
   }
+  
+ .btn-manage-card {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background-color: #10b981;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-manage-card:hover {
+    background-color: #059669;
+}
+
 }

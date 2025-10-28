@@ -2,6 +2,8 @@
 from django.urls import path
 from .views import auth
 from .views import restaurant
+from .views.restaurant import api_save_layout, api_load_layout
+
 
 app_name = 'rr_app'
 
@@ -26,6 +28,12 @@ urlpatterns = [
     path('restaurants/', restaurant.restaurants_view, name='restaurants'),
     path('reservation/manage/', restaurant.reservation_management_view, name='reservation_management'),
     path('restaurant/<int:restaurant_id>/', restaurant.restaurant_detail_view, name='restaurant_detail'),
+    
     # Redirect root to login
     path('', auth.login_view, name='home'),
+
+    # Admin restaurant layout URL
+   path("dashboard/restaurant/<int:restaurant_id>/layout/", restaurant.admin_restaurant_layout, name="admin_restaurant_layout"),
+     path('api/save-layout/<int:restaurant_id>/', api_save_layout, name='api_save_layout'),
+    path('api/load-layout/<int:restaurant_id>/', api_load_layout, name='api_load_layout'),
 ]
