@@ -1,0 +1,306 @@
+{% extends 'common/rr_base.html' %}
+{% load static %}
+
+{% block title %}Reserve at {{ restaurant.name }} - Restaurant Reservations{% endblock %}
+
+{% block rr_base_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'reservations/css/reservation.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<!-- Reservation Header -->
+<div class="reservation-header">
+    <a href="{% url 'restaurants:restaurant_detail' restaurant.id %}" class="back-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" />
+        </svg>
+        Back to Restaurant
+    </a>
+    <div class="header-content">
+        <h1>Make a Reservation</h1>
+        <p class="subtitle">at <span class="restaurant-name">{{ restaurant.name }}</span></p>
+    </div>
+</div>
+
+<!-- Main Reservation Container -->
+<div class="reservation-wrapper">
+    <!-- Restaurant Info Card -->
+    <div class="restaurant-info-card">
+        <div class="restaurant-header-info">
+            <h3>{{ restaurant.name }}</h3>
+            <div class="restaurant-meta">
+                <div class="meta-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z"/>
+                    </svg>
+                    <span>{{ restaurant.address }}</span>
+                </div>
+                <div class="meta-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+                    </svg>
+                    <span>{{ restaurant.phone_number }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Reservation Content -->
+    <div class="reservation-main">
+        <!-- Table Selection Section -->
+        <section class="table-section">
+            <h2>Select Your Table</h2>
+            <div class="table-map-container">
+                <div class="floor-legend">
+                    <div class="legend-item">
+                        <div class="legend-color available"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color reserved"></div>
+                        <span>Reserved</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color selected"></div>
+                        <span>Selected</span>
+                    </div>
+                </div>
+                
+                <div class="floor-plan">
+                    <!-- Entrance -->
+                    <div class="entrance">
+                        <span>Entrance</span>
+                    </div>
+                    
+                    <!-- Windows -->
+                    <div class="window window-top">Window</div>
+                    <div class="window window-right">Window</div>
+                    
+                    <!-- Bar Area -->
+                    <div class="bar-area">
+                        <span>Bar</span>
+                    </div>
+                    
+                    <!-- Tables -->
+                    <!-- 2-person tables -->
+                    <div class="table table-2 available" data-table="1" data-capacity="2" style="top: 80px; left: 100px;">
+                        <svg width="40" height="60" viewBox="0 0 40 60">
+                            <rect x="10" y="20" width="20" height="20" rx="4" fill="currentColor"/>
+                            <circle cx="15" cy="15" r="3" fill="currentColor"/>
+                            <circle cx="25" cy="15" r="3" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">1</span>
+                    </div>
+                    
+                    <div class="table table-2 available" data-table="2" data-capacity="2" style="top: 80px; left: 200px;">
+                        <svg width="40" height="60" viewBox="0 0 40 60">
+                            <rect x="10" y="20" width="20" height="20" rx="4" fill="currentColor"/>
+                            <circle cx="15" cy="15" r="3" fill="currentColor"/>
+                            <circle cx="25" cy="15" r="3" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">2</span>
+                    </div>
+                    
+                    <!-- 4-person tables -->
+                    <div class="table table-4 available" data-table="3" data-capacity="4" style="top: 180px; left: 80px;">
+                        <svg width="60" height="80" viewBox="0 0 60 80">
+                            <rect x="15" y="25" width="30" height="30" rx="6" fill="currentColor"/>
+                            <circle cx="20" cy="15" r="4" fill="currentColor"/>
+                            <circle cx="40" cy="15" r="4" fill="currentColor"/>
+                            <circle cx="20" cy="65" r="4" fill="currentColor"/>
+                            <circle cx="40" cy="65" r="4" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">3</span>
+                    </div>
+                    
+                    <div class="table table-4 reserved" data-table="4" data-capacity="4" style="top: 180px; left: 200px;">
+                        <svg width="60" height="80" viewBox="0 0 60 80">
+                            <rect x="15" y="25" width="30" height="30" rx="6" fill="currentColor"/>
+                            <circle cx="20" cy="15" r="4" fill="currentColor"/>
+                            <circle cx="40" cy="15" r="4" fill="currentColor"/>
+                            <circle cx="20" cy="65" r="4" fill="currentColor"/>
+                            <circle cx="40" cy="65" r="4" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">4</span>
+                    </div>
+                    
+                    <div class="table table-4 available" data-table="5" data-capacity="4" style="top: 300px; left: 140px;">
+                        <svg width="60" height="80" viewBox="0 0 60 80">
+                            <rect x="15" y="25" width="30" height="30" rx="6" fill="currentColor"/>
+                            <circle cx="20" cy="15" r="4" fill="currentColor"/>
+                            <circle cx="40" cy="15" r="4" fill="currentColor"/>
+                            <circle cx="20" cy="65" r="4" fill="currentColor"/>
+                            <circle cx="40" cy="65" r="4" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">5</span>
+                    </div>
+                    
+                    <!-- 6-person tables -->
+                    <div class="table table-6 available" data-table="6" data-capacity="6" style="top: 200px; left: 360px;">
+                        <svg width="80" height="100" viewBox="0 0 80 100">
+                            <rect x="20" y="30" width="40" height="40" rx="8" fill="currentColor"/>
+                            <circle cx="25" cy="15" r="5" fill="currentColor"/>
+                            <circle cx="55" cy="15" r="5" fill="currentColor"/>
+                            <circle cx="15" cy="50" r="5" fill="currentColor"/>
+                            <circle cx="65" cy="50" r="5" fill="currentColor"/>
+                            <circle cx="25" cy="85" r="5" fill="currentColor"/>
+                            <circle cx="55" cy="85" r="5" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">6</span>
+                    </div>
+                    
+                    <div class="table table-6 available" data-table="7" data-capacity="6" style="top: 350px; left: 320px;">
+                        <svg width="80" height="100" viewBox="0 0 80 100">
+                            <rect x="20" y="30" width="40" height="40" rx="8" fill="currentColor"/>
+                            <circle cx="25" cy="15" r="5" fill="currentColor"/>
+                            <circle cx="55" cy="15" r="5" fill="currentColor"/>
+                            <circle cx="15" cy="50" r="5" fill="currentColor"/>
+                            <circle cx="65" cy="50" r="5" fill="currentColor"/>
+                            <circle cx="25" cy="85" r="5" fill="currentColor"/>
+                            <circle cx="55" cy="85" r="5" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">7</span>
+                    </div>
+                    
+                    <!-- 8-person table -->
+                    <div class="table table-8 available" data-table="8" data-capacity="8" style="top: 120px; left: 340px;">
+                        <svg width="100" height="120" viewBox="0 0 100 120">
+                            <rect x="25" y="35" width="50" height="50" rx="10" fill="currentColor"/>
+                            <circle cx="30" cy="15" r="6" fill="currentColor"/>
+                            <circle cx="50" cy="15" r="6" fill="currentColor"/>
+                            <circle cx="70" cy="15" r="6" fill="currentColor"/>
+                            <circle cx="15" cy="40" r="6" fill="currentColor"/>
+                            <circle cx="85" cy="40" r="6" fill="currentColor"/>
+                            <circle cx="15" cy="80" r="6" fill="currentColor"/>
+                            <circle cx="85" cy="80" r="6" fill="currentColor"/>
+                            <circle cx="50" cy="105" r="6" fill="currentColor"/>
+                        </svg>
+                        <span class="table-number">8</span>
+                    </div>
+                    
+                    <!-- Kitchen -->
+                    <div class="kitchen">Kitchen</div>
+                    
+                    <!-- Restrooms -->
+                    <div class="restroom">Restrooms</div>
+                </div>
+                
+                <div class="table-selection-info">
+                    <p id="selected-table-info">Click on an available table to select it</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservation Form -->
+        <section class="reservation-form-section">
+            <h2>Reservation Details</h2>
+            <form id="reservation-form" class="reservation-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="restaurant-id" value="{{ restaurant.id }}">
+                <input type="hidden" id="selected-table" name="table_number" value="">
+                
+                <div class="form-group">
+                    <label for="guest-name">Full Name</label>
+                    {{ reserve_form.name }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-email">Email Address</label>
+                    {{ reserve_form.email }}
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reservation-date">Date</label>
+                        {{ reserve_form.date }}
+                    </div>
+                    <div class="form-group">
+                        <label for="reservation-time">Time</label>
+                        {{ reserve_form.time }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-count">Number of Guests</label>
+                    {{ reserve_form.guest_count }}
+                </div>
+                
+                <div class="selected-table-display">
+                    <div class="table-selection-status">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/>
+                        </svg>
+                        {{ reserve_form.table_numbers }}
+                        <span id="table-status">No table selected</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="special-notes">Special Requests</label>
+                    {{ reserve_form.notes }}
+                </div>
+                
+                <button type="submit" class="reserve-btn" id="reserve-btn" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,5 19,5H18V3M17,12H12V17H17V12Z"/>
+                    </svg>
+                    Complete Reservation
+                </button>
+            </form>
+        </section>
+
+        <!-- Reservation Policies -->
+        <section class="policies-section">
+            <h2>Reservation Policies</h2>
+            <div class="policies-list">
+                <div class="policy-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9,20.42L2.79,14.21L4.21,12.79L9,17.58L19.79,6.79L21.21,8.21L9,20.42Z"/>
+                    </svg>
+                    <div>
+                        <h4>Free Cancellation</h4>
+                        <p>Cancel for free up to 24 hours before your reservation</p>
+                    </div>
+                </div>
+                <div class="policy-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
+                    </svg>
+                    <div>
+                        <h4>Email Confirmation</h4>
+                        <p>You'll receive a confirmation email shortly after booking</p>
+                    </div>
+                </div>
+                <div class="policy-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/>
+                    </svg>
+                    <div>
+                        <h4>Late Arrival Policy</h4>
+                        <p>Late arrivals may forfeit your table after 15 minutes</p>
+                    </div>
+                </div>
+                <div class="policy-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,1L15.09,8.26H23L17.45,12.79L19.54,20.05L12,15.5L4.46,20.05L6.55,12.79L1,8.26H8.91L12,1Z"/>
+                    </svg>
+                    <div>
+                        <h4>Special Requirements</h4>
+                        <p>Let us know about dietary restrictions or special occasions</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+<script src="{% static 'common/js/Notifications.js' %}"></script>
+<script src="{% static 'restaurants/js/restaurant_detail.js' %}"></script>
+<script src="{% static 'home/js/stars.js' %}"></script>
+{% endblock %}

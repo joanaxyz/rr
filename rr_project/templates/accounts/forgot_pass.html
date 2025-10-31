@@ -1,0 +1,56 @@
+{% extends 'accounts/auth.html' %}
+{% load static %}
+
+{% block title %}Forgot Password - RR{% endblock %}
+
+{% block page_title %}
+  <p class="content_title">Forgot Password</p>
+{% endblock %}
+
+{% block form_fields %}
+  <!-- Step 1: Email input -->
+  <div id="email-step">
+    <input type="email" id="email" placeholder="Email address" required>
+  </div>
+  
+  <!-- Step 2: Verification code input -->
+  <div id="verification-step" class="verification-container" style="display: none;">
+    <div class="code-inputs">
+      <input type="text" maxlength="1" class="code-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="code-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="code-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="code-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="code-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="code-box" inputmode="numeric">
+    </div>
+  </div>
+
+  <!-- Step 3: New password input -->
+  <div id="password-step" style="display: none;">
+    <div class="form-group password-wrapper">
+        <input type="password" id="new_password" placeholder="New password" required>
+    </div>
+    <div class="form-group password-wrapper">
+      <input type="password" id="confirm_password" placeholder="Confirm password" required>
+    </div>
+  </div>
+{% endblock %}
+
+{% block form_footer %}
+  <p id="email-instructions" class="auth_link">
+    Enter your email address and we'll send you a verification code.
+  </p>
+  
+  <p id="resend_code" class="auth_link" style="display: none;">
+    Didn't get the code? <a id="resend_link">Resend</a>
+  </p>
+  
+  <p id="password-instructions" class="auth_link" style="display: none;">
+    Enter your new password (minimum 8 characters)<br>
+    Atleast one number
+  </p>
+{% endblock %}
+
+{% block auth_js %}
+  <script src="{% static 'accounts/forgot_pass.js' %}"></script>
+{% endblock %}

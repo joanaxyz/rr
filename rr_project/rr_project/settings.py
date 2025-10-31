@@ -29,17 +29,17 @@ SECRET_KEY = 'django-insecure-xs_w$!5xmj-6!gk+(y6n*6j%x^+ay&xz71qjqx*amkp#1i^4s0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/') 
 
 # Authentication Configuration
-AUTH_USER_MODEL = 'rr_app.User'
-LOGIN_URL = '/auth/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/auth/login/'
+AUTH_USER_MODEL = 'accounts.User'
+LOGIN_URL = '/accounts/auth/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/accounts/auth/login/'
 
 # Supabase Configuration (Disabled for Django Auth migration)
 SUPABASE_URL = config('SUPABASE_URL')
@@ -74,7 +74,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rr_app',
+    'accounts',
+    'home',
+    'restaurants',
+    'reservations',
 ]
 
 MIDDLEWARE = [
@@ -85,6 +88,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'rr_project.urls'
@@ -124,7 +128,7 @@ print(DATABASES)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'rr_app.utils.validators.MinimumLengthAndNumberValidator',
+        'NAME': 'accounts.validators.MinimumLengthAndNumberValidator',
         'OPTIONS': {
             'min_length': 8,
         }
@@ -147,18 +151,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Custom User Model
-AUTH_USER_MODEL = 'rr_app.User'
-
-# Login/Logout URLs
-LOGIN_URL = '/rr/auth/login/'
-LOGIN_REDIRECT_URL = '/rr/dashboard/'
-LOGOUT_REDIRECT_URL = '/rr/auth/login/'

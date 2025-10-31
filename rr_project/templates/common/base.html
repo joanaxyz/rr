@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Mga Bulakbol">
+  <title>{% block title %}RR{% endblock %}</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{% static 'common/css/messagebox.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/spinner.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  
+
+  {% block content %}
+  <!-- Page content goes here -->
+  {% endblock %}
+
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p class="loading-text" id="loadingText">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Message Box -->
+  <div class="messagebox-overlay">
+    <div class="messagebox">
+      <div class="messagebox-title" id="msgbx_title">Title Here</div>
+      <div class="messagebox-message" id="msgbx_body">Your message goes here.</div>
+      <div class="messagebox-buttons">
+        <button class="messagebox-btn" id="msgbx_btn">Cancel</button>
+        <button class="messagebox-btn messagebox-btn-primary" id="msgbx_btn_primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+   {% if messages %}
+  <script id="djangoMessages" type="application/json">
+    [
+      {% for message in messages %}
+      {
+        "level": {{ message.level }},
+        "text": "{{ message|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  </script>
+  {% endif %}
+  <script src="{% static 'common/js/MessageBox.js' %}"></script>
+  <script src="{% static 'common/js/LoadingOverlay.js' %}"></script>
+  <script src ="{% static 'common/js/MessageNotification.js' %}"></script>
+  <script src ="{% static 'common/js/SubmitStyling.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

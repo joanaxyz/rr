@@ -1,0 +1,77 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'reservations/css/reservation_list.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="reservation-container">
+  <div class="header">
+    <h1>My Reservations</h1>
+  </div>
+
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if has_reservations %}
+  <div class="table-container">
+    <table class="reservation-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Restaurant</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Guests</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reservation in reservations %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td><a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
+              {{ reservation.restaurant.name }}
+          </a>
+          </td>
+          <td>{{ reservation.date }}</td>
+          <td>{{ reservation.time }}</td>
+          <td>{{ reservation.guest_count }}</td>
+          <td>
+            <span class="status-badge {{ reservation.status|lower }}">
+              {{ reservation.status|title }}
+            </span>
+          </td>
+          <td>
+            {% if reservation.status != 'CANCELLED' %}
+            <form method="post" action="">
+              {% csrf_token %}
+              <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
+              <input type="hidden" name="cancel_reason" class="cancel-reason-input">
+              <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
+            </form>
+            {% else %}
+            <span class="cancelled-text">Cancelled</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="no-reservations">You have no reservations yet. Start by exploring restaurants and making your first reservation!</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+<script src="{% static 'reservations/js/reservation_list.js' %}"></script>
+{% endblock %}
