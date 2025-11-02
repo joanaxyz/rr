@@ -37,9 +37,10 @@
         {% for reservation in reservations %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <td><a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
+          <td>
+            <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
               {{ reservation.restaurant.name }}
-          </a>
+            </a>
           </td>
           <td>{{ reservation.date }}</td>
           <td>{{ reservation.time }}</td>
@@ -51,12 +52,15 @@
           </td>
           <td>
             {% if reservation.status != 'CANCELLED' %}
-            <form method="post" action="">
-              {% csrf_token %}
-              <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
-              <input type="hidden" name="cancel_reason" class="cancel-reason-input">
-              <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
-            </form>
+            <div class="action-buttons">
+              <a href="{% url 'reservations:edit_reservation' reservation.id %}" class="edit-btn">Edit</a>
+              <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
+                <input type="hidden" name="cancel_reason" class="cancel-reason-input">
+                <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
+              </form>
+            </div>
             {% else %}
             <span class="cancelled-text">Cancelled</span>
             {% endif %}

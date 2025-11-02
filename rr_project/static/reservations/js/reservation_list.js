@@ -21,3 +21,7 @@ function submitCancel(reason, form) {
     form.submit();
   }
 }
+
+function editReservation(reservationId) {
+  window.location.href = `/reservations/edit/${reservationId}/`;
+}
