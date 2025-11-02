@@ -51,19 +51,20 @@
             </span>
           </td>
           <td>
-            {% if reservation.status != 'CANCELLED' %}
-            <div class="action-buttons">
-              <form method="post" action="">
-                {% csrf_token %}
+            <form method="post" action="">
+            {% csrf_token %}
+              {% if reservation.status != 'CANCELLED' %}
+              <div class="action-buttons">
                 <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
                 <input type="hidden" name="cancel_reason" class="cancel-reason-input">
                 <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
                 <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
-              </form>
-            </div>
-            {% else %}
-            <span class="cancelled-text">Cancelled</span>
-            {% endif %}
+              </div>
+              {% else %}
+              <input type="hidden" name="delete_reservation" value="{{ reservation.id }}">
+              <button type="button" class="delete-btn" onclick="deleteReservation(this.form)">Delete</button>
+              {% endif %}
+            </form>
           </td>
         </tr>
         {% endfor %}

@@ -57,11 +57,11 @@ def send_verification_email(user, request):
     context = {
         'user': user,
         'verification_url': verification_url,
-        'site_name': 'Restaurant Reservation',
+        'site_name': 'RR',
     }
     
     # Email subject
-    subject = 'Verify your email address - Restaurant Reservation'
+    subject = 'Verify your email address - RR'
     
     # Use the generic send_email function
     return send_email(
@@ -79,11 +79,11 @@ def send_password_reset_code_email(user, reset_code):
     context = {
         'user': user,
         'reset_code': reset_code,
-        'site_name': 'Restaurant Reservation',
+        'site_name': 'RR',
     }
     
     # Email subject
-    subject = 'Password Reset Code - Restaurant Reservation'
+    subject = 'Password Reset Code - RR'
     
     # Use the generic send_email function
     return send_email(
@@ -91,4 +91,42 @@ def send_password_reset_code_email(user, reset_code):
         template_name='emails/password_reset_code_email.html',
         context=context,
         recipient_email=user.email
+    )
+
+def send_reservation_cancellation_email(cancelled_reservation):
+    """
+    Send reservation cancellation email to user
+    """
+    # Email context
+    context = {
+        'reservation': cancelled_reservation,
+        'site_name': 'RR',
+    }
+    #Email subject
+    subject = 'Reservation Cancellation - RR'
+    
+    return send_email(
+        subject=subject,
+        template_name='emails/reservation_cancellation.html',
+        context=context,
+        recipient_email = cancelled_reservation.email
+    )
+
+def send_reservation_confirmation_email(reservation):
+    """
+    Send reservation cancellation email to user
+    """
+    # Email context
+    context = {
+        'reservation': reservation,
+        'site_name': 'RR',
+    }
+    #Email subject
+    subject = 'Reservation Cancellation - RR'
+    
+    return send_email(
+        subject=subject,
+        template_name='emails/reservation_cancellation.html',
+        context=context,
+        recipient_email = reservation.email
     )

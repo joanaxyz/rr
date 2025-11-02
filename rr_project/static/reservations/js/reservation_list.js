@@ -22,6 +22,14 @@ function submitCancel(reason, form) {
   }
 }
 
+function deleteReservation(form) {
+  if (form) {
+    window.MessageBox.showConfirm("Are you sure you want to delete this reservation?", ()=>{
+      form.submit();
+    })
+  }
+}
+
 function editReservation(reservationId) {
   window.location.href = `/reservations/${reservationId}/edit/`;
 }

@@ -11,7 +11,7 @@ from django.utils import timezone
 from .validators import MinimumLengthAndNumberValidator 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import User, UserRole, Customer, Admin
-from .services import send_verification_email, send_password_reset_code_email
+from email_service.views import send_verification_email, send_password_reset_code_email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 

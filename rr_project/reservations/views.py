@@ -6,7 +6,7 @@ from django.shortcuts import render
 from .models import *
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ReservationForm
-
+from email_service.views import send_reservation_cancellation_email
 from django.contrib import messages
 
 
@@ -60,7 +60,10 @@ def reservation_management_view(request):
                 reservation.status = 'CANCELLED'
                 reservation.cancellation_reason = reason
                 reservation.save()
-                messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
+                if send_reservation_cancellation_email(reservation):
+                    messages.success(request, f"Reservation at {restaurant_name} has been cancelled. You have been sent an email!")
+                else:
+                    messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
             except Exception:
                 messages.error(request, "Failed to cancel reservation. Please try again.")
             return redirect('reservations:reservation_management')
@@ -74,26 +77,6 @@ def reservation_management_view(request):
                 messages.success(request, "Cancelled reservation has been deleted.")
             except Exception:
                 messages.error(request, "Failed to delete reservation. Please try again.")
-            return redirect('reservations:reservation_management')
-
-        # Edit reservation
-        elif 'edit_reservation' in request.POST:
-            reservation_id = request.POST.get('reservation_id')
-            new_date = request.POST.get('edit_date')
-            new_time = request.POST.get('edit_time')
-            new_guest_count = request.POST.get('edit_guest_count')
-            new_notes = request.POST.get('edit_notes', '')
-
-            try:
-                reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
-                reservation.date = new_date
-                reservation.time = new_time
-                reservation.guest_count = new_guest_count
-                reservation.notes = new_notes
-                reservation.save()
-                messages.success(request, f"Reservation at {reservation.restaurant.name} has been updated.")
-            except Exception as e:
-                messages.error(request, f"Failed to update reservation: {str(e)}")
             return redirect('reservations:reservation_management')
 
     context = {
