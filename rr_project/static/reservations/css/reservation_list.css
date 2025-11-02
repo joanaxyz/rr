@@ -135,6 +135,21 @@ body {
   background-color: var(--color-orange-hover);
 }
 
+.edit-btn {
+  background-color: var(--color-gray-600);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-base);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  font-size: var(--font-sm);
+}
+
+.edit-btn:hover {
+  background-color: var(--color-gray-400);
+}
+
 .delete-btn {
   background-color: var(--color-error);
   color: var(--color-white);

@@ -53,12 +53,12 @@
           <td>
             {% if reservation.status != 'CANCELLED' %}
             <div class="action-buttons">
-              <a href="{% url 'reservations:edit_reservation' reservation.id %}" class="edit-btn">Edit</a>
               <form method="post" action="">
                 {% csrf_token %}
                 <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
                 <input type="hidden" name="cancel_reason" class="cancel-reason-input">
                 <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
+                <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
               </form>
             </div>
             {% else %}

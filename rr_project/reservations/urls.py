@@ -4,8 +4,8 @@ from .views import *
 app_name = 'reservations'
 
 urlpatterns = [
-    path('restaurant/<int:restaurant_id>/reserve/', reservation, name='reserve'),
     path('reservations/', reservation_management_view, name='reservation_management'),
-    path('reservations/<int:reservation_id>/edit/', edit_reservation, name='edit_reservation'),
+    path('restaurant/<int:restaurant_id>/reserve/', reservation, name='reserve'),
+    path('<int:reservation_id>/edit/', edit_reservation, name='edit_reservation'),
 ]
 
