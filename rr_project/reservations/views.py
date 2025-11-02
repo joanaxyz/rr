@@ -6,7 +6,7 @@ from django.shortcuts import render
 from .models import *
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ReservationForm
-from email_service.views import send_reservation_cancellation_email
+from email_service.views import send_reservation_cancellation_email, send_reservation_confirmation_email, send_reservation_updated_email
 from django.contrib import messages
 
 
@@ -26,7 +26,10 @@ def reservation(request, restaurant_id):
                 reservation.restaurant = restaurant
                 reservation.save()
 
-                messages.success(request, f'You will receive an email once your reservation has been confirmed')
+                # Send confirmation email
+                send_reservation_confirmation_email(reservation)
+                
+                messages.success(request, f'Reservation created! You will receive a confirmation email shortly.')
                 return redirect('restaurants:restaurant_detail', restaurant_id=restaurant.id)
             except Exception as e:
                 messages.error(request, f'An error occured during reservation: {str(e)}')
@@ -94,8 +97,12 @@ def edit_reservation(request, reservation_id):
     if request.method == 'POST':
         form = ReservationForm(request.POST, instance=reservation, restaurant=reservation.restaurant)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Your reservation has been updated successfully.')
+            updated_reservation = form.save()
+            
+            # Send update notification email
+            send_reservation_updated_email(updated_reservation)
+            
+            messages.success(request, 'Your reservation has been updated successfully. A confirmation email has been sent.')
             return redirect('reservations:reservation_management')
         else:
             messages.error(request, 'Please correct the errors below.')

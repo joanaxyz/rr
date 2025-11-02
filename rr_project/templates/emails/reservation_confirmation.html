@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservation Cancelled</title>
+    <title>Reservation Confirmed</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'common/css/email-styles.css' %}">
 </head>
@@ -20,18 +20,22 @@
             <!-- Main Content -->
             <div class="verify-main">
                 <div class="verify-icon">
-                    <!-- Cancellation Icon (X in circle) -->
+                    <!-- Checkmark Icon -->
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="11" stroke="#dc2626" stroke-width="2"/>
-                        <path d="M8 8L16 16M16 8L8 16" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="12" r="11" stroke="#28a745" stroke-width="2"/>
+                        <path d="M8 12L11 15L16 8" stroke="#28a745" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
 
-                <h2 class="verify-title">Reservation Cancelled</h2>
+                <h2 class="verify-title">Reservation Confirmed!</h2>
 
                 <p class="verify-description">
-                    Your reservation has been successfully cancelled. We appreciate your understanding and hope to see you again at {{ reservation.restaurant.name|default:"our restaurant" }} in the future.
+                    Your reservation has been received and is pending confirmation by the restaurant. The restaurant will review your request and you'll receive another email once your reservation is confirmed.
                 </p>
+
+                <div class="success-box">
+                    <strong>Your Reservation Details:</strong>
+                </div>
 
                 <div class="account-details">
                     <div class="detail-item">
@@ -39,36 +43,42 @@
                         <span class="detail-value">{{ reservation.restaurant.name|default:"N/A" }}</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-label">Original Reservation Date</span>
+                        <span class="detail-label">Guest Name</span>
+                        <span class="detail-value">{{ reservation.name|default:"N/A" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date & Time</span>
                         <span class="detail-value">{{ reservation.date|default:"N/A"|date:"D, d M Y" }} at {{ reservation.time|default:"N/A"|time:"H:i A" }}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Party Size</span>
                         <span class="detail-value">{{ reservation.guest_count|default:"N/A" }} guest{% if reservation.guest_count != 1 %}s{% endif %}</span>
                     </div>
-                    {% if reservation.table_numbers %}
+                    {% if reservation.notes %}
                     <div class="detail-item">
-                        <span class="detail-label">Table Numbers</span>
-                        <span class="detail-value">{{ reservation.table_numbers|join:", " }}</span>
+                        <span class="detail-label">Special Requests</span>
+                        <span class="detail-value">{{ reservation.notes }}</span>
                     </div>
                     {% endif %}
-                    {% if reservation.cancellation_reason %}
                     <div class="detail-item">
-                        <span class="detail-label">Cancellation Reason</span>
-                        <span class="detail-value">{{ reservation.cancellation_reason }}</span>
+                        <span class="detail-label">Confirmation Email</span>
+                        <span class="detail-value">{{ reservation.email|default:"N/A" }}</span>
                     </div>
-                    {% endif %}
                 </div>
 
                 <div class="info-box">
-                    <strong>What happens next?</strong> If you previously made any special requests or had notes on your reservation, please be aware that the restaurant may have been preparing for your visit. We recommend contacting them directly if you have any questions.
+                    <strong>What happens next?</strong> The restaurant will review your reservation request. Most restaurants respond within a few hours. You'll receive a confirmation email once they have accepted or reviewed your reservation. If you need to cancel or modify, you can do so from your account.
+                </div>
+
+                <div class="warning">
+                    <strong>Please Note:</strong> Ensure you receive all confirmation emails. Make sure to check your spam/junk folder if you don't see a confirmation email from the restaurant within 24 hours.
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="verify-footer">
-                <p>If you did not cancel this reservation or have any concerns, please contact our support team immediately.</p>
-                <p>Thank you for using RR - Restaurant Reservation System.</p>
+                <p>Thank you for choosing RR - Restaurant Reservation System.</p>
+                <p>For support, visit your account or contact us through our website.</p>
             </div>
         </div>
     </div>

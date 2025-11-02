@@ -114,19 +114,38 @@ def send_reservation_cancellation_email(cancelled_reservation):
 
 def send_reservation_confirmation_email(reservation):
     """
-    Send reservation cancellation email to user
+    Send reservation confirmation email to user
     """
     # Email context
     context = {
         'reservation': reservation,
         'site_name': 'RR',
     }
-    #Email subject
-    subject = 'Reservation Cancellation - RR'
+    # Email subject
+    subject = 'Reservation Received - Awaiting Confirmation - RR'
     
     return send_email(
         subject=subject,
-        template_name='emails/reservation_cancellation.html',
+        template_name='emails/reservation_confirmation.html',
         context=context,
-        recipient_email = reservation.email
+        recipient_email=reservation.email
+    )
+
+def send_reservation_updated_email(reservation):
+    """
+    Send reservation updated notification email to user
+    """
+    # Email context
+    context = {
+        'reservation': reservation,
+        'site_name': 'RR',
+    }
+    # Email subject
+    subject = 'Your Reservation Has Been Updated - RR'
+    
+    return send_email(
+        subject=subject,
+        template_name='emails/reservation_updated.html',
+        context=context,
+        recipient_email=reservation.email
     )
