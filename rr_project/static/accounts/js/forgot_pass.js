@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Send email request
-            fetch('/rr/auth/forgot-password/', {
+            fetch('/accounts/auth/forgot-password/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Verify code
-            fetch('/rr/auth/verify-reset-code/', {
+            fetch('/accounts/auth/verify-reset-code/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Reset password
-            fetch('/rr/auth/reset-password/', {
+            fetch('/accounts/auth/reset-password/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalText = resendLink.textContent;
         resendLink.textContent = 'Sending...';
         
-        fetch('/rr/auth/resend-reset-code/', {
+        fetch('/accounts/auth/resend-reset-code/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

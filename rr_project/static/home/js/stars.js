@@ -12,6 +12,7 @@ function initStars(){
     });
 }
 
+
 function generateStars(rating = 0) {
     let starsHTML = '';
     const fullStars = Math.floor(rating);
@@ -22,11 +23,15 @@ function generateStars(rating = 0) {
         <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.62 12 2 9.19 8.62 2 9.24 7.46 13.97 5.82 21 12 17.27Z"/>
     </svg>`;
 
+    // Half star: Left half filled, right half empty (using opacity technique)
     const halfStarSVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-        <path d="M12 17.27L12 2 9.19 8.62 2 9.24 7.46 13.97 5.82 21 12 17.27Z"/>
+        <g>
+            <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.62 12 2 9.19 8.62 2 9.24 7.46 13.97 5.82 21 12 17.27Z" fill="currentColor"/>
+            <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.62 12 2 9.19 8.62 2 9.24 7.46 13.97 5.82 21 12 17.27Z" fill="currentColor" opacity="0.3"/>
+        </g>
     </svg>`;
 
-    const emptyStarSVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+    const emptyStarSVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" opacity="0.3">
         <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.62 12 2 9.19 8.62 2 9.24 7.46 13.97 5.82 21 12 17.27Z"/>
     </svg>`;
 
