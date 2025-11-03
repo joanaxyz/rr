@@ -1,9 +1,38 @@
+function setupMoreLessToggle() {
+    const toggles = document.querySelectorAll('.more-toggle');
+    
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const filterType = toggle.dataset.toggle; // 'cuisines' or 'tags'
+            const containerClass = `hidden-${filterType}`;
+            const container = toggle.closest(`.${filterType}-filter`).querySelector(`.${containerClass}`);
+            
+            if (container) {
+                const isExpanded = container.classList.contains('expanded');
+                if (isExpanded) {
+                    container.classList.remove('expanded');
+                    toggle.textContent = '+ MORE';
+                } else {
+                    container.classList.add('expanded');
+                    toggle.textContent = '- LESS';
+                }
+            }
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Handle +MORE and -LESS toggle
+    setupMoreLessToggle();
+    const address = document.getElementById('address').textContent;
+
     const restaurants = JSON.parse(document.getElementById('restaurant-data').textContent);
     render(restaurants);
     const cuisineFContainer = document.querySelector('.cuisines-filter');
     const tagsFContainer = document.querySelector('.tags-filter');
-    // Get all checked inputs inside it
+    
+    // Get all checked inputs inside it (including hidden ones)
     const cuisines = Array.from(
         cuisineFContainer.querySelectorAll('input[name="cuisines"]')
     );
@@ -12,8 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
         tagsFContainer.querySelectorAll('input[name="tags"]')
     );
 
+    // Get dropdown elements
+    const guestCountSelect = document.getElementById('guest_count_select');
+    const operatingDaySelect = document.getElementById('operating_day_select');
+
     let checkedCuisines = [];
     let checkedTags = [];
+    let selectedGuestCount = '';
+    let selectedOperatingDay = '';
     let sortBy = 'newest';
     let sortOrder = "asc";
 
@@ -47,6 +82,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const contextGuestCount = guestCountSelect.dataset.value;
+    const contextOperatingDay = operatingDaySelect.dataset.value;
+    let shouldApplyFilters = false;
+    
+    if (contextGuestCount) {
+        guestCountSelect.value = contextGuestCount;
+        selectedGuestCount = contextGuestCount;
+        shouldApplyFilters = true;
+        console.log("gcount: ", contextGuestCount);
+    }
+    
+    if (contextOperatingDay && contextOperatingDay != 'None') {
+        operatingDaySelect.value = contextOperatingDay;
+        selectedOperatingDay = contextOperatingDay;
+        shouldApplyFilters = true;
+    }
+    
+    // Apply filters if any context values were set
+    if (shouldApplyFilters) {
+        applyFiltersAndSort();
+    }
+
+    // Guest count dropdown
+    guestCountSelect.addEventListener('change', (e) => {
+        selectedGuestCount = e.target.value;
+        applyFiltersAndSort();
+    });
+
+    // Operating day dropdown
+    operatingDaySelect.addEventListener('change', (e) => {
+        selectedOperatingDay = e.target.value;
+        applyFiltersAndSort();
+    });
+
     // Sort by radio buttons
     const sortByRadios = Array.from(document.querySelectorAll('input[name="sort_by"]'));
     sortByRadios.forEach(radio => {
@@ -70,17 +139,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function applyFiltersAndSort() {
-        let filtered = filterRestaurants(restaurants, checkedCuisines, checkedTags);
+        const resultNumbers = document.querySelector('.results-count');
+        let filtered = filterRestaurants(restaurants, checkedCuisines, checkedTags, selectedGuestCount, selectedOperatingDay, address);
         if (sortBy) {
             filtered = sortRestaurants(filtered, sortBy, sortOrder);
         }
         render(filtered);
+        resultNumbers.textContent = `${filtered.length} restaurants found`;
     }
 })
 
 
 
-function filterRestaurants(restaurants, cuisines, tags) {
+function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay, address) {
     // cuisines and tags are arrays of selected IDs/values
     console.log('cusines checked: ', cuisines);
     return restaurants.filter(restaurant => {
@@ -91,8 +162,34 @@ function filterRestaurants(restaurants, cuisines, tags) {
         // Check if restaurant has at least one of the selected tags
         const matchesTags = tags.length === 0 || restaurant.tags.some(t => tags.includes(t.id));
 
-        // Keep restaurant only if it matches both
-        return matchesCuisine && matchesTags;
+        // Check if restaurant can accommodate the selected guest count
+        let matchesGuestCount = true;
+        if (guestCount) {
+            if (guestCount === '1') matchesGuestCount = restaurant.max_guest_count >= 1;
+            else if (guestCount === '2') matchesGuestCount = restaurant.max_guest_count >= 2;
+            else if (guestCount === '3-4') matchesGuestCount = restaurant.max_guest_count >= 3;
+            else if (guestCount === '5-6') matchesGuestCount = restaurant.max_guest_count >= 5;
+            else if (guestCount === '7-10') matchesGuestCount = restaurant.max_guest_count >= 7;
+            else if (guestCount === '11-20') matchesGuestCount = restaurant.max_guest_count >= 11;
+            else if (guestCount === '20+') matchesGuestCount = restaurant.max_guest_count >= 20;
+            else if (guestCount === 'Any') matchesGuestCount = true;
+        }
+
+        // Check if restaurant operates on the selected day
+        let matchesOperatingDay = true;
+        if (operatingDay) {
+            const operatingDays = restaurant.operating_days.split(',').map(d => d.trim());
+            matchesOperatingDay = operatingDays.includes(operatingDay) || operatingDay === 'Any Day';
+        }
+
+        let matchesAddress = true;
+        if(address) {
+            const restaurantAddress = restaurant.address;
+            matchesAddress = restaurantAddress.includes(address) || address == 'Address';
+        }
+
+        // Keep restaurant only if it matches all filters
+        return matchesCuisine && matchesTags && matchesGuestCount && matchesOperatingDay && matchesAddress;
     });
 }
 
@@ -182,6 +279,13 @@ function createRestaurantCard(restaurant) {
               </span>
             </div>
 
+            <div class="restaurant-operating-days">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
+              </svg>
+              <span class="operating-days-text">${restaurant.operating_days || "Hours not available"}</span>
+            </div>
+
             <div class="restaurant-price-wrapper">
               <div class="restaurant-price">
                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -190,6 +294,13 @@ function createRestaurantCard(restaurant) {
                 </svg>
                 <span>${restaurant.price_range_display || "N/A"}</span>
               </div>
+            </div>
+
+            <div class="restaurant-guests">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+              </svg>
+              <span>Up to ${restaurant.max_guest_count} guests</span>
             </div>
           </div>
 

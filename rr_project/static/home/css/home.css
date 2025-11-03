@@ -386,16 +386,14 @@ body, html {
 }
 
 .price-item {
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(252, 165, 165, 0.08) 100%);
+  background: rgba(220, 38, 38, 0.06);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-base);
-  border-left: 3px solid var(--color-primary);
-  transition: all var(--transition-base);
+  transition: background var(--transition-base);
 }
 
 .price-item:hover {
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.12) 0%, rgba(252, 165, 165, 0.12) 100%);
-  transform: translateX(2px);
+  background: rgba(220, 38, 38, 0.1);
 }
 
 .price-range-text {
