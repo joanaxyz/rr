@@ -27,7 +27,7 @@
           </select>
         </div>
         <div class="search-field">
-          <input type="date" class="date-input" name="date" id="dateInput">
+          <input type="date" class="date-input" name="date" id="dateInput" required>
         </div>
         <div class="search-field">
           <select class="guests-select" name="guests" id="guestsSelect">
@@ -199,8 +199,7 @@
     }
   </script>
   {% endif %}
-<script src="{% static 'rr_app/js/dashboard/slider.js' %}"></script>
-<script src="{% static 'rr_app/js/dashboard/stars.js' %}"></script>
-<script src="{% static 'rr_app/js/dashboard/book.js' %}"></script>
-<script src="{% static 'rr_app/js/dashboard/search.js' %}"></script>
+<script src="{% static 'home/js/slider.js' %}"></script>
+<script src="{% static 'home/js/stars.js' %}"></script>
+<script src="{% static 'home/js/book.js' %}"></script>
 {% endblock %}

@@ -18,9 +18,9 @@ def restaurant_detail_view(request, restaurant_id):
     recent_reviews = reviews.filter(created_at__gte = timezone.now() - timedelta(days=30))
     avg_rating = reviews.aggregate(avg_rating=Avg('rating'))['avg_rating']
     review_form = None
-
+    
     context = {
-        'restaurant': restaurant,
+        'restaurant': restaurant.to_dict(),
         'reviews': reviews,
         'recent_reviews': recent_reviews,
         'avg_rating': avg_rating,

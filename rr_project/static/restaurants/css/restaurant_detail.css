@@ -981,3 +981,32 @@ body {
   border-color: var(--primary-red);
   transform: translateY(-1px);
 }
+
+/* Star Rating Styles */
+.stars,
+.review-stars,
+.rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stars svg,
+.review-stars svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-black);
+  flex-shrink: 0;
+}
+
+.stars svg path,
+.review-stars svg path {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Operating Days Display */
+.operating-days {
+  color: var(--text-secondary);
+  font-weight: 500;
+}

@@ -48,3 +48,5 @@ class Reservation(models.Model):
     def __str__(self):
         restaurant_name = self.restaurant.name if self.restaurant else 'Unknown Restaurant'
         return f"{self.name} - {self.guest_count} guests at {restaurant_name} on {self.date} at {self.time} [{self.status}]"
+
+    

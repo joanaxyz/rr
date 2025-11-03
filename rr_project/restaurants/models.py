@@ -58,6 +58,8 @@ class Restaurant(models.Model):
             "id": self.id,
             "name": self.name,
             "address": self.full_address,
+            "phone_number": self.phone_number,
+            "email": self.email,
             "description": self.description,
             "price_range_display": self.price_range_display,
             "is_open_now": self.is_open_now,
@@ -104,6 +106,40 @@ class Restaurant(models.Model):
         if self.price_min and self.price_max:
             return f"₱{int(self.price_min)} - ₱{int(self.price_max)}"
         return "Price not available"
+class Table(models.Model):
+    number = models.IntegerField()
+    capacity = models.IntegerField()
+    TABLE_STATUS_CHOICES = [
+        ('available', 'Available'),
+        ('reserved', 'Reserved'),
+        ('occupied', 'Occupied'),
+        ('cleaning', 'Cleaning'),
+        ('unavailable', 'Unavailable'),
+    ]
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        related_name='tables',
+        null=True
+    )
+    customer = models.OneToOneField(
+        Customer,
+        related_name='table',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=TABLE_STATUS_CHOICES,
+        default='available'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.number
 
 class Cuisine(models.Model):
     name = models.CharField(max_length=100)
