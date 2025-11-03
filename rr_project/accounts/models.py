@@ -10,6 +10,7 @@ import string
 class UserRole(models.TextChoices):
     ADMIN = 'ADMIN', 'Admin'
     CUSTOMER = 'CUSTOMER', 'Customer'
+    OWNER = 'OWNER', 'Owner'
 
 
 class User(AbstractUser):
@@ -55,7 +56,11 @@ class User(AbstractUser):
         self.password_reset_code_expires = None
         self.save()
 
+class Owner(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='owner_profile')
 
+    def __str__(self):
+        return f"Owner: {self.user.email or self.user.username}"
 class Admin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
 

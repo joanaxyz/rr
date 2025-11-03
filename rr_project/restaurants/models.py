@@ -4,7 +4,7 @@ from django.db import models
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
-from accounts.models import Customer
+from accounts.models import Customer, Owner
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=100)
@@ -16,6 +16,12 @@ class Restaurant(models.Model):
     postal_code = models.CharField(max_length=20, blank=True, null=True, help_text="Postal code")
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)
+    owner = models.OneToOneField(
+        Owner,
+        related_name='restaurants',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     customers = models.ManyToManyField(
         Customer,
         related_name='restaurants',
