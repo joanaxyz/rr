@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const elements = {
         userProfile: document.getElementById('userProfile'),
         dropdown: document.getElementById('profileDropdown'),
-        logoutBtn: document.getElementById('btnLogout')
+        logoutBtn: document.getElementById('btnLogout'),
+        settings: document.getElementById('btnSettings'),
     };
 
     const setupEventListeners = () => {
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.dropdown.addEventListener('click', (e) => e.stopPropagation());
 
         elements.logoutBtn.addEventListener('click', handleLogout);
+        elements.settings.addEventListener('click', handleSettings);
     };
 
     const handleLogout = () => {
@@ -29,6 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href='/accounts/auth/logout';
         });
     };
+
+    const handleSettings = () => {
+        window.location.href='/settings/';
+    }
 
     setupEventListeners();
 });

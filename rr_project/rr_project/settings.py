@@ -78,6 +78,9 @@ INSTALLED_APPS = [
     'home',
     'restaurants',
     'reservations',
+    'settings',
+    'owner_verification',
+    'manage_restaurant',
 ]
 
 MIDDLEWARE = [

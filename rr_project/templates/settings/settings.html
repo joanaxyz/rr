@@ -1,0 +1,265 @@
+{% extends 'common/rr_base.html' %}
+{% load static %}
+
+{% block title %}Settings{% endblock %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'settings/css/settings.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="settings-container">
+    <!-- Sidebar Navigation -->
+    <aside class="settings-sidebar">
+        <div class="settings-header">
+            <h2>Settings</h2>
+        </div>
+        <nav class="settings-nav">
+            <a href="#profile" class="nav-item active" data-section="profile">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#security" class="nav-item" data-section="security">
+                <i class="fas fa-lock"></i>
+                <span>Security</span>
+            </a>
+            <a href="#notifications" class="nav-item" data-section="notifications">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+            </a>
+            {% if user.role == 'CUSTOMER' %}
+            <a href="#owner-application" class="nav-item" data-section="owner-application">
+                <i class="fas fa-store"></i>
+                <span>Apply as Owner</span>
+                <span class="badge-new">NEW</span>
+            </a>
+            {% elif user.role == 'OWNER' %}
+            <a href="#owner-status" class="nav-item" data-section="owner-status">
+                <i class="fas fa-check-circle"></i>
+                <span>Owner Status</span>
+            </a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="settings-main">
+        <!-- Profile Section -->
+        <section id="profile-section" class="settings-section active">
+            <div class="section-header">
+                <h3>Profile Information</h3>
+                <p>Manage your personal information</p>
+            </div>
+            <div class="settings-content">
+                <form class="settings-form" id="profile-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" name="last_name" value="{{ user.last_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" value="{{ user.phone_number|default:'' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section id="security-section" class="settings-section">
+            <div class="section-header">
+                <h3>Security Settings</h3>
+                <p>Manage your account security and password</p>
+            </div>
+            <div class="settings-content">
+                <div class="security-option">
+                    <div class="option-header">
+                        <h4>Change Password</h4>
+                        <p>Update your password regularly to keep your account secure</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="openPasswordModal()">Change Password</button>
+                </div>
+                <hr class="divider">
+                <div class="security-option">
+                    <div class="option-header">
+                        <h4>Two-Factor Authentication</h4>
+                        <p>Add an extra layer of security to your account</p>
+                    </div>
+                    <button class="btn btn-outline">Enable 2FA</button>
+                </div>
+                <hr class="divider">
+                <div class="security-option">
+                    <div class="option-header">
+                        <h4>Active Sessions</h4>
+                        <p>Manage devices where you're signed in</p>
+                    </div>
+                    <div class="sessions-list">
+                        <div class="session-item">
+                            <div class="session-info">
+                                <span class="session-device">Current Device</span>
+                                <span class="session-location">{{ request.META.HTTP_USER_AGENT|truncatechars:50 }}</span>
+                            </div>
+                            <span class="session-status">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section id="notifications-section" class="settings-section">
+            <div class="section-header">
+                <h3>Notifications</h3>
+                <p>Control how you receive updates and alerts</p>
+            </div>
+            <div class="settings-content">
+                <div class="notification-option">
+                    <div class="option-header">
+                        <h4>Email Notifications</h4>
+                        <p>Receive updates via email</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <hr class="divider">
+                <div class="notification-option">
+                    <div class="option-header">
+                        <h4>Reservation Updates</h4>
+                        <p>Get notified about new reservations and changes</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <hr class="divider">
+                <div class="notification-option">
+                    <div class="option-header">
+                        <h4>Marketing Emails</h4>
+                        <p>Receive promotional offers and updates</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Owner Application Section -->
+        {% if user.role == 'CUSTOMER' %}
+        <section id="owner-application-section" class="settings-section">
+            <div class="section-header">
+                <h3>Apply as Restaurant Owner</h3>
+                <p>Manage your restaurant and reach customers</p>
+            </div>
+            <div class="settings-content">
+                <div class="owner-application-intro">
+                    <div class="intro-card">
+                        <i class="fas fa-lightbulb"></i>
+                        <h4>Join Our Platform</h4>
+                        <p>Grow your restaurant business by connecting with diners through our platform. We verify restaurant owners to maintain quality and trust.</p>
+                    </div>
+                </div>
+                <a href="{% url 'owner_verification:owner_verification' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-right"></i> Start Owner Verification
+                </a>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Owner Status Section -->
+        {% if user.role == 'OWNER' %}
+        <section id="owner-status-section" class="settings-section">
+            <div class="section-header">
+                <h3>Owner Account Status</h3>
+                <p>Your restaurant owner verification status</p>
+            </div>
+            <div class="settings-content">
+                <div class="verification-status {% if owner.is_verified %}verified{% else %}pending{% endif %}">
+                    <div class="status-icon">
+                        {% if owner.is_verified %}
+                        <i class="fas fa-check-circle"></i>
+                        {% else %}
+                        <i class="fas fa-hourglass-half"></i>
+                        {% endif %}
+                    </div>
+                    <div class="status-info">
+                        <h4>{% if owner.is_verified %}Verified Owner{% else %}Verification Pending{% endif %}</h4>
+                        <p>{% if owner.is_verified %}Your account is verified. You can now manage your restaurants.{% else %}We're reviewing your documents. This usually takes 1-2 business days.{% endif %}</p>
+                    </div>
+                </div>
+                {% if not owner.is_verified %}
+                <hr class="divider">
+                <div class="verification-documents">
+                    <h4>Submitted Documents</h4>
+                    <div class="documents-list">
+                        <div class="document-item">
+                            <span class="doc-icon"><i class="fas fa-file-pdf"></i></span>
+                            <span class="doc-name">Government ID</span>
+                            <span class="doc-status verified"><i class="fas fa-check"></i> Received</span>
+                        </div>
+                        <div class="document-item">
+                            <span class="doc-icon"><i class="fas fa-file-pdf"></i></span>
+                            <span class="doc-name">Business License</span>
+                            <span class="doc-status verified"><i class="fas fa-check"></i> Received</span>
+                        </div>
+                        <div class="document-item">
+                            <span class="doc-icon"><i class="fas fa-file-pdf"></i></span>
+                            <span class="doc-name">Proof of Ownership</span>
+                            <span class="doc-status verified"><i class="fas fa-check"></i> Received</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+</div>
+
+<!-- Password Change Modal -->
+<div id="password-modal" class="modal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h2>Change Password</h2>
+            <button class="modal-close" onclick="closeModal('password-modal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="password-form">
+                {% csrf_token %}
+                <div class="form-group password-wrapper">
+                    <label for="current-password">Current Password</label>
+                    <input type="password" id="current-password" name="current_password" required>
+                </div>
+                <div class="form-group password-wrapper">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" name="new_password" required>
+                </div>
+                <div class="form-group password-wrapper">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Update Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block rr_base_js %}
+<script src="{% static 'settings/js/settings.js' %}"></script>
+<script src="{% static 'accounts/js/password_toggle.js' %}"></script>
+{% endblock %}

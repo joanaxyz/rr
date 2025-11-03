@@ -17,7 +17,8 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=UserRole.choices, default=UserRole.CUSTOMER)
     banned = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    phone_number = models.CharField(max_length=20, null=True)
+
     # Email verification fields
     email_verified = models.BooleanField(default=False)
     verification_token = models.UUIDField(default=uuid.uuid4, unique=True)

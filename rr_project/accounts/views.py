@@ -383,3 +383,4 @@ def resend_verification_email_view(request, user_id):
             })
     
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+

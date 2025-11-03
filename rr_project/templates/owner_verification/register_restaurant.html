@@ -1,0 +1,212 @@
+{% extends 'common/rr_base.html' %}
+{% load static %}
+
+{% block title %}Owner Verification{% endblock %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'settings/css/settings.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="settings-container">
+    <!-- Main Content -->
+    <main class="settings-main full-width">
+        <!-- Owner Verification Section -->
+        <section class="settings-section active">
+            <div class="section-header">
+                <h3>Restaurant Owner Verification</h3>
+                <p>Complete the verification process to manage your restaurant</p>
+            </div>
+            <div class="settings-content">
+                <!-- Step Indicator -->
+                <div class="steps-indicator">
+                    <div class="step active">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Personal Info</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Business Proof</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Review</span>
+                    </div>
+                </div>
+
+                <form id="owner-verification-form" class="verification-form">
+                    {% csrf_token %}
+                    
+                    <!-- Step 1: Personal Information -->
+                    <div class="form-step active" id="step-1">
+                        <h3>Personal Information</h3>
+                        <p class="step-description">We need to verify your identity and ownership of the restaurant.</p>
+                        
+                        <div class="form-group">
+                            <label for="owner-full-name">Full Name (as on Government ID)</label>
+                            <input type="text" id="owner-full-name" name="full_name" placeholder="Enter your full name" required>
+                            <small>Must match your government-issued ID exactly</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id-type">Government ID Type</label>
+                                <select id="id-type" name="id_type" required>
+                                    <option value="">Select ID type</option>
+                                    <option value="passport">Passport</option>
+                                    <option value="national_id">National ID</option>
+                                    <option value="drivers_license">Driver's License</option>
+                                    <option value="permit">Residence Permit</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id-number">ID Number</label>
+                                <input type="text" id="id-number" name="id_number" placeholder="e.g., 12345678" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="business-address">Business Address</label>
+                            <input type="text" id="business-address" name="business_address" placeholder="Enter your restaurant's complete address" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="owner-email">Business Email</label>
+                            <input type="email" id="owner-email" name="business_email" placeholder="contact@restaurant.com">
+                            <small>Optional. Can be different from account email</small>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-block" onclick="nextStep(2)">
+                            Continue to Business Proof
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Business Proof -->
+                    <div class="form-step" id="step-2">
+                        <h3>Restaurant Ownership Proof</h3>
+                        <p class="step-description">Upload documents to verify you own or operate this restaurant.</p>
+                        
+                        <div class="form-group">
+                            <label for="business-license">Business License/Certificate of Registration</label>
+                            <div class="file-upload-box" id="license-upload" ondrop="handleDrop(event, 'license')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-upload"></i>
+                                </div>
+                                <p class="upload-text">Drag & drop or click to upload</p>
+                                <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
+                                <input type="file" id="business-license" name="business_license" accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                            </div>
+                            <div id="license-preview" class="file-preview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="government-id-doc">Government-Issued ID (Front & Back)</label>
+                            <div class="file-upload-box" id="id-upload" ondrop="handleDrop(event, 'id')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <div class="upload-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <p class="upload-text">Drag & drop or click to upload</p>
+                                <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
+                                <input type="file" id="government-id-doc" name="government_id_doc" accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                            </div>
+                            <div id="id-preview" class="file-preview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="proof-ownership">Proof of Ownership</label>
+                            <p class="hint-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Upload one of: Articles of Incorporation, Certificate of Authority, Lease Agreement, Utility Bill, or Bank Statement showing restaurant name
+                            </p>
+                            <div class="file-upload-box" id="ownership-upload" ondrop="handleDrop(event, 'ownership')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <div class="upload-icon">
+                                    <i class="fas fa-certificate"></i>
+                                </div>
+                                <p class="upload-text">Drag & drop or click to upload</p>
+                                <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
+                                <input type="file" id="proof-ownership" name="proof_ownership" accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                            </div>
+                            <div id="ownership-preview" class="file-preview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tax-id">Tax ID / Business Registration Number</label>
+                            <input type="text" id="tax-id" name="tax_id" placeholder="e.g., 12-3456789">
+                            <small>Optional but recommended</small>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-outline" onclick="previousStep(1)">Back</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep(3)">Review & Submit</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Review -->
+                    <div class="form-step" id="step-3">
+                        <h3>Review Your Information</h3>
+                        <p class="step-description">Please review your information before submitting.</p>
+                        
+                        <div class="review-section">
+                            <h4>Personal Information</h4>
+                            <div class="review-item">
+                                <span class="label">Full Name:</span>
+                                <span class="value" id="review-name">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">ID Type:</span>
+                                <span class="value" id="review-id-type">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">ID Number:</span>
+                                <span class="value" id="review-id-number">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">Business Address:</span>
+                                <span class="value" id="review-address">-</span>
+                            </div>
+                        </div>
+
+                        <div class="review-section">
+                            <h4>Submitted Documents</h4>
+                            <div class="review-item">
+                                <span class="label">Business License:</span>
+                                <span class="value" id="review-license">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">Government ID:</span>
+                                <span class="value" id="review-id-doc">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">Proof of Ownership:</span>
+                                <span class="value" id="review-ownership">-</span>
+                            </div>
+                        </div>
+
+                        <div class="info-box warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>By submitting this application, you confirm that all information is accurate and truthful. False information may result in account suspension.</p>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="agree-terms" name="agree_terms" required>
+                            <label for="agree-terms">I confirm that all information is accurate and I own/operate this restaurant</label>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-outline" onclick="previousStep(2)">Back</button>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check"></i> Submit Application
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
+
+{% endblock %}
+
+{% block rr_base_js %}
+<script src="{% static 'settings/js/settings.js' %}"></script>
+{% endblock %}
