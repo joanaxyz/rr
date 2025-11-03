@@ -18,7 +18,7 @@ class Restaurant(models.Model):
     phone_number = models.CharField(max_length=20)
     owner = models.OneToOneField(
         Owner,
-        related_name='restaurants',
+        related_name='restaurant',
         on_delete=models.SET_NULL,
         null=True
     )
