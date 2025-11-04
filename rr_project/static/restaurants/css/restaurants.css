@@ -25,7 +25,7 @@
   max-height: 85vh;
   overflow-y: auto;
   position: sticky;
-  top: var(--space-8);
+  top: 130px; /* Accounts for fixed navbar (110px) + spacing (20px) */
 }
 
 /* Custom scrollbar styling */
@@ -778,6 +778,7 @@
   
   .left-container {
     padding: var(--space-4);
+    top: 115px; /* Adjusted for smaller navbar at tablet size (85px + 30px) */
   }
   
   .card .restaurant-name {

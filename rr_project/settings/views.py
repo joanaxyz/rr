@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import check_password
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 
-@login_required
+# @login_required
 def settings_view(request):
     user = request.user
     context = {

@@ -22,7 +22,7 @@
 
 .settings-sidebar {
     position: sticky;
-    top: var(--space-6);
+    top: 120px; /* Accounts for fixed navbar (110px) + spacing (10px) */
     height: fit-content;
     background: var(--color-white);
     border-radius: var(--radius-xl);
@@ -909,6 +909,10 @@
 @media (max-width: 768px) {
     .settings-container {
         padding: var(--space-4);
+    }
+
+    .settings-sidebar {
+        top: 105px; /* Adjusted for smaller navbar at tablet size (85px + 20px) */
     }
 
     .settings-section {

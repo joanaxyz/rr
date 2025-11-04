@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedOperatingDay = '';
     let sortBy = 'newest';
     let sortOrder = "asc";
+    let searchTerm = '';
+    const searchInput = document.querySelector('input[type="search"]');
 
 
     cuisines.forEach(c => {
@@ -98,7 +100,18 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOperatingDay = contextOperatingDay;
         shouldApplyFilters = true;
     }
-    
+    const searchValue = searchInput.value;
+    console.log('searchvalue:', searchValue);
+    if (searchValue == ''){
+        searchInput.value = localStorage.getItem("searchTerm");
+    }
+
+    searchTerm = searchInput.value;
+
+    if(searchTerm){
+        shouldApplyFilters = true;
+    }
+
     // Apply filters if any context values were set
     if (shouldApplyFilters) {
         applyFiltersAndSort();
@@ -138,9 +151,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const searchbar = document.querySelector('.navbar-searchbar');
+    const searchBtn = searchbar.querySelector('button');
+    searchBtn.addEventListener('click',()=>{
+        searchTerm = searchInput.value;
+        applyFiltersAndSort();
+    });
+    
+    
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            searchTerm = searchInput.value;
+            applyFiltersAndSort();
+        }
+    });
+    
     function applyFiltersAndSort() {
         const resultNumbers = document.querySelector('.results-count');
-        let filtered = filterRestaurants(restaurants, checkedCuisines, checkedTags, selectedGuestCount, selectedOperatingDay, address);
+        let filtered = filterRestaurants(restaurants, checkedCuisines, checkedTags, selectedGuestCount, selectedOperatingDay, address, searchTerm);
         if (sortBy) {
             filtered = sortRestaurants(filtered, sortBy, sortOrder);
         }
@@ -151,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay, address) {
+function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay, address, searchTerm) {
     // cuisines and tags are arrays of selected IDs/values
     console.log('cusines checked: ', cuisines);
     return restaurants.filter(restaurant => {
@@ -185,11 +213,17 @@ function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay
         let matchesAddress = true;
         if(address) {
             const restaurantAddress = restaurant.address;
-            matchesAddress = restaurantAddress.includes(address) || address == 'Address';
+            matchesAddress = restaurantAddress.includes(address.toLowerCase()) || address == 'Address';
+        }
+
+        let matchesName = true;
+        if(searchTerm) {
+            const restaurantName = restaurant.name.toLowerCase();
+            matchesName = restaurantName.includes(searchTerm.toLowerCase());
         }
 
         // Keep restaurant only if it matches all filters
-        return matchesCuisine && matchesTags && matchesGuestCount && matchesOperatingDay && matchesAddress;
+        return matchesCuisine && matchesTags && matchesGuestCount && matchesOperatingDay && matchesAddress && matchesName;
     });
 }
 
