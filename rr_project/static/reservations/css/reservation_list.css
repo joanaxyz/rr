@@ -1,4 +1,4 @@
-@import url('../common/css/design-tokens.css');
+@import '../../common/css/components.css';
 
 /* ===== Base Layout ===== */
 body {

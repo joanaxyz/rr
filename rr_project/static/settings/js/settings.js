@@ -416,24 +416,8 @@ function showError(message) {
 }
 
 function showSuccess(message) {
-    const successDiv = document.createElement('div');
-    successDiv.className = 'alert alert-success';
-    successDiv.innerHTML = `
-        <i class="fas fa-check-circle"></i>
-        <span>${message}</span>
-        <button onclick="this.parentElement.remove()" class="alert-close">&times;</button>
-    `;
-
-    const container = document.querySelector('.settings-section.active') || document.querySelector('.modal-body');
-    if (container) {
-        container.insertAdjacentElement('afterbegin', successDiv);
-        successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    window.MessageBox.showSuccess(message);
 }
-
-// ============================================================================
-// INITIALIZE FUNCTIONS
-// ============================================================================
 
 function initializeOwnerVerification() {
     // Mark step 1 as active initially
@@ -479,7 +463,19 @@ function handleProfileFormSubmit(e) {
     e.preventDefault();
     
     const form = e.target;
-    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Client-side validation first
+    const validationErrors = validateProfileForm(form);
+    if (validationErrors.length > 0) {
+        displayFormErrors('profile-form-errors', validationErrors);
+        clearAllFieldErrors(form);
+        return;
+    }
+    
+    // Clear previous errors
+    clearFormErrors('profile-form-errors');
+
+    
     const formData = new FormData(form);
 
     fetch('/settings/update-profile/', {
@@ -493,27 +489,76 @@ function handleProfileFormSubmit(e) {
         .then(data => {
             if (data.success) {
                 showSuccess(data.message);
+                clearAllFieldErrors(form);
             } else {
-                showError(data.message || 'Error updating profile');
+                // Handle backend errors
+                if (data.errors && typeof data.errors === 'object') {
+                    displayFieldErrors('profile-form-errors', data.errors);
+                } else {
+                    displayFormErrors('profile-form-errors', [data.message || 'Error updating profile']);
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showError('An error occurred. Please try again.');
+            displayFormErrors('profile-form-errors', ['An error occurred. Please try again.']);
         })
-        .finally(() => {
-            // Re-enable button after response
-            if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.innerHTML = submitButton.getAttribute('data-original-text') || 'Save Changes';
-            }
-        });
+}
+
+/**
+ * Validate profile form fields (client-side)
+ */
+function validateProfileForm(form) {
+    const errors = [];
+    
+    // Clear previous field errors
+    clearAllFieldErrors(form);
+    
+    const firstName = form.querySelector('#first-name').value.trim();
+    const lastName = form.querySelector('#last-name').value.trim();
+    const email = form.querySelector('#email').value.trim();
+    const phone = form.querySelector('#phone').value.trim();
+    
+    // Validate required fields
+    if (!firstName) {
+        errors.push('First name is required');
+    }
+    
+    if (!lastName) {
+        errors.push('Last name is required');
+    }
+    
+    if (!email) {
+        errors.push('Email is required');
+    } else if (!isValidEmail(email)) {
+        errors.push('Please enter a valid email address');
+    }
+    
+    // Validate phone if provided
+    if (phone && !/^\d{10}$/.test(phone.replace(/\D/g, ''))) {
+        errors.push('Phone number must be 10 digits');
+    }
+    
+    return errors;
 }
 
 function handlePasswordFormSubmit(e) {
     e.preventDefault();
     
     const form = e.target;
+    
+    // Client-side validation first
+    const validationErrors = validatePasswordForm(form);
+    if (validationErrors.length > 0) {
+        displayFormErrors('password-form-errors', validationErrors);
+        clearAllFieldErrors(form);
+        return;
+    }
+    
+    // Clear previous errors
+    clearFormErrors('password-form-errors');
+    ;
+    
     const formData = new FormData(form);
 
     fetch('/settings/change-password/', {
@@ -525,19 +570,151 @@ function handlePasswordFormSubmit(e) {
     })
         .then(response => response.json())
         .then(data => {
-
             if (data.success) {
                 showSuccess(data.message);
                 form.reset();
+                clearAllFieldErrors(form);
                 setTimeout(() => {
                     closeModal('password-modal');
                 }, 1500);
             } else {
-                showError(data.message || 'Error updating password');
+                // Handle backend errors
+                if (data.errors && typeof data.errors === 'object') {
+                    displayFieldErrors('password-form-errors', data.errors);
+                } else {
+                    displayFormErrors('password-form-errors', [data.message || 'Error updating password']);
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showError('An error occurred. Please try again.');
-        });
+            displayFormErrors('password-form-errors', ['An error occurred. Please try again.']);
+        })
+}
+
+/**
+ * Validate password form fields (client-side)
+ * Returns array of error messages
+ */
+function validatePasswordForm(form) {
+    const errors = [];
+    const currentPassword = form.querySelector('#current-password').value.trim();
+    const newPassword = form.querySelector('#new-password').value.trim();
+    const confirmPassword = form.querySelector('#confirm-password').value.trim();
+    
+    // Clear previous field errors
+    clearAllFieldErrors(form);
+    
+    // Validate required fields
+    if (!currentPassword) {
+        errors.push('Current password is required');
+    }
+    
+    if (!newPassword) {
+        errors.push('New password is required');
+    }
+    
+    if (!confirmPassword) {
+        errors.push('Confirm password is required');
+    }
+    
+    // Validate password match
+    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+        errors.push('New passwords do not match');
+    }
+    
+    // Validate password length
+    if (newPassword && newPassword.length < 8) {
+        errors.push('New password must be at least 8 characters');
+    }
+    
+    return errors;
+}
+
+/**
+ * Display form-level errors in the error container
+ */
+function displayFormErrors(containerId, errorMessages) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    if (errorMessages.length === 0) {
+        container.classList.remove('active');
+        return;
+    }
+    
+    // Create error list
+    let html = '<ul class="form-errors-list">';
+    errorMessages.forEach(msg => {
+        html += `<li>${escapeHtml(msg)}</li>`;
+    });
+    html += '</ul>';
+    
+    container.innerHTML = html;
+    container.classList.add('active');
+    
+    // Scroll error into view
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/**
+ * Display field-level errors from backend response
+ * (Inline field errors have been removed - only form-level errors are displayed)
+ */
+function displayFieldErrors(containerId, fieldErrors) {
+    const formErrors = [];
+    
+    for (const [fieldName, messages] of Object.entries(fieldErrors)) {
+        const errorMessages = Array.isArray(messages) ? messages : [messages];
+        formErrors.push(...errorMessages);
+    }
+    
+    // Display form-level errors if any
+    if (formErrors.length > 0) {
+        displayFormErrors(containerId, formErrors);
+    }
+}
+
+/**
+ * Set error state on a specific field
+ * (Inline field errors have been removed - this function is kept for backward compatibility)
+ */
+function setFieldError(fieldId, errorMessage) {
+    // Inline field errors are no longer used
+    // Error messages are displayed in the form-level error container instead
+}
+
+/**
+ * Clear all field errors in a form
+ */
+function clearAllFieldErrors(form) {
+    const fields = form.querySelectorAll('input, textarea, select');
+    fields.forEach(field => {
+        field.classList.remove('error');
+    });
+}
+
+/**
+ * Clear the form-level error container
+ */
+function clearFormErrors(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.classList.remove('active');
+        container.innerHTML = '';
+    }
+}
+
+/**
+ * Utility: Escape HTML to prevent XSS
+ */
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
 }

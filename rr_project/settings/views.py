@@ -27,15 +27,38 @@ def update_profile(request):
         email = request.POST.get('email', '').strip()
         phone = request.POST.get('phone', '').strip()
         
-        # Validate email
-        if not email:
-            return JsonResponse({'success': False, 'message': 'Email is required'})
+        errors = {}
         
-        # Validate email uniqueness (exclude current user)
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-        if User.objects.filter(email=email).exclude(id=user.id).exists():
-            return JsonResponse({'success': False, 'message': 'This email is already in use by another account'})
+        # Validate required fields
+        if not first_name:
+            errors['first_name'] = 'First name is required'
+        
+        if not last_name:
+            errors['last_name'] = 'Last name is required'
+        
+        if not email:
+            errors['email'] = 'Email is required'
+        else:
+            # Basic email format validation
+            import re
+            if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
+                errors['email'] = 'Please enter a valid email address'
+            else:
+                # Validate email uniqueness (exclude current user)
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                if User.objects.filter(email=email).exclude(id=user.id).exists():
+                    errors['email'] = 'This email is already in use by another account'
+        
+        # Validate phone if provided
+        if phone:
+            digits_only = re.sub(r'\D', '', phone)
+            if len(digits_only) != 10:
+                errors['phone'] = 'Phone number must be 10 digits'
+        
+        # Return errors if any validation failed
+        if errors:
+            return JsonResponse({'success': False, 'errors': errors})
         
         user.first_name = first_name
         user.last_name = last_name
@@ -57,28 +80,42 @@ def change_password(request):
         new_password = request.POST.get('new_password', '').strip()
         confirm_password = request.POST.get('confirm_password', '').strip()
         
-        # Validate all fields are provided
-        if not all([current_password, new_password, confirm_password]):
-            return JsonResponse({'success': False, 'message': 'All fields are required'})
+        errors = {}
         
-        # Verify current password
-        if not check_password(current_password, user.password):
-            return JsonResponse({'success': False, 'message': 'Current password is incorrect'})
+        # Validate required fields
+        if not current_password:
+            errors['current_password'] = 'Current password is required'
         
-        # Check passwords match
-        if new_password != confirm_password:
-            return JsonResponse({'success': False, 'message': 'New passwords do not match'})
+        if not new_password:
+            errors['new_password'] = 'New password is required'
         
-        # Validate new password
-        validator = MinimumLengthAndNumberValidator(min_length=8)
-        try:
-            validator.validate(new_password)
-        except ValidationError as e:
-            return JsonResponse({'success': False, 'message': e.messages[0] if e.messages else 'Password validation failed'})
+        if not confirm_password:
+            errors['confirm_password'] = 'Confirm password is required'
         
-        # Check new password is different from current
-        if check_password(new_password, user.password):
-            return JsonResponse({'success': False, 'message': 'New password cannot be the same as current password'})
+        # Verify current password (only if provided)
+        if current_password and not check_password(current_password, user.password):
+            errors['current_password'] = 'Current password is incorrect'
+        
+        # Check passwords match (only if both provided)
+        if new_password and confirm_password and new_password != confirm_password:
+            errors['new_password'] = 'Passwords do not match'
+            errors['confirm_password'] = 'Passwords do not match'
+        
+        # Validate new password (only if provided and not already errored)
+        if new_password and 'new_password' not in errors:
+            validator = MinimumLengthAndNumberValidator(min_length=8)
+            try:
+                validator.validate(new_password)
+            except ValidationError as e:
+                errors['new_password'] = e.messages[0] if e.messages else 'Password validation failed'
+            
+            # Check new password is different from current
+            if check_password(new_password, user.password):
+                errors['new_password'] = 'New password cannot be the same as current password'
+        
+        # Return errors if any validation failed
+        if errors:
+            return JsonResponse({'success': False, 'errors': errors})
         
         # Set new password
         user.set_password(new_password)

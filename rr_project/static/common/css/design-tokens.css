@@ -62,6 +62,11 @@
   --color-info-bg: #d1ecf1;
   --color-info-text: #0c5460;
   
+  /* Table States */
+  --table-available: #28a745;
+  --table-reserved: #ffc107;
+  --table-selected: #D4530A;
+  
   /* ============ TYPOGRAPHY ============ */
   
   /* Font Families */

@@ -179,6 +179,127 @@
   color: var(--color-orange);
 }
 
+/* Form element selectors for general form styling */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-2) solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-family: var(--font-primary);
+  color: var(--color-gray-800);
+  background: var(--color-gray-50);
+  transition: all var(--transition-base);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--color-gray-400);
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: var(--color-gray-300);
+  background: var(--color-white);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--color-primary);
+  background: var(--color-white);
+  box-shadow: 0 0 0 3px rgba(212, 83, 10, 0.1);
+  outline: none;
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+  border-color: var(--color-error);
+  background: var(--color-error-bg);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+/* Form group label styling */
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--font-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
+}
+
+.form-group label .required {
+  color: var(--color-error);
+}
+
+/* Form row for multi-column layouts */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+}
+
+.form-row.three-columns {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Password wrapper with toggle visibility */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: var(--space-14) !important;
+}
+
+.toggle-password {
+  position: absolute;
+  right: var(--space-5);
+  top: 2.75rem;
+  cursor: pointer;
+  color: var(--color-gray-400);
+  font-size: var(--font-lg);
+  transition: all var(--transition-base);
+  padding: var(--space-2);
+  border-radius: var(--radius-base);
+  user-select: none;
+  -webkit-user-select: none;
+  display: none;
+  pointer-events: auto;
+}
+
+.toggle-password:hover {
+  color: var(--color-primary);
+  background: rgba(212, 83, 10, 0.08);
+}
+
+/* Helper text styling */
+.form-help-text {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--font-sm);
+  color: var(--color-gray-600);
+}
+
+.form-error-text {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--font-sm);
+  color: var(--color-error);
+}
+
 /* ============ CARDS ============ */
 
 .card {

@@ -3,7 +3,6 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'accounts/css/auth.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
@@ -51,7 +50,6 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'accounts/js/password_toggle.js' %}"></script>
   <script src="{% static 'accounts/js/ErrorMessage.js' %}"></script>
   <script src="{% static 'accounts/js/remove_error_msg_on_input.js' %}"></script>
   {% block auth_js %}{% endblock %}

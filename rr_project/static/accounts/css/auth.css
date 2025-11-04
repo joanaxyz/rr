@@ -2,7 +2,7 @@
 /* AUTHENTICATION PAGES */
 /* ================================ */
 
-@import '/common/css/components.css';
+@import '../../common/css/components.css';
 
 /* ============ RESET & BASE ============ */
 body,
@@ -443,37 +443,6 @@ body::before {
   border-color: var(--color-primary);
   background: var(--color-white);
   box-shadow: 0 0 0 3px rgba(212, 83, 10, 0.1);
-}
-
-/* ============ PASSWORD TOGGLE ============ */
-
-.password-wrapper {
-  position: relative;
-  width: 100%;
-  margin: var(--space-4) 0;
-}
-
-.password-wrapper input {
-  padding-right: var(--space-14) !important;
-  margin: 0 !important;
-}
-
-.toggle-password {
-  position: absolute;
-  right: var(--space-5);
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: var(--color-gray-400);
-  font-size: var(--font-lg);
-  transition: all var(--transition-base);
-  padding: var(--space-2);
-  border-radius: var(--radius-base);
-}
-
-.toggle-password:hover {
-  color: var(--color-primary);
-  background: rgba(212, 83, 10, 0.08);
 }
 
 .auth_link a.disabled {

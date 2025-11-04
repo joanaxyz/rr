@@ -2,7 +2,7 @@
 /* RESTAURANTS PAGE STYLES */
 /* ================================ */
 
-@import '../../../common/css/design-tokens.css';
+@import '../../common/css/components.css';
 
 /* ============ LAYOUT STRUCTURE ============ */
 
@@ -694,37 +694,7 @@
   gap: var(--space-4);
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.form-group label {
-  font-size: var(--font-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-700);
-}
-
-.form-group input {
-  padding: var(--space-3);
-  border: var(--border-1) solid var(--color-gray-300);
-  border-radius: var(--radius-base);
-  font-size: var(--font-base);
-  color: var(--color-gray-800);
-  background: var(--color-white);
-  transition: var(--transition-base);
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-}
-
-.form-group input::placeholder {
-  color: var(--color-gray-400);
-}
+/* Form group styles are defined in components.css */
 
 .modal-footer {
   display: flex;
@@ -909,37 +879,7 @@
   gap: var(--space-4);
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.form-group label {
-  font-size: var(--font-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-700);
-}
-
-.form-group input {
-  padding: var(--space-3);
-  border: var(--border-1) solid var(--color-gray-300);
-  border-radius: var(--radius-base);
-  font-size: var(--font-base);
-  color: var(--color-gray-800);
-  background: var(--color-white);
-  transition: var(--transition-base);
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-}
-
-.form-group input::placeholder {
-  color: var(--color-gray-400);
-}
+/* Form group styles are defined in components.css */
 
 .address-modal-actions {
   display: flex;

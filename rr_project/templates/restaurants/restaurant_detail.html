@@ -84,9 +84,9 @@
                         </span>
                     </div>
                     
-                    {% if restaurant.tags.all %}
+                    {% if restaurant.tags %}
                     <div class="tags-info">
-                        {% for tag in restaurant.tags.all %}
+                        {% for tag in restaurant.tags %}
                             <span class="restaurant-tag">{{ tag.tag }}</span>
                         {% endfor %}
                     </div>

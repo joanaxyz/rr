@@ -9,10 +9,11 @@
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 
   <!-- CSS Files -->
+  <link rel="stylesheet" href="{% static 'common/css/components.css' %}">
   <link rel="stylesheet" href="{% static 'common/css/messagebox.css' %}">
   <link rel="stylesheet" href="{% static 'common/css/spinner.css' %}">
   
@@ -59,8 +60,9 @@
   {% endif %}
   <script src="{% static 'common/js/MessageBox.js' %}"></script>
   <script src="{% static 'common/js/LoadingOverlay.js' %}"></script>
-  <script src ="{% static 'common/js/MessageNotification.js' %}"></script>
-  <script src ="{% static 'common/js/SubmitStyling.js' %}"></script>
+  <script src="{% static 'common/js/MessageNotification.js' %}"></script>
+  <script src="{% static 'common/js/SubmitStyling.js' %}"></script>
+  <script src="{% static 'common/js/password_toggle.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>
