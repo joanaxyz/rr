@@ -269,9 +269,9 @@
             <form id="password-form" novalidate>
                 {% csrf_token %}
                 <div class="form-group password-wrapper">
-                    <label for="current-password">Current Password</label>
                     <input 
                         type="password" 
+                        placeholder="Current Password"
                         id="current-password" 
                         name="current_password" 
                         required
@@ -280,9 +280,9 @@
                     <i class="fa-regular fa-eye toggle-password"></i>
                 </div>
                 <div class="form-group password-wrapper">
-                    <label for="new-password">New Password</label>
                     <input 
                         type="password" 
+                        placeholder="New Password"
                         id="new-password" 
                         name="new_password" 
                         required
@@ -291,9 +291,9 @@
                     <i class="fa-regular fa-eye toggle-password"></i>
                 </div>
                 <div class="form-group password-wrapper">
-                    <label for="confirm-password">Confirm Password</label>
                     <input 
                         type="password" 
+                        placeholder="Confirm Password"
                         id="confirm-password" 
                         name="confirm_password" 
                         required
