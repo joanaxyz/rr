@@ -1,0 +1,87 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manage Restaurant Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'manage_restaurant/manage_restaurant.css' %}">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">RR</div>
+        <h1>RR Dashboard</h1>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="reservations">Reservations</button>
+        <button class="nav-item" data-view="tables">Tables</button>
+        <button class="nav-item" data-view="settings">Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <small>Signed in as <strong>Owner</strong></small>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="search">
+          <input id="searchInput" placeholder="Search reservations..." />
+        </div>
+        <div class="top-actions">
+          <div class="stat small">Open: <span id="openCount">0</span></div>
+          <div class="user">
+            <button id="userBtn">Owner ▾</button>
+            <div id="userMenu" class="user-menu hidden">
+              <button id="manageResto">Manage Restaurant</button>
+              <button id="signOut">Sign out</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="content">
+        <div id="view-dashboard" class="view active">
+          <div class="cards">
+            <div class="card">
+              <div class="card-title">Total Reservations</div>
+              <div class="card-value" id="totalReservations">0</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Upcoming</div>
+              <div class="card-value" id="upcomingCount">0</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Tables</div>
+              <div class="card-value" id="totalTables">0</div>
+            </div>
+          </div>
+
+          <h2>Latest reservations</h2>
+          <div class="table-wrapper">
+            <table id="reservationsTable">
+              <thead>
+                <tr>
+                  <th>Guest</th>
+                  <th>Table</th>
+                  <th>Seats</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="{% static 'manage_restaurant/manage_restaurant.js' %}"></script>
+</body>
+</html>
