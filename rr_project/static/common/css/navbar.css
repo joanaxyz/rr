@@ -4,6 +4,26 @@
 
 @import 'components.css';
 
+:root {
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-hover) 50%,
+    var(--color-primary-lighter) 100%
+  );
+
+  --gradient-primary-light: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 20%, transparent) 0%,
+    color-mix(in srgb, var(--color-primary-hover) 20%, transparent) 50%,
+    color-mix(in srgb, var(--color-primary-lighter) 20%, transparent) 100%
+  );
+}
+
+.element {
+  background: var(--gradient-primary-light);
+}
+
 /* Navbar */
 .navbar {
   display: flex;
@@ -125,11 +145,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(212, 83, 10, 0.15) 0%,
-    rgba(255, 122, 0, 0.1) 100%
-  );
+  background: var(--gradient-primary-light);
   opacity: 0;
   transition: opacity var(--transition-slow);
   z-index: 0;
