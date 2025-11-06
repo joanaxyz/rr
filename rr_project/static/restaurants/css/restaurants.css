@@ -126,7 +126,7 @@
 }
 
 .operating-days-filter::before {
-  content: 'OPERATING DAYS';
+  content: 'DAY';
   position: absolute;
   top: calc(var(--space-3) * -1);
   left: 0;
