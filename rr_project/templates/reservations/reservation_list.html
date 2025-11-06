@@ -21,7 +21,6 @@
 
   {% if has_reservations %}
   <div class="table-container">
-    <h2>Active Reservations</h2>
     <table class="reservation-table">
       <thead>
         <tr>
@@ -36,80 +35,37 @@
       </thead>
       <tbody>
         {% for reservation in reservations %}
-          {% if not reservation.is_deleted %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>
-              <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
-                {{ reservation.restaurant.name }}
-              </a>
-            </td>
-            <td>{{ reservation.date }}</td>
-            <td>{{ reservation.time }}</td>
-            <td>{{ reservation.guest_count }}</td>
-            <td>
-              <span class="status-badge {{ reservation.status|lower }}">
-                {{ reservation.status|title }}
-              </span>
-            </td>
-            <td>
-              <form method="post" action="">
-                {% csrf_token %}
-                {% if reservation.status != 'CANCELLED' %}
-                <div class="action-buttons">
-                  <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
-                  <input type="hidden" name="cancel_reason" class="cancel-reason-input">
-                  <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
-                  <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
-                </div>
-                {% else %}
-                <input type="hidden" name="delete_reservation" value="{{ reservation.id }}">
-                <button type="button" class="delete-btn" onclick="deleteReservation(this.form)">Delete</button>
-                {% endif %}
-              </form>
-            </td>
-          </tr>
-          {% endif %}
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% endif %}
-
-  <!-- 🔹 Deleted Reservations Section -->
-  {% if deleted_reservations %}
-  <div class="table-container deleted-section">
-    <h2>Deleted Reservations (Trash)</h2>
-    <table class="reservation-table deleted">
-      <thead>
         <tr>
-          <th>#</th>
-          <th>Restaurant</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Guests</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for reservation in deleted_reservations %}
-        <tr class="deleted-row">
           <td>{{ forloop.counter }}</td>
-          <td>{{ reservation.restaurant.name }}</td>
+          <td>
+            <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
+              {{ reservation.restaurant.name }}
+            </a>
+          </td>
           <td>{{ reservation.date }}</td>
           <td>{{ reservation.time }}</td>
           <td>{{ reservation.guest_count }}</td>
           <td>
-            <span class="status-badge cancelled">
+            <span class="status-badge {{ reservation.status|lower }}">
               {{ reservation.status|title }}
             </span>
           </td>
           <td>
             <form method="post" action="">
               {% csrf_token %}
-              <input type="hidden" name="restore_reservation" value="{{ reservation.id }}">
-              <button type="button" class="restore-btn" onclick="restoreReservation(this.form)">Restore</button>
+              {% if reservation.status != 'CANCELLED' %}
+              <div class="action-buttons">
+                <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
+                <input type="hidden" name="cancel_reason" class="cancel-reason-input">
+                <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
+                <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
+              </div>
+              {% else %}
+              <div class="action-buttons">
+                <input type="hidden" name="restore_reservation" value="{{ reservation.id }}">
+                <button type="button" class="restore-btn" onclick="restoreReservation(this.form)">Restore</button>
+              </div>
+              {% endif %}
             </form>
           </td>
         </tr>
@@ -117,12 +73,8 @@
       </tbody>
     </table>
   </div>
-  {% endif %}
-
-  {% if not has_reservations and not deleted_reservations %}
-  <p class="no-reservations">
-    You have no reservations yet. Start by exploring restaurants and making your first reservation!
-  </p>
+  {% else %}
+  <p class="no-reservations">You have no reservations yet. Start by exploring restaurants and making your first reservation!</p>
   {% endif %}
 </div>
 {% endblock %}
