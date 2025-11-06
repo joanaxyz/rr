@@ -150,21 +150,6 @@ body {
   background-color: var(--color-gray-400);
 }
 
-.delete-btn {
-  background-color: var(--color-error);
-  color: var(--color-white);
-  border: none;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  font-size: var(--font-sm);
-  transition: background-color var(--transition-base);
-}
-
-.delete-btn:hover {
-  background-color: var(--color-error);
-}
-
 .cancelled-text {
   color: var(--color-gray-500);
   font-weight: var(--font-weight-medium);
