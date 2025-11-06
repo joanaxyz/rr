@@ -66,12 +66,25 @@
   --table-available: #28a745;
   --table-reserved: #ffc107;
   --table-selected: #D4530A;
+  --table-hover: #ff8c00;
+  
+  /* Semantic Color Aliases */
+  --primary-red: #D4530A;
+  --primary-red-dark: #B8440A;
+  --text-primary: rgba(0, 0, 0, 0.87);
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-tertiary: rgba(0, 0, 0, 0.45);
+  --cream: #fffbf5;
+  --success: #28a745;
+  --info: #17a2b8;
+  --white: #ffffff;
   
   /* ============ TYPOGRAPHY ============ */
   
   /* Font Families */
   --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   --font-brand: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-accent: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
   /* Font Sizes */
   --font-xs: 0.75rem;    /* 12px */
@@ -136,6 +149,11 @@
   --radius-lg: 1rem;       /* 16px */
   --radius-xl: 1.5rem;     /* 24px */
   --radius-full: 9999px;
+  
+  /* Border Radius Aliases (backward compatibility) */
+  --border-radius: var(--radius-base);
+  --border-radius-lg: var(--radius-lg);
+  --border-radius-xl: var(--radius-xl);
   
   /* Border Widths */
   --border-1: 1px;

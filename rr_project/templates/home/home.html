@@ -70,9 +70,7 @@
                 <button class="book-button" onclick="bookRestaurant('{{ restaurant.id }}')">BOOK NOW</button>
                 <button class="bookmark-button" onclick="bookmarkRestaurant('{{ restaurant.id }}')"
                   title="Bookmark this restaurant">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" />
-                  </svg>
+                  <i class="fas fa-bookmark"></i>
                 </button>
               </div>
             </div>
@@ -88,24 +86,15 @@
 
               <div class="restaurant-details">
                 <div class="detail-item">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" />
-                  </svg>
+                  <i class="fas fa-location-dot"></i>
                   {{ restaurant.address }}
                 </div>
                 <div class="detail-item">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M19,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.9 20.1,3 19,3M9,17H7V10H9M13,17H11V10H13M17,17H15V10H17Z" />
-                  </svg>
+                  <i class="fas fa-calendar"></i>
                   <span class="operating-days">{{ restaurant.operating_days }}</span>
                 </div>
                 <div class="detail-item">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />
-                  </svg>
+                  <i class="fas fa-clock"></i>
                   <div class="cuisine-list">
                     {% for cuisine in restaurant.cuisines %}
                     <span class="cuisine-tag">{{ cuisine.name }}</span>
@@ -113,16 +102,11 @@
                   </div>
                 </div>
                 <div class="detail-item price-item">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M13,9H11V11H9V13H11V15H13V13H15V11H13V9Z" />
-                  </svg>
+                  <i class="fas fa-dollar-sign"></i>
                   <span class="price-range-text">{{ restaurant.price_range_display }}</span>
                 </div>
                 <div class="detail-item">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
-                  </svg>
+                  <i class="fas fa-hourglass-end"></i>
                   <span class="{% if restaurant.is_open_now %}status-open{% else %}status-closed{% endif %}">
                     {% if restaurant.is_open_now %}
                       Open until {{ restaurant.closing_time}}

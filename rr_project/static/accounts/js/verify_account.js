@@ -1,6 +1,6 @@
 // Verify Account JavaScript functionality
 
-function resendVerificationEmail(userId) {
+async function resendVerificationEmail(userId) {
     const button = document.getElementById('btn_resend');
     const messageContainer = document.getElementById('message-container');
     
@@ -11,30 +11,25 @@ function resendVerificationEmail(userId) {
     // Clear previous messages
     messageContainer.innerHTML = '';
     
-    fetch(`/rr/auth/resend-verification/${userId}/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        const data = await APIClient.post(`/accounts/api/resend-verification/${userId}/`, 
+            {},
+            { loadingText: 'Sending verification email...' }
+        );
+        
         if (data.success) {
             showMessage(data.message, 'success');
         } else {
             showMessage(data.message, 'error');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
         showMessage('An error occurred while sending the verification email.', 'error');
-    })
-    .finally(() => {
+    } finally {
         // Re-enable button
         button.disabled = false;
         button.textContent = 'Resend Verification Email';
-    });
+    }
 }
 
 function showMessage(message, type) {
@@ -59,22 +54,6 @@ function showMessage(message, type) {
             messageDiv.parentNode.removeChild(messageDiv);
         }
     }, 5000);
-}
-
-// Function to get CSRF token from cookies
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
 }
 
 // Initialize when page loads

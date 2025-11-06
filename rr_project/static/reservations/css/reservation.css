@@ -18,7 +18,7 @@ body {
 
 /* Header Styles */
 .reservation-header {
-  background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
   border-bottom: 1px solid var(--gray-200);
   padding: 2rem;
   margin-bottom: 3rem;
@@ -31,22 +31,26 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--primary-red);
+  color: var(--white);
+  background: var(--primary-red);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
   transition: all 0.2s ease;
   margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .back-button:hover {
   transform: translateX(-4px);
-  color: var(--primary-red-dark);
+  background: var(--primary-red-dark);
+  box-shadow: var(--shadow-lg);
 }
 
-.back-button svg {
+.back-button i {
   width: 20px;
-  height: 20px;
   flex-shrink: 0;
 }
 
@@ -404,7 +408,7 @@ body {
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 1.5rem;
-  background: var(--primary-red);
+  background: var(--color-primary);
   color: var(--white);
   border: none;
   border-radius: var(--border-radius);
@@ -416,13 +420,13 @@ body {
 }
 
 .reserve-btn:hover:not(:disabled) {
-  background: var(--primary-red-dark);
+  background: var(--color-primary-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
 .reserve-btn:disabled {
-  background: var(--gray-400);
+  background: var(--color-gray-400);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

@@ -27,16 +27,15 @@
                 <i class="fas fa-bell"></i>
                 <span>Notifications</span>
             </a>
-            {% if user.role == 'CUSTOMER' %}
+            {% if user.role != 'OWNER' %}
             <a href="#owner-application" class="nav-item" data-section="owner-application">
-                <i class="fas fa-store"></i>
-                <span>Apply as Owner</span>
-                <span class="badge-new">NEW</span>
+                <i class="fas fa-check-circle"></i>
+                <span>Status</span>
             </a>
             {% elif user.role == 'OWNER' %}
             <a href="#owner-status" class="nav-item" data-section="owner-status">
                 <i class="fas fa-check-circle"></i>
-                <span>Owner Status</span>
+                <span>Status</span>
             </a>
             {% endif %}
         </nav>
@@ -183,18 +182,26 @@
             </div>
         </section>
 
-        <!-- Owner Application Section -->
+        <!-- Owner Application Section (Status for CUSTOMER) -->
         {% if user.role == 'CUSTOMER' %}
         <section id="owner-application-section" class="settings-section">
             <div class="section-header">
-                <h3>Apply as Restaurant Owner</h3>
-                <p>Manage your restaurant and reach customers</p>
+                <h3>Account Status</h3>
+                <p>Manage your account and explore business opportunities</p>
             </div>
             <div class="settings-content">
+                <div class="user-status-badge">
+                    <span class="status-label">Current Role:</span>
+                    <span class="status-badge role-{{ user.role|lower }}">
+                        <i class="fas fa-circle"></i>
+                        {{ user.get_role_display }}
+                    </span>
+                </div>
+                <hr class="divider">
                 <div class="owner-application-intro">
                     <div class="intro-card">
                         <i class="fas fa-lightbulb"></i>
-                        <h4>Join Our Platform</h4>
+                        <h4>Join Our Platform as Owner</h4>
                         <p>Grow your restaurant business by connecting with diners through our platform. We verify restaurant owners to maintain quality and trust.</p>
                     </div>
                 </div>
@@ -209,20 +216,35 @@
         {% if user.role == 'OWNER' %}
         <section id="owner-status-section" class="settings-section">
             <div class="section-header">
-                <h3>Owner Account Status</h3>
-                <p>Your restaurant owner verification status</p>
+                <h3>Account Status</h3>
+                <p>Your account role and verification status</p>
             </div>
             <div class="settings-content">
+                <div class="user-status-badge">
+                    <span class="status-label">Current Role:</span>
+                    <span class="status-badge role-{{ user.role|lower }}">
+                        <i class="fas fa-circle"></i>
+                        {{ user.get_role_display }}
+                    </span>
+                </div>
+                <hr class="divider">
+                <h4 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Verification Status</h4>
                 <div class="verification-status {% if owner.is_verified %}verified{% else %}pending{% endif %}">
                     <div class="status-icon">
                         {% if owner.is_verified %}
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-shield-halved"></i>
                         {% else %}
-                        <i class="fas fa-hourglass-half"></i>
+                        <i class="fas fa-clock"></i>
                         {% endif %}
                     </div>
                     <div class="status-info">
-                        <h4>{% if owner.is_verified %}Verified Owner{% else %}Verification Pending{% endif %}</h4>
+                        <h4>
+                            {% if owner.is_verified %}
+                            <span class="status-badge role-verified"><i class="fas fa-check-circle"></i> Verified Owner</span>
+                            {% else %}
+                            <span class="status-badge role-pending"><i class="fas fa-exclamation-circle"></i> Verification Pending</span>
+                            {% endif %}
+                        </h4>
                         <p>{% if owner.is_verified %}Your account is verified. You can now manage your restaurants.{% else %}We're reviewing your documents. This usually takes 1-2 business days.{% endif %}</p>
                     </div>
                 </div>
@@ -277,7 +299,7 @@
                         required
                         autocomplete="current-password"
                     >
-                    <i class="fa-regular fa-eye toggle-password"></i>
+                    <i class="fas fa-eye toggle-password"></i>
                 </div>
                 <div class="form-group password-wrapper">
                     <input 
@@ -288,7 +310,7 @@
                         required
                         autocomplete="new-password"
                     >
-                    <i class="fa-regular fa-eye toggle-password"></i>
+                    <i class="fas fa-eye toggle-password"></i>
                 </div>
                 <div class="form-group password-wrapper">
                     <input 
@@ -299,7 +321,7 @@
                         required
                         autocomplete="new-password"
                     >        
-                <i class="fa-regular fa-eye toggle-password"></i>
+                <i class="fas fa-eye toggle-password"></i>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Update Password</button>
             </form>

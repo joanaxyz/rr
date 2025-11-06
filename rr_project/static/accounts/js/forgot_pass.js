@@ -158,33 +158,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Send email request
-            fetch('/accounts/auth/forgot-password/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: `email=${encodeURIComponent(email)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                resetButton();
-                
-                if (data.success) {
-                    userId = data.user_id;
-                    currentStep = 2;
-                    updateUI();
-                    showSuccess(data.message);
-                } else {
-                    showError(data.message);
+            // Send email request using APIClient
+            (async () => {
+                try {
+                    const data = await APIClient.post('/accounts/api/forgot-password/', 
+                        { email: email },
+                        { loadingText: 'Sending verification code...' }
+                    );
+                    resetButton();
+                    
+                    if (data.success) {
+                        userId = data.user_id;
+                        currentStep = 2;
+                        updateUI();
+                        showSuccess(data.message);
+                    } else {
+                        showError(data.message);
+                    }
+                } catch (error) {
+                    resetButton();
+                    showError('An error occurred. Please try again.');
+                    console.error('Error:', error);
                 }
-            })
-            .catch(error => {
-                resetButton();
-                showError('An error occurred. Please try again.');
-                console.error('Error:', error);
-            });
+            })();
             
         } else if (currentStep === 2) {
             // Step 2: Code verification
@@ -196,35 +192,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Verify code
-            fetch('/accounts/auth/verify-reset-code/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: `user_id=${userId}&code=${code}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                resetButton();
-                
-                if (data.success) {
-                    verifiedCode = data.verified_code;
-                    currentStep = 3;
-                    updateUI();
-                    showSuccess(data.message);
-                } else {
-                    showError(data.message);
+            // Verify code using APIClient
+            (async () => {
+                try {
+                    const data = await APIClient.post('/accounts/api/verify-reset-code/', 
+                        { user_id: userId, code: code },
+                        { loadingText: 'Verifying code...' }
+                    );
+                    resetButton();
+                    
+                    if (data.success) {
+                        verifiedCode = data.verified_code;
+                        currentStep = 3;
+                        updateUI();
+                        showSuccess(data.message);
+                    } else {
+                        showError(data.message);
+                        clearCodeBoxes();
+                    }
+                } catch (error) {
+                    resetButton();
+                    showError('An error occurred. Please try again.');
                     clearCodeBoxes();
+                    console.error('Error:', error);
                 }
-            })
-            .catch(error => {
-                resetButton();
-                showError('An error occurred. Please try again.');
-                clearCodeBoxes();
-                console.error('Error:', error);
-            });
+            })();
             
         } else if (currentStep === 3) {
             // Step 3: Password reset
@@ -249,39 +241,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Reset password
-            fetch('/accounts/auth/reset-password/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: `user_id=${userId}&code=${verifiedCode}&new_password=${encodeURIComponent(newPassword)}&confirm_password=${encodeURIComponent(confirmPassword)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                resetButton();
-                
-                if (data.success) {
-                    showSuccess(data.message);
-                    // Redirect after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url || '/rr/auth/login/';
-                    }, 2000);
-                } else {
-                    showError(data.message);
+            // Reset password using APIClient
+            (async () => {
+                try {
+                    const data = await APIClient.post('/accounts/api/reset-password/', 
+                        { 
+                            user_id: userId, 
+                            code: verifiedCode, 
+                            new_password: newPassword, 
+                            confirm_password: confirmPassword 
+                        },
+                        { loadingText: 'Resetting password...' }
+                    );
+                    resetButton();
+                    
+                    if (data.success) {
+                        showSuccess(data.message);
+                        // Redirect after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url || '/rr/auth/login/';
+                        }, 2000);
+                    } else {
+                        showError(data.message);
+                    }
+                } catch (error) {
+                    resetButton();
+                    showError('An error occurred. Please try again.');
+                    console.error('Error:', error);
                 }
-            })
-            .catch(error => {
-                resetButton();
-                showError('An error occurred. Please try again.');
-                console.error('Error:', error);
-            });
+            })();
         }
     }
     
     // Handle resend code
-    function handleResendCode() {
+    async function handleResendCode() {
         if (!userId) return;
         
         resendLink.style.opacity = '0.6';
@@ -290,32 +283,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalText = resendLink.textContent;
         resendLink.textContent = 'Sending...';
         
-        fetch('/accounts/auth/resend-reset-code/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: `user_id=${userId}`
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            const data = await APIClient.post('/accounts/api/resend-reset-code/', 
+                { user_id: userId },
+                { loadingText: 'Resending verification code...' }
+            );
+            
             if (data.success) {
                 showSuccess(data.message);
                 clearCodeBoxes();
             } else {
                 showError(data.message);
             }
-        })
-        .catch(error => {
+        } catch (error) {
             showError('Failed to resend code. Please try again.');
             console.error('Error:', error);
-        })
-        .finally(() => {
+        } finally {
             resendLink.style.opacity = '1';
             resendLink.style.pointerEvents = 'auto';
             resendLink.textContent = originalText;
-        });
+        }
     }
     
     // Initialize

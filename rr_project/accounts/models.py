@@ -8,9 +8,11 @@ import string
 
 # Create your models here.
 class UserRole(models.TextChoices):
-    ADMIN = 'ADMIN', 'Admin'
     CUSTOMER = 'CUSTOMER', 'Customer'
     OWNER = 'OWNER', 'Owner'
+    HOST = 'Host', 'host'
+    SERVER = 'Server', 'server'
+    MANAGER = 'Manager', 'manager'
 
 
 class User(AbstractUser):
@@ -62,12 +64,23 @@ class Owner(models.Model):
 
     def __str__(self):
         return f"Owner: {self.user.email or self.user.username}"
-class Admin(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
+class Host(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='host_profile')
 
     def __str__(self):
-        return f"Admin: {self.user.email or self.user.username}"
+        return f"Host: {self.user.email or self.user.username}"
 
+class Server(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='server_profile')
+
+    def __str__(self):
+        return f"Server: {self.user.email or self.user.username}"
+
+class Manager(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='manager_profile')
+
+    def __str__(self):
+        return f"Manager: {self.user.email or self.user.username}"
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customer_profile')

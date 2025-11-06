@@ -1,0 +1,75 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/manage.css' %}">
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<!-- Management Header -->
+<div class="manage-header">
+    <div class="header-content">
+        <h1>Dashboard</h1>
+        <p class="subtitle">{{ restaurant.name }}</p>
+    </div>
+</div>
+
+<!-- Main Management Container -->
+<div class="dashboard-container">
+
+  <!-- Statistics Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-label">Total Reservations</div>
+      <div class="stat-card-value">{{ total_reservations }}</div>
+      <div class="stat-card-subtext">All reservations for this restaurant</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-label">Pending Reservations</div>
+      <div class="stat-card-value">{{ pending_reservations }}</div>
+      <div class="stat-card-subtext">Awaiting confirmation</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-label">Confirmed Reservations</div>
+      <div class="stat-card-value">{{ confirmed_reservations }}</div>
+      <div class="stat-card-subtext">Ready to serve</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-label">Total Tables</div>
+      <div class="stat-card-value">{{ total_tables }}</div>
+      <div class="stat-card-subtext">Available dining tables</div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <h2 class="quick-actions-title">Quick Actions</h2>
+    <div class="quick-actions">
+      <a href="{% url 'manage_restaurant:reservations' restaurant.id %}" class="action-btn">
+        <i class="fas fa-calendar-check"></i>
+        Manage Reservations
+      </a>
+      <a href="{% url 'manage_restaurant:tables' restaurant.id %}" class="action-btn">
+        <i class="fas fa-chair"></i>
+        Manage Tables
+      </a>
+      <a href="{% url 'manage_restaurant:details' restaurant.id %}" class="action-btn">
+        <i class="fas fa-building"></i>
+        Edit Details
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+{% endblock %}

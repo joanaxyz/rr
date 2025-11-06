@@ -6,7 +6,7 @@ from django.shortcuts import render
 from .models import *
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ReservationForm
-from email_service.views import send_reservation_cancellation_email, send_reservation_confirmation_email, send_reservation_updated_email
+from email_service.views import send_reservation_updated_email
 from django.contrib import messages
 
 
@@ -25,9 +25,6 @@ def reservation(request, restaurant_id):
                 reservation.customer = customer
                 reservation.restaurant = restaurant
                 reservation.save()
-
-                # Send confirmation email
-                send_reservation_confirmation_email(reservation)
                 
                 messages.success(request, f'Reservation created! You will receive a confirmation email shortly.')
                 return redirect('restaurants:restaurant_detail', restaurant_id=restaurant.id)
@@ -55,18 +52,16 @@ def reservation_management_view(request):
         # Cancel reservation
         if 'cancel_reservation' in request.POST:
             reservation_id = request.POST.get('cancel_reservation')
-            reason = request.POST.get('cancellation_reason', '').strip()
+            reason = request.POST.get('cancel_reason', '').strip()
 
             try:
                 reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
-                restaurant_name = reservation.restaurant.name if reservation.restaurant else "Unknown Restaurant"
                 reservation.status = 'CANCELLED'
-                reservation.cancellation_reason = reason
+                reservation.cancellation_info = {
+                    'reason': reason,
+                    'sender': 'CUSTOMER'
+                }
                 reservation.save()
-                if send_reservation_cancellation_email(reservation):
-                    messages.success(request, f"Reservation at {restaurant_name} has been cancelled. You have been sent an email!")
-                else:
-                    messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
             except Exception:
                 messages.error(request, "Failed to cancel reservation. Please try again.")
             return redirect('reservations:reservation_management')

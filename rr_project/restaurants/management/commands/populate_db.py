@@ -2,51 +2,82 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import datetime, time
 from decimal import Decimal
-from accounts.models import User, Customer, Admin
-from restaurants.models import Restaurant, Cuisine, Tags, Review
+from accounts.models import User, Customer, Owner
+from restaurants.models import Restaurant, Cuisine, Tags, Review, Element, Table
 from reservations.models import Reservation
 
 
 class Command(BaseCommand):
-    help = 'Populate the database with test data'
+    help = 'Populate the database with Cebu City restaurant test data'
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.WARNING('Starting database population...'))
 
         # Clear existing data
-        User.objects.all().delete()
-        Restaurant.objects.all().delete()
-        Cuisine.objects.all().delete()
-        Tags.objects.all().delete()
+        self.stdout.write(self.style.WARNING('Clearing existing data...'))
+        try:
+            Table.objects.all().delete()
+            self.stdout.write(self.style.SUCCESS('[OK] Cleared tables'))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'[!] Could not clear tables: {e}'))
+        
+        try:
+            Element.objects.all().delete()
+            self.stdout.write(self.style.SUCCESS('[OK] Cleared elements'))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'[!] Could not clear elements: {e}'))
+        
         Review.objects.all().delete()
         Reservation.objects.all().delete()
+        try:
+            Restaurant.objects.all().delete()
+            self.stdout.write(self.style.SUCCESS('[OK] Cleared restaurants'))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'[!] Could not clear restaurants: {e}'))
+        Cuisine.objects.all().delete()
+        Tags.objects.all().delete()
+        User.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS('[OK] Existing data cleared'))
 
-        # Create Admin User
-        admin_user = User.objects.create_superuser(
-            username='admin',
-            email='admin@example.com',
-            password='admin123',
-            role='ADMIN',
-            first_name='Admin',
-            last_name='User'
-        )
-        admin_user.email_verified = True
-        admin_user.save()
-        Admin.objects.create(user=admin_user)
-        self.stdout.write(self.style.SUCCESS(f'✓ Created admin user: {admin_user.email}'))
+        # Create Owner Users for restaurants
+        owner_data = [
+            {'email': 'owner1@cebu.com', 'first_name': 'Maria', 'last_name': 'Santos'},
+            {'email': 'owner2@cebu.com', 'first_name': 'Juan', 'last_name': 'Dela Cruz'},
+            {'email': 'owner3@cebu.com', 'first_name': 'Rosa', 'last_name': 'Garcia'},
+            {'email': 'owner4@cebu.com', 'first_name': 'Pedro', 'last_name': 'Lopez'},
+            {'email': 'owner5@cebu.com', 'first_name': 'Ana', 'last_name': 'Martinez'},
+            {'email': 'owner6@cebu.com', 'first_name': 'Luis', 'last_name': 'Rodriguez'},
+        ]
+
+        owners = []
+        for data in owner_data:
+            user = User.objects.create_user(
+                username=data['email'],
+                email=data['email'],
+                password='owner123',
+                role='OWNER',
+                first_name=data['first_name'],
+                last_name=data['last_name']
+            )
+            user.email_verified = True
+            user.save()
+            owner = Owner.objects.create(user=user)
+            owners.append(owner)
+            self.stdout.write(self.style.SUCCESS(f'[OK] Created owner: {data["email"]}'))
 
         # Create Customer Users
         customers_data = [
-            {'email': 'john@example.com', 'first_name': 'John', 'last_name': 'Doe'},
-            {'email': 'jane@example.com', 'first_name': 'Jane', 'last_name': 'Smith'},
-            {'email': 'bob@example.com', 'first_name': 'Bob', 'last_name': 'Johnson'},
-            {'email': 'alice@example.com', 'first_name': 'Alice', 'last_name': 'Williams'},
+            {'email': 'marco@cebu.com', 'first_name': 'Marco', 'last_name': 'Fernandez'},
+            {'email': 'clara@cebu.com', 'first_name': 'Clara', 'last_name': 'Reyes'},
+            {'email': 'miguel@cebu.com', 'first_name': 'Miguel', 'last_name': 'Aquino'},
+            {'email': 'santos@cebu.com', 'first_name': 'Santos', 'last_name': 'Villanueva'},
+            {'email': 'sofia@cebu.com', 'first_name': 'Sofia', 'last_name': 'Corpuz'},
         ]
 
         customers = []
         for data in customers_data:
             user = User.objects.create_user(
-                username=data['email'].split('@')[0],
+                username=data['email'],
                 email=data['email'],
                 password='customer123',
                 role='CUSTOMER',
@@ -57,144 +88,147 @@ class Command(BaseCommand):
             user.save()
             customer = Customer.objects.create(user=user)
             customers.append(customer)
-            self.stdout.write(self.style.SUCCESS(f'✓ Created customer: {data["email"]}'))
+            self.stdout.write(self.style.SUCCESS(f'[OK] Created customer: {data["email"]}'))
 
-        # Create Cuisines
-        cuisine_names = ['Italian', 'Asian', 'Mexican', 'French', 'Indian', 'American']
+        # Create Cuisines (including Cebu City specific cuisines)
+        cuisine_names = ['Filipino', 'Asian', 'Seafood', 'Fusion', 'Japanese', 'Korean', 'International', 'Italian', 'Spanish', 'Mexican', 'French', 'Indian', 'American']
         cuisines = {}
         for name in cuisine_names:
             cuisine = Cuisine.objects.create(name=name)
             cuisines[name] = cuisine
-            self.stdout.write(self.style.SUCCESS(f'✓ Created cuisine: {name}'))
+            self.stdout.write(self.style.SUCCESS(f'[OK] Created cuisine: {name}'))
 
         # Create Tags
-        tag_names = ['Vegetarian', 'Vegan', 'Spicy', 'Gluten-Free', 'Organic', 'Fast Service']
+        tag_names = ['Vegetarian', 'Vegan', 'Spicy', 'Gluten-Free', 'Organic', 'Fast Service', 'Fresh', 'Fine Dining', 'Romantic', 'Scenic', 'Cozy']
         tags = {}
         for name in tag_names:
             tag = Tags.objects.create(tag=name)
             tags[name] = tag
-            self.stdout.write(self.style.SUCCESS(f'✓ Created tag: {name}'))
+            self.stdout.write(self.style.SUCCESS(f'[OK] Created tag: {name}'))
 
-        # Create Restaurants
+        # Create Restaurants (Cebu City based)
         restaurants_data = [
             {
-                'name': 'Bella Italia',
-                'street_number': '123',
-                'street_name': 'Main Street',
-                'street_block': 'Downtown',
-                'city': 'San Francisco',
-                'postal_code': '94102',
-                'email': 'info@bellaitalia.com',
-                'phone_number': '+1-555-0101',
-                'description': 'Authentic Italian restaurant serving traditional pasta and pizza',
-                'price_min': Decimal('10.00'),
-                'price_max': Decimal('50.00'),
-                'max_guest_count': 8,
-                'opening_time': time(11, 0),
+                'name': 'Larsian Grill Station',
+                'street_number': '456',
+                'street_name': 'Larsian Street',
+                'street_block': 'Carbon',
+                'city': 'Cebu City',
+                'postal_code': '6000',
+                'email': 'info@larsiangrill.com',
+                'phone_number': '+63-32-255-0101',
+                'description': 'Famous Cebu lechon and grilled dishes. A must-try for authentic local flavors.',
+                'price_min': Decimal('150.00'),
+                'price_max': Decimal('600.00'),
+                'max_guest_count': 12,
+                'opening_time': time(10, 0),
                 'closing_time': time(22, 0),
                 'operating_days': 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
-                'cuisines': ['Italian', 'French'],
-                'tags': ['Vegetarian']
-            },
-            {
-                'name': 'Dragon Palace',
-                'street_number': '456',
-                'street_name': 'Oak Avenue',
-                'street_block': 'Chinatown',
-                'city': 'San Francisco',
-                'postal_code': '94108',
-                'email': 'info@dragonpalace.com',
-                'phone_number': '+1-555-0102',
-                'description': 'Premium Asian cuisine featuring Chinese, Japanese, and Thai dishes',
-                'price_min': Decimal('12.00'),
-                'price_max': Decimal('40.00'),
-                'max_guest_count': 10,
-                'opening_time': time(10, 30),
-                'closing_time': time(23, 0),
-                'operating_days': 'Tue,Wed,Thu,Fri,Sat,Sun',
-                'cuisines': ['Asian'],
+                'cuisines': ['Filipino', 'Asian'],
                 'tags': ['Spicy', 'Fast Service']
             },
             {
-                'name': 'Casa Mexicana',
-                'street_number': '789',
-                'street_name': 'Pine Street',
-                'street_block': 'Riverside',
-                'city': 'Oakland',
-                'postal_code': '94612',
-                'email': 'info@casamexicana.com',
-                'phone_number': '+1-555-0103',
-                'description': 'Colorful Mexican restaurant with authentic recipes and vibrant atmosphere',
-                'price_min': Decimal('8.00'),
-                'price_max': Decimal('35.00'),
+                'name': 'Sutukil by the Waterfront',
+                'street_number': '123',
+                'street_name': 'Mangga Avenue',
+                'street_block': 'South Road',
+                'city': 'Cebu City',
+                'postal_code': '6000',
+                'email': 'info@sutukil.com',
+                'phone_number': '+63-32-255-0102',
+                'description': 'Specialty seafood restaurant offering Sutukil (sinigang, tuyo, kilawin). Enjoy fresh catch with scenic views.',
+                'price_min': Decimal('200.00'),
+                'price_max': Decimal('800.00'),
                 'max_guest_count': 10,
-                'opening_time': time(11, 0),
-                'closing_time': time(22, 30),
-                'operating_days': 'Mon,Wed,Thu,Fri,Sat,Sun',
-                'cuisines': ['Mexican'],
-                'tags': ['Spicy', 'Vegetarian']
-            },
-            {
-                'name': 'Le Gourmet',
-                'street_number': '321',
-                'street_name': 'Elm Street',
-                'street_block': 'Uptown',
-                'city': 'Berkeley',
-                'postal_code': '94704',
-                'email': 'info@legourmet.com',
-                'phone_number': '+1-555-0104',
-                'description': 'Fine dining French establishment with an extensive wine collection',
-                'price_min': Decimal('25.00'),
-                'price_max': Decimal('100.00'),
-                'max_guest_count': 6,
-                'opening_time': time(18, 0),
-                'closing_time': time(23, 30),
-                'operating_days': 'Wed,Thu,Fri,Sat,Sun',
-                'cuisines': ['French'],
-                'tags': ['Organic']
-            },
-            {
-                'name': 'Spice Route',
-                'street_number': '654',
-                'street_name': 'Birch Lane',
-                'street_block': 'East Side',
-                'city': 'San Jose',
-                'postal_code': '95110',
-                'email': 'info@spiceroute.com',
-                'phone_number': '+1-555-0105',
-                'description': 'Indian restaurant offering dishes from various regions of India',
-                'price_min': Decimal('10.00'),
-                'price_max': Decimal('45.00'),
-                'max_guest_count': 8,
                 'opening_time': time(11, 0),
                 'closing_time': time(23, 0),
                 'operating_days': 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
-                'cuisines': ['Indian'],
-                'tags': ['Vegan', 'Gluten-Free', 'Spicy']
+                'cuisines': ['Seafood', 'Filipino'],
+                'tags': ['Fresh', 'Organic']
             },
             {
-                'name': 'The Classic Grill',
-                'street_number': '987',
-                'street_name': 'Cedar Road',
-                'street_block': 'West Side',
-                'city': 'Palo Alto',
-                'postal_code': '94301',
-                'email': 'info@classicgrill.com',
-                'phone_number': '+1-555-0106',
-                'description': 'American steakhouse featuring premium cuts and classic cuisine',
-                'price_min': Decimal('20.00'),
-                'price_max': Decimal('80.00'),
-                'max_guest_count': 10,
+                'name': 'Handuraw Tapas & Wine Bar',
+                'street_number': '789',
+                'street_name': 'Osmeña Boulevard',
+                'street_block': 'Uptown Cebu',
+                'city': 'Cebu City',
+                'postal_code': '6000',
+                'email': 'info@handuraw.com',
+                'phone_number': '+63-32-255-0103',
+                'description': 'Modern fusion restaurant combining local ingredients with international techniques. Perfect for wine enthusiasts.',
+                'price_min': Decimal('300.00'),
+                'price_max': Decimal('1200.00'),
+                'max_guest_count': 8,
                 'opening_time': time(17, 0),
+                'closing_time': time(23, 30),
+                'operating_days': 'Tue,Wed,Thu,Fri,Sat,Sun',
+                'cuisines': ['Fusion', 'Filipino'],
+                'tags': ['Fine Dining', 'Organic']
+            },
+            {
+                'name': 'Choobi Choobi',
+                'street_number': '234',
+                'street_name': 'Jones Avenue',
+                'street_block': 'Mabolo',
+                'city': 'Cebu City',
+                'postal_code': '6000',
+                'email': 'info@choobichoobi.com',
+                'phone_number': '+63-32-255-0104',
+                'description': 'Japanese-Korean fusion restaurant with authentic ramen, BBQ, and Korean dishes.',
+                'price_min': Decimal('180.00'),
+                'price_max': Decimal('700.00'),
+                'max_guest_count': 10,
+                'opening_time': time(11, 0),
+                'closing_time': time(22, 0),
+                'operating_days': 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
+                'cuisines': ['Japanese', 'Korean'],
+                'tags': ['Spicy', 'Fast Service']
+            },
+            {
+                'name': 'Golden Cowrie Beach Club',
+                'street_number': '567',
+                'street_name': 'A.S. Fortuna Street',
+                'street_block': 'Banilad',
+                'city': 'Cebu City',
+                'postal_code': '6000',
+                'email': 'info@goldencowrie.com',
+                'phone_number': '+63-32-255-0105',
+                'description': 'Beachfront dining experience with international and local cuisine. Great ambiance for gatherings.',
+                'price_min': Decimal('250.00'),
+                'price_max': Decimal('900.00'),
+                'max_guest_count': 14,
+                'opening_time': time(11, 0),
                 'closing_time': time(23, 0),
-                'operating_days': 'Fri,Sat,Sun',
-                'cuisines': ['American'],
-                'tags': ['Fast Service']
+                'operating_days': 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
+                'cuisines': ['International', 'Seafood'],
+                'tags': ['Romantic', 'Scenic']
+            },
+            {
+                'name': 'Casa Cortes Cafe',
+                'street_number': '345',
+                'street_name': 'Sanciangko Street',
+                'street_block': 'South Road',
+                'city': 'Cebu City',
+                'postal_code': '6000',
+                'email': 'info@casacortes.com',
+                'phone_number': '+63-32-255-0106',
+                'description': 'Cozy Italian-Spanish cafe with pasta, tapas, and premium coffee. Perfect for lunch and coffee lovers.',
+                'price_min': Decimal('120.00'),
+                'price_max': Decimal('400.00'),
+                'max_guest_count': 8,
+                'opening_time': time(8, 0),
+                'closing_time': time(21, 0),
+                'operating_days': 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
+                'cuisines': ['Italian', 'Spanish'],
+                'tags': ['Vegetarian', 'Cozy']
             },
         ]
 
         restaurants = []
-        for data in restaurants_data:
+        for idx, data in enumerate(restaurants_data):
+            # Assign owner (cycle through owners)
+            owner = owners[idx % len(owners)]
+            
             restaurant = Restaurant.objects.create(
                 name=data['name'],
                 street_number=data['street_number'],
@@ -210,23 +244,26 @@ class Command(BaseCommand):
                 max_guest_count=data['max_guest_count'],
                 opening_time=data['opening_time'],
                 closing_time=data['closing_time'],
-                operating_days=data['operating_days']
+                operating_days=data['operating_days'],
+                owner=owner
             )
 
             # Assign cuisines
             for cuisine_name in data['cuisines']:
-                restaurant.cuisines.add(cuisines[cuisine_name])
+                if cuisine_name in cuisines:
+                    restaurant.cuisines.add(cuisines[cuisine_name])
 
             # Assign tags
             for tag_name in data['tags']:
-                restaurant.tags.add(tags[tag_name])
+                if tag_name in tags:
+                    restaurant.tags.add(tags[tag_name])
 
             # Assign customers
             for customer in customers[:2]:  # Assign first 2 customers to each restaurant
                 restaurant.customers.add(customer)
 
             restaurants.append(restaurant)
-            self.stdout.write(self.style.SUCCESS(f'✓ Created restaurant: {data["name"]}'))
+            self.stdout.write(self.style.SUCCESS(f'[OK] Created restaurant: {data["name"]} (Owner: {owner.user.email})'))
 
         # Create Reviews
         for idx, restaurant in enumerate(restaurants):
@@ -237,7 +274,56 @@ class Command(BaseCommand):
                     rating=Decimal(str(4.0 + (i * 0.2))),  # Ratings between 4.0 and 4.4
                     comment=f'Great experience at {restaurant.name}! Food was delicious and service was excellent.'
                 )
-                self.stdout.write(self.style.SUCCESS(f'✓ Created review for {restaurant.name}'))
+                self.stdout.write(self.style.SUCCESS(f'[OK] Created review for {restaurant.name}'))
+
+        # Create Elements (decorative elements/fixtures) for each restaurant
+        try:
+            element_names = ['Window', 'Bar', 'Entrance', 'Kitchen', 'Restroom', 'Storage']
+            elements_created = 0
+            for restaurant in restaurants:
+                for idx, element_name in enumerate(element_names):  # All elements per restaurant
+                    element = Element.objects.create(
+                        name=element_name,
+                        x=50 + (idx * 100),
+                        y=50 + (idx * 75),
+                        restaurant=restaurant
+                    )
+                    elements_created += 1
+                    self.stdout.write(self.style.SUCCESS(f'[OK] Created element "{element_name}" for {restaurant.name}'))
+            self.stdout.write(self.style.SUCCESS(f'[OK] Total elements created: {elements_created}'))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'[!] Could not create elements: {str(e)[:100]}'))
+
+        # Create Tables for each restaurant
+        try:
+            table_configs = [
+                {'capacity': 2, 'count': 4},   # 4 tables for 2 people
+                {'capacity': 4, 'count': 3},   # 3 tables for 4 people
+                {'capacity': 6, 'count': 2},   # 2 tables for 6 people
+                {'capacity': 8, 'count': 1},   # 1 large table for 8 people
+            ]
+
+            tables_created = 0
+            for restaurant in restaurants:
+                table_number = 1
+                for config in table_configs:
+                    for i in range(config['count']):
+                        table = Table.objects.create(
+                            number=table_number,
+                            capacity=config['capacity'],
+                            x=50 + (i * 200),
+                            y=100 + (config['capacity'] * 50),
+                            restaurant=restaurant,
+                            status='available'
+                        )
+                        table_number += 1
+                        tables_created += 1
+                        self.stdout.write(self.style.SUCCESS(
+                            f'[OK] Created table #{table.number} (capacity {table.capacity}) for {restaurant.name}'
+                        ))
+            self.stdout.write(self.style.SUCCESS(f'[OK] Total tables created: {tables_created}'))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'[!] Could not create tables: {str(e)[:100]}'))
 
         # Create Reservations
         for idx, customer in enumerate(customers):
@@ -254,7 +340,14 @@ class Command(BaseCommand):
                     status='CONFIRMED' if res_idx == 0 else 'PENDING'
                 )
                 self.stdout.write(self.style.SUCCESS(
-                    f'✓ Created {reservation.status} reservation for {customer.user.get_full_name()}'
+                    f'[OK] Created {reservation.status} reservation for {customer.user.get_full_name()}'
                 ))
 
-        self.stdout.write(self.style.SUCCESS('\n✅ Database population completed successfully!'))
+        self.stdout.write(self.style.SUCCESS('\n[SUCCESS] Database population completed successfully!'))
+        self.stdout.write(self.style.SUCCESS(f'  - {len(owners)} Owners'))
+        self.stdout.write(self.style.SUCCESS(f'  - {len(customers)} Customers'))
+        self.stdout.write(self.style.SUCCESS(f'  - {len(restaurants)} Restaurants'))
+        self.stdout.write(self.style.SUCCESS(f'  - {len(restaurants) * 6} Elements (Window, Bar, Entrance, Kitchen, Restroom, Storage)'))
+        self.stdout.write(self.style.SUCCESS(f'  - {sum(config["count"] for config in table_configs) * len(restaurants)} Tables'))
+        self.stdout.write(self.style.SUCCESS(f'  - {len(restaurants) * 3} Reviews'))
+        self.stdout.write(self.style.SUCCESS(f'  - {len(customers) * 2} Reservations'))

@@ -5,7 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservation Confirmed</title>
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/email-styles.css' %}">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; margin: 0; padding: 20px; background-color: #ffffff; }
+        .verify-container { max-width: 600px; margin: 0 auto; }
+        .verify-content { width: 100%; }
+        .logo-header { text-align: center; background-color: #D4530A; color: #ffffff; padding: 30px 20px; margin: 0; }
+        .logo-header img { max-width: 80px; height: auto; margin: 0 0 15px 0; display: block; margin-left: auto; margin-right: auto; }
+        .company-name { margin: 10px 0 5px 0; font-size: 28px; font-weight: bold; color: #ffffff; }
+        .company-tagline { margin: 0; font-size: 14px; color: #ffffff; }
+        .verify-main { background-color: #f9fafb; padding: 40px 30px; margin: 0; border: 1px solid #d1d5db; }
+        .verify-icon { text-align: center; margin-bottom: 20px; }
+        .verify-icon svg { width: 64px; height: 64px; }
+        .verify-title { text-align: center; color: #333333; margin: 20px 0 15px 0; font-size: 24px; font-weight: bold; }
+        .verify-description { text-align: center; margin: 15px 0; font-size: 16px; line-height: 1.6; color: #555555; }
+        .account-details { background-color: #ffffff; border: 1px solid #d1d5db; padding: 20px; margin: 20px 0; text-align: center; }
+        .detail-item { margin: 15px 0; padding: 10px 0; border-bottom: 1px solid #d1d5db; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { display: block; font-weight: bold; color: #666666; font-size: 12px; margin-bottom: 5px; }
+        .detail-value { display: block; color: #333333; font-size: 16px; }
+        .btn-verify { display: inline-block; background-color: #D4530A; color: #ffffff !important; text-decoration: none; padding: 15px 40px; margin: 20px auto; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .button-container { text-align: center; margin: 25px 0; }
+        .reset-code { text-align: center; background-color: #ffffff; border: 2px solid #D4530A; padding: 20px; margin: 20px 0; font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #D4530A; font-family: 'Courier New', monospace; }
+        .verification-link { word-break: break-all; color: #D4530A; font-size: 14px; text-decoration: none; }
+        .warning { background-color: #fff3cd; border: 1px solid #ffc107; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; color: #856404; font-size: 14px; }
+        .info-box { background-color: #f0f8ff; border: 1px solid #D4530A; border-left: 4px solid #D4530A; padding: 15px; margin: 20px 0; color: #333333; font-size: 14px; }
+        .success-box { background-color: #d4edda; border: 1px solid #28a745; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; color: #155724; font-size: 14px; }
+        .error-box { background-color: #f8d7da; border: 1px solid #dc2626; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; color: #721c24; font-size: 14px; }
+        .verify-footer { text-align: center; color: #666666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; }
+        .verify-footer p { margin: 8px 0; line-height: 1.5; }
+        .footer { text-align: center; color: #666666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; }
+        .footer p { margin: 5px 0; line-height: 1.5; }
+        .footer a { color: #D4530A; text-decoration: none; }
+        h1, h2, h3, h4, h5, h6 { margin: 15px 0; }
+        p { margin: 15px 0; }
+        img { max-width: 100%; height: auto; }
+        a { color: #D4530A; }
+    </style>
 </head>
 <body>
     <div class="verify-container">
@@ -30,11 +65,11 @@
                 <h2 class="verify-title">Reservation Confirmed!</h2>
 
                 <p class="verify-description">
-                    Your reservation has been received and is pending confirmation by the restaurant. The restaurant will review your request and you'll receive another email once your reservation is confirmed.
+                    Great news! Your reservation at {{ reservation.restaurant.name }} has been confirmed. We look forward to welcoming you!
                 </p>
 
                 <div class="success-box">
-                    <strong>Your Reservation Details:</strong>
+                    <strong>Your Confirmed Reservation Details:</strong>
                 </div>
 
                 <div class="account-details">
@@ -67,11 +102,11 @@
                 </div>
 
                 <div class="info-box">
-                    <strong>What happens next?</strong> The restaurant will review your reservation request. Most restaurants respond within a few hours. You'll receive a confirmation email once they have accepted or reviewed your reservation. If you need to cancel or modify, you can do so from your account.
+                    <strong>Before you arrive:</strong> Please arrive 10-15 minutes before your reservation time. If you're running late or need to cancel, please contact the restaurant as soon as possible. You can also manage your reservation from your account dashboard.
                 </div>
 
                 <div class="warning">
-                    <strong>Please Note:</strong> Ensure you receive all confirmation emails. Make sure to check your spam/junk folder if you don't see a confirmation email from the restaurant within 24 hours.
+                    <strong>Important:</strong> Please keep this confirmation email for your records. You may be asked to present it upon arrival. If you need to make any changes or cancel your reservation, please do so at least 24 hours in advance.
                 </div>
             </div>
 

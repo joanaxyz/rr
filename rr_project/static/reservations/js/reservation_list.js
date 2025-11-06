@@ -17,7 +17,7 @@ async function showCancelReason(form) {
 }
 function submitCancel(reason, form) {
   if (form) {
-    form.querySelector(".cancel-reason-input").value = reason;
+    form.querySelector("input[name='cancel_reason']").value = reason;
     form.submit();
   }
 }

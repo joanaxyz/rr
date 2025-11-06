@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from restaurants.models import Restaurant
 from accounts.models import Customer
+from django.utils.timezone import localtime
 
 class Reservation(models.Model):
     customer = models.ForeignKey(
@@ -32,7 +33,7 @@ class Reservation(models.Model):
         ],
         default='PENDING'
     )
-    cancellation_reason = models.TextField(blank=True, null=True)
+    cancellation_info = models.JSONField(blank=True, null=True, default=dict)
     restaurant = models.ForeignKey(
         Restaurant,
         on_delete=models.SET_NULL,
@@ -48,5 +49,29 @@ class Reservation(models.Model):
     def __str__(self):
         restaurant_name = self.restaurant.name if self.restaurant else 'Unknown Restaurant'
         return f"{self.name} - {self.guest_count} guests at {restaurant_name} on {self.date} at {self.time} [{self.status}]"
-
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "guest_count": self.guest_count,
+            "date": self.date.isoformat() if self.date else None,
+            "time": self.time.strftime("%H:%M:%S") if self.time else None,
+            "notes": self.notes or "",
+            "table_numbers": list(self.table_numbers or []),
+            "status": self.status,
+            "cancellation_info":{
+                'reason':self.cancellation_reason.get('reason'),
+                'sender':self.cancellation_reason.get('sender')
+            },
+            "restaurant": self.restaurant.name if self.restaurant else None,
+            "restaurant_id": self.restaurant.id if self.restaurant else None,
+            "customer": {
+                "id": self.customer.id,
+                "name": getattr(self.customer, "name", None),
+                "email": getattr(self.customer, "email", None)
+            } if self.customer else None,
+            "created_at": localtime(self.created_at).isoformat() if self.created_at else None
+        }
     

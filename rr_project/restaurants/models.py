@@ -16,7 +16,7 @@ class Restaurant(models.Model):
     postal_code = models.CharField(max_length=20, blank=True, null=True, help_text="Postal code")
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)
-    owner = models.OneToOneField(
+    owner = models.ForeignKey(
         Owner,
         related_name='restaurant',
         on_delete=models.SET_NULL,
@@ -112,9 +112,28 @@ class Restaurant(models.Model):
         if self.price_min and self.price_max:
             return f"₱{int(self.price_min)} - ₱{int(self.price_max)}"
         return "Price not available"
+
+class Element(models.Model):
+    name = models.CharField(max_length = 50)
+    x = models.IntegerField()
+    y = models.IntegerField()
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        related_name='elements',
+        null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
 class Table(models.Model):
     number = models.IntegerField()
     capacity = models.IntegerField()
+    x = models.IntegerField()
+    y = models.IntegerField()
     TABLE_STATUS_CHOICES = [
         ('available', 'Available'),
         ('reserved', 'Reserved'),

@@ -50,7 +50,7 @@
 .messagebox-title {
   font-size: var(--font-3xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-orange);
+  color: var(--color-primary);
   margin-bottom: var(--space-5);
   letter-spacing: var(--tracking-tight);
   text-align: center;
@@ -91,15 +91,15 @@
 }
 
 .msgbx-input:focus {
-  border-bottom-color: var(--color-orange);
+  border-bottom-color: var(--color-primary);
 }
 
 .msgbx-input.error {
-  border-bottom-color: var(--color-orange);
+  border-bottom-color: var(--color-primary);
 }
 
 .msgbx-input.error::placeholder {
-  color: var(--color-orange);
+  color: var(--color-primary);
 }
 
 /* MessageBox Buttons Container */
@@ -130,8 +130,8 @@
 
 .messagebox-btn:hover {
   background: var(--color-dark-surface-hover);
-  border-color: var(--color-orange);
-  color: var(--color-orange);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .messagebox-btn:active {
@@ -140,17 +140,17 @@
 
 /* Primary Button Style */
 .messagebox-btn-primary {
-  background: var(--color-orange);
+  background: var(--color-primary);
   color: var(--color-white);
-  border-color: var(--color-orange);
-  box-shadow: var(--shadow-orange);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
 }
 
 .messagebox-btn-primary:hover {
-  background: var(--color-orange-hover);
-  border-color: var(--color-orange-hover);
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
   color: var(--color-white);
-  box-shadow: var(--shadow-orange-lg);
+  box-shadow: var(--shadow-primary-lg);
 }
 
 /* ================================ */
@@ -163,7 +163,7 @@
 }
 
 .messagebox.light .messagebox-title {
-  color: var(--color-orange);
+  color: var(--color-primary);
 }
 
 .messagebox.light .messagebox-message {
@@ -182,15 +182,15 @@
 }
 
 .messagebox.light .msgbx-input:focus {
-  border-bottom-color: var(--color-orange);
+  border-bottom-color: var(--color-primary);
 }
 
 .messagebox.light .msgbx-input.error {
-  border-bottom-color: var(--color-orange);
+  border-bottom-color: var(--color-primary);
 }
 
 .messagebox.light .msgbx-input.error::placeholder {
-  color: var(--color-orange);
+  color: var(--color-primary);
 }
 
 .messagebox.light .messagebox-btn {
@@ -201,22 +201,22 @@
 
 .messagebox.light .messagebox-btn:hover {
   background: var(--color-white);
-  border-color: var(--color-orange);
-  color: var(--color-orange);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .messagebox.light .messagebox-btn-primary {
-  background: var(--color-orange);
+  background: var(--color-primary);
   color: var(--color-white);
-  border-color: var(--color-orange);
-  box-shadow: var(--shadow-orange);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
 }
 
 .messagebox.light .messagebox-btn-primary:hover {
-  background: var(--color-orange-hover);
-  border-color: var(--color-orange-hover);
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
   color: var(--color-white);
-  box-shadow: var(--shadow-orange-lg);
+  box-shadow: var(--shadow-primary-lg);
 }
 
 /* ================================ */
@@ -232,7 +232,7 @@
 .messagebox.light.theme-warning,
 .messagebox.theme-info,
 .messagebox.light.theme-info {
-  border-color: var(--color-orange);
+  border-color: var(--color-primary);
 }
 
 .messagebox.theme-error .messagebox-title,
@@ -243,7 +243,7 @@
 .messagebox.light.theme-warning .messagebox-title,
 .messagebox.theme-info .messagebox-title,
 .messagebox.light.theme-info .messagebox-title {
-  color: var(--color-orange);
+  color: var(--color-primary);
 }
 
 .messagebox.theme-error .messagebox-btn-primary,
@@ -254,9 +254,9 @@
 .messagebox.light.theme-warning .messagebox-btn-primary,
 .messagebox.theme-info .messagebox-btn-primary,
 .messagebox.light.theme-info .messagebox-btn-primary {
-  background: var(--color-orange);
-  border-color: var(--color-orange);
-  box-shadow: var(--shadow-orange);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
 }
 
 .messagebox.theme-error .messagebox-btn-primary:hover,
@@ -267,9 +267,9 @@
 .messagebox.light.theme-warning .messagebox-btn-primary:hover,
 .messagebox.theme-info .messagebox-btn-primary:hover,
 .messagebox.light.theme-info .messagebox-btn-primary:hover {
-  background: var(--color-orange-hover);
-  border-color: var(--color-orange-hover);
-  box-shadow: var(--shadow-orange-lg);
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-primary-lg);
 }
 
 .messagebox.theme-error .msgbx-input:focus,
@@ -280,7 +280,7 @@
 .messagebox.light.theme-warning .msgbx-input:focus,
 .messagebox.theme-info .msgbx-input:focus,
 .messagebox.light.theme-info .msgbx-input:focus {
-  border-bottom-color: var(--color-orange);
+  border-bottom-color: var(--color-primary);
 }
 
 /* ================================ */

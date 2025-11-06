@@ -265,10 +265,11 @@ body {
   height: 44px;
 }
 
-.bookmark-button svg {
+.bookmark-button i {
   width: 18px;
   height: 18px;
-  fill: currentColor;
+  color: currentColor;
+  font-size: var(--font-base);
 }
 
 .bookmark-button:hover {
@@ -356,11 +357,12 @@ body {
   font-size: var(--font-sm);
 }
 
-.detail-item svg {
+.detail-item i {
   width: 16px;
   height: 16px;
-  fill: var(--color-primary);
+  color: var(--color-primary);
   flex-shrink: 0;
+  font-size: var(--font-sm);
 }
 
 .detail-item .status-open {

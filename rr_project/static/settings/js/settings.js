@@ -369,26 +369,44 @@ if (verificationForm) {
     });
 }
 
-function submitOwnerVerification(formData) {
-    fetch('/accounts/apply-owner/', {
-        method: 'POST',
-        body: formData,
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccess('Application submitted successfully! We will review your documents within 1-2 business days.');
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                showError(data.message || 'Error submitting application');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showError('An error occurred. Please try again.');
+async function submitOwnerVerification(formData) {
+    try {
+        // Show loading overlay manually for FormData requests
+        if (window.LoadingOverlay) {
+            window.LoadingOverlay.show('Submitting application...');
+        }
+        
+        // Use native fetch for FormData (since APIClient serializes to JSON)
+        const response = await fetch('/accounts/apply-owner/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': APIClient.getCookie('csrftoken')
+            },
+            body: formData,
         });
+        
+        const data = await response.json();
+        
+        // Hide loading overlay
+        if (window.LoadingOverlay) {
+            window.LoadingOverlay.hide();
+        }
+        
+        if (data.success) {
+            showSuccess('Application submitted successfully! We will review your documents within 1-2 business days.');
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            showError(data.message || 'Error submitting application');
+        }
+    } catch (error) {
+        if (window.LoadingOverlay) {
+            window.LoadingOverlay.hide();
+        }
+        console.error('Error:', error);
+        showError('An error occurred. Please try again.');
+    }
 }
 
 // ============================================================================

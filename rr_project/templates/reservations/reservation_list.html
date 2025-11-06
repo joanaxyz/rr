@@ -56,7 +56,7 @@
               {% if reservation.status != 'CANCELLED' %}
               <div class="action-buttons">
                 <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
-                <input type="hidden" name="cancel_reason" class="cancel-reason-input">
+                <input type="hidden" name="cancel_reason">
                 <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
                 <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
               </div>

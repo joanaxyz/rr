@@ -104,10 +104,14 @@ def send_reservation_cancellation_email(cancelled_reservation):
     }
     #Email subject
     subject = 'Reservation Cancellation - RR'
-    
+    template_html='emails/reservation_cancellation_customer.html'
+
+    if cancelled_reservation.cancellation_reason.get('sender') != 'CUSTOMER':
+        template_html='emails/reservation_cancellation_host.html',
+        
     return send_email(
         subject=subject,
-        template_name='emails/reservation_cancellation.html',
+        template_name=template_html,
         context=context,
         recipient_email = cancelled_reservation.email
     )
