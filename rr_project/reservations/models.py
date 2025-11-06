@@ -42,11 +42,12 @@ class Reservation(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    is_deleted = models.BooleanField(default=False)
+    previous_status = models.CharField(max_length=20, blank=True, null=True)
+
     class Meta:
         ordering = ['-created_at']
 
     def __str__(self):
         restaurant_name = self.restaurant.name if self.restaurant else 'Unknown Restaurant'
         return f"{self.name} - {self.guest_count} guests at {restaurant_name} on {self.date} at {self.time} [{self.status}]"
-
-    

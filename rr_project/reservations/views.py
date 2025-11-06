@@ -47,19 +47,21 @@ def reservation(request, restaurant_id):
 
 @login_required
 def reservation_management_view(request):
-    """Display, cancel, delete, or edit reservations"""
+    """Display, cancel, delete, restore, or edit reservations"""
     customer, created = Customer.objects.get_or_create(user=request.user)
-    reservations = Reservation.objects.filter(customer=customer).order_by('-date')
+    reservations = Reservation.objects.filter(customer=customer, is_deleted=False).order_by('-date')
+    deleted_reservations = Reservation.objects.filter(customer=customer, is_deleted=True).order_by('-date')
 
     if request.method == 'POST':
         # Cancel reservation
         if 'cancel_reservation' in request.POST:
             reservation_id = request.POST.get('cancel_reservation')
-            reason = request.POST.get('cancellation_reason', '').strip()
+            reason = request.POST.get('cancel_reason', '').strip()
 
             try:
                 reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
                 restaurant_name = reservation.restaurant.name if reservation.restaurant else "Unknown Restaurant"
+                reservation.previous_status = reservation.status  # store current status before cancel
                 reservation.status = 'CANCELLED'
                 reservation.cancellation_reason = reason
                 reservation.save()
@@ -67,26 +69,49 @@ def reservation_management_view(request):
                     messages.success(request, f"Reservation at {restaurant_name} has been cancelled. You have been sent an email!")
                 else:
                     messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
-            except Exception:
+            except Exception as e:
+                print(e)
                 messages.error(request, "Failed to cancel reservation. Please try again.")
             return redirect('reservations:reservation_management')
 
-        # Delete reservation
+        # Delete reservation (move to trash)
         elif 'delete_reservation' in request.POST:
             reservation_id = request.POST.get('delete_reservation')
             try:
                 reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
-                reservation.delete()
-                messages.success(request, "Cancelled reservation has been deleted.")
-            except Exception:
+                reservation.is_deleted = True
+                reservation.save()
+                messages.success(request, "Reservation has been moved to trash.")
+            except Exception as e:
+                print(e)
                 messages.error(request, "Failed to delete reservation. Please try again.")
+            return redirect('reservations:reservation_management')
+
+        # Restore reservation from trash
+        elif 'restore_reservation' in request.POST:
+            reservation_id = request.POST.get('restore_reservation')
+            try:
+                reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
+                reservation.is_deleted = False
+                # 🔹 If it was cancelled, restore to previous status if available
+                if reservation.status == 'CANCELLED' and hasattr(reservation, 'previous_status') and reservation.previous_status:
+                    reservation.status = reservation.previous_status
+                else:
+                    reservation.status = 'PENDING'
+                reservation.save()
+                messages.success(request, f"Reservation at {reservation.restaurant.name} has been restored.")
+            except Exception as e:
+                print(e)
+                messages.error(request, "Failed to restore reservation. Please try again.")
             return redirect('reservations:reservation_management')
 
     context = {
         'reservations': reservations,
+        'deleted_reservations': deleted_reservations,
         'has_reservations': reservations.exists(),
     }
     return render(request, 'reservations/reservation_list.html', context)
+
 
 @login_required
 def edit_reservation(request, reservation_id):

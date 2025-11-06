@@ -286,3 +286,18 @@ body {
     opacity: 1;
   }
 }
+
+.restore-btn {
+  background-color: #198754;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.restore-btn:hover {
+  background-color: #157347;
+}
