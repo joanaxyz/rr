@@ -1,3 +1,19 @@
+@import '../../common/css/components.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background: var(--gradient-surface-dark);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
 /* Header Styles */
 .manage-header {
   background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
@@ -30,9 +46,21 @@
 }
 
 .manage-restaurants-container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--space-8) var(--space-8);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .restaurants-list {
@@ -45,15 +73,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  padding: var(--space-6) var(--space-8);
+  background: var(--color-white);
+  border: var(--border-1) solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-base) var(--ease-in-out);
 }
 
 .restaurant-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-gray-300);
+  transform: translateY(-2px);
 }
 
 .restaurant-name-section {
@@ -61,57 +92,61 @@
 }
 
 .restaurant-name-section h2 {
-  font-size: 1.25rem;
-  color: #333;
-  font-weight: 600;
+  font-size: var(--font-lg);
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .manage-btn {
-  padding: 0.75rem 1.5rem;
-  background-color: #e74c3c;
-  color: white;
+  padding: var(--space-3) var(--space-6);
+  background: linear-gradient(135deg, rgba(212, 83, 10, 0.9) 0%, rgba(212, 83, 10, 0.7) 100%);
+  color: var(--color-white);
   border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
   text-decoration: none;
   text-align: center;
-  transition: background-color 0.3s ease;
+  transition: all var(--transition-base) var(--ease-in-out);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-left: 1rem;
+  margin-left: var(--space-4);
 }
 
 .manage-btn:hover {
-  background-color: #c0392b;
+  background: linear-gradient(135deg, rgba(212, 83, 10, 1) 0%, rgba(212, 83, 10, 0.8) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 83, 10, 0.3);
 }
 
 .manage-btn:active {
-  background-color: #a93226;
+  transform: translateY(0) scale(0.97);
 }
 
 .no-restaurants {
   text-align: center;
-  padding: 3rem 2rem;
-  color: #999;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--space-12) var(--space-8);
+  color: var(--color-gray-600);
+  background: var(--color-white);
+  border: var(--border-1) solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .no-restaurants p {
-  font-size: 1.125rem;
+  font-size: var(--font-lg);
   margin: 0;
+  font-weight: var(--font-weight-medium);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .manage-restaurants-container {
-    padding: 1.5rem;
+    padding: var(--space-6) var(--space-6);
   }
 
   .manage-header h1 {
@@ -121,7 +156,7 @@
   .restaurant-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: var(--space-4);
   }
 
   .manage-btn {
@@ -132,7 +167,7 @@
 
 @media (max-width: 480px) {
   .manage-restaurants-container {
-    padding: 1rem;
+    padding: var(--space-4) var(--space-4);
   }
 
   .manage-header h1 {
@@ -140,15 +175,15 @@
   }
 
   .restaurant-name-section h2 {
-    font-size: 1.125rem;
+    font-size: var(--font-base);
   }
 
   .restaurant-item {
-    padding: 1rem;
+    padding: var(--space-4) var(--space-5);
   }
 
   .manage-btn {
-    padding: 0.625rem 1rem;
-    font-size: 0.8125rem;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-xs);
   }
 }
