@@ -9,6 +9,7 @@ from django.db.models import Avg, Count
 from datetime import timedelta
 from django.utils import timezone
 from .models import Cuisine, Tags
+from .forms import OwnerVerificationForm
 # Create your views here.
 @login_required
 def restaurant_detail_view(request, restaurant_id):
@@ -63,3 +64,23 @@ def restaurants_view(request):
         'guest_count': guest_count,
     }
     return render(request, 'restaurants/restaurants.html', context)
+
+def owner_verification(request):
+    if request.method == 'POST':
+        form = OwnerVerificationForm(request.POST)
+        if form.is_valid():
+            restaurant = form.save(commit=False)
+            restaurant.owner = request.user
+            restaurant.save()
+            # after successful registration, redirect to manage restaurant list
+            return redirect('manage_restaurant')
+    else:
+        form = OwnerVerificationForm()
+    return render(request, 'restaurants/owner_verification.html', {'form': form})
+
+
+@login_required
+def manage_restaurant(request):
+    # this will show all restaurants the current owner registered
+    restaurants = Restaurant.objects.filter(owner=request.user)
+    return render(request, 'restaurants/manage_restaurant.html', {'restaurants': restaurants})

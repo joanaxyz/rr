@@ -1,0 +1,15 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_content %}
+<div class="verification-container">
+  <h1>Owner Verification</h1>
+  <p>Register your restaurant below</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}

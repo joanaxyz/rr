@@ -11,7 +11,6 @@
 {% endblock %}
 
 {% block rr_base_content %}
-<!-- Management Header -->
 <div class="manage-header">
     <div class="header-content">
         <h1>Dashboard</h1>
@@ -19,10 +18,7 @@
     </div>
 </div>
 
-<!-- Main Management Container -->
 <div class="dashboard-container">
-
-  <!-- Statistics Grid -->
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-card-label">Total Reservations</div>
@@ -49,7 +45,6 @@
     </div>
   </div>
 
-  <!-- Quick Actions -->
   <div class="quick-actions-section">
     <h2 class="quick-actions-title">Quick Actions</h2>
     <div class="quick-actions">
@@ -67,7 +62,12 @@
       </a>
     </div>
   </div>
-</div>
+
+  <div class="register-btn-container" style="margin-top: 20px; text-align: center;">
+    <a href="{% url 'owner_verification' %}" class="btn btn-primary">
+      Register Another Restaurant
+    </a>
+  </div>
 </div>
 {% endblock %}
 

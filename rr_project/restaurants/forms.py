@@ -38,3 +38,7 @@ class RestaurantAddressForm(forms.ModelForm):
                 'placeholder': 'Postal Code (Optional)',
             }),
         }
+
+    class Meta:
+        model = Restaurant
+        fields = ['name', 'address', 'contact_number']
