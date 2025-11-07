@@ -1,6 +1,7 @@
 /* Manage Tables Floor Plan Editor Styles */
 
 @import '../../common/css/components.css';
+@import '../../common/css/floor-plan-common.css';
 
 * {
   margin: 0;
@@ -19,7 +20,7 @@ body {
 /* Header Styles */
 .manage-header {
   background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
   padding: 2rem;
   margin-bottom: 2rem;
   position: sticky;
@@ -103,7 +104,7 @@ body {
   border-radius: var(--border-radius-xl);
   box-shadow: var(--shadow-md);
   padding: 1.5rem;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
 }
 
 .tools-section h3,
@@ -124,8 +125,8 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-200);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
   color: var(--text-primary);
   font-weight: 600;
@@ -162,8 +163,8 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-200);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius);
   color: var(--text-primary);
   font-weight: 500;
@@ -174,7 +175,7 @@ body {
 
 .element-item:hover,
 .size-btn:hover {
-  background: var(--gray-100);
+  background: var(--color-gray-100);
   border-color: var(--primary-red);
   transform: translateX(2px);
 }
@@ -231,7 +232,7 @@ body {
   background: var(--white);
   border-radius: var(--border-radius-xl);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
   padding: 2rem;
 }
 
@@ -241,7 +242,7 @@ body {
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .control-group {
@@ -269,26 +270,85 @@ body {
   color: var(--text-secondary);
 }
 
+.dimension-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dimension-controls label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.dimension-controls input[type="number"] {
+  width: 80px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  background: var(--white);
+  color: var(--text-primary);
+}
+
+.dimension-controls input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+#apply-dimensions-btn {
+  padding: 0.5rem 1.25rem;
+  background: var(--primary-red);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#apply-dimensions-btn:hover {
+  background: var(--primary-red-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+#apply-dimensions-btn:active {
+  transform: translateY(0);
+}
+
 .floor-plan-container {
   position: relative;
   width: 100%;
+  height: 600px;
+  max-height: 600px;
+  min-height: 600px;
+  flex-shrink: 0;
   margin-bottom: 1.5rem;
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  overflow: auto;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 .floor-plan {
-  position: relative;
-  width: 100%;
-  height: 600px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 800px;
+  height: 500px;
   background-image: 
     linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent),
     linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent);
   background-size: 40px 40px;
-  border: 2px solid var(--gray-200);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
   cursor: crosshair;
   transition: background-color 0.2s ease, border-color 0.2s ease;
+  transform-origin: top left;
 }
 
 .floor-plan.dragging-element {
@@ -296,162 +356,13 @@ body {
   border-color: rgba(59, 130, 246, 0.3);
 }
 
-/* Floor Items (Tables and Elements) */
-.floor-item {
-  position: absolute;
-  cursor: grab;
-  user-select: none;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 0.75rem;
-  color: white;
-}
 
-.floor-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  cursor: grab;
-}
-
-.floor-item.dragging {
-  opacity: 0.6;
-  cursor: grabbing;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--primary-red);
-  z-index: 200;
-  transform: scale(1.05);
-}
-
-.floor-item.selected {
-  box-shadow: 0 0 0 3px var(--primary-red), 0 0 0 6px rgba(220, 38, 38, 0.1);
-  z-index: 100;
-}
-
-.floor-item.table {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-}
-
-.floor-item.table svg {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.floor-item.table-2 {
-  width: 75px;
-  height: 105px;
-  color: var(--table-available);
-}
-
-.floor-item.table-4 {
-  width: 100px;
-  height: 130px;
-  color: var(--table-available);
-}
-
-.floor-item.table-6 {
-  width: 125px;
-  height: 155px;
-  color: var(--table-available);
-}
-
-.floor-item.table-8 {
-  width: 155px;
-  height: 190px;
-  color: var(--table-available);
-}
-
-.floor-item.entrance {
-  width: 120px;
-  height: 40px;
-  background: var(--gray-600);
-  color: var(--primary-red);
-}
-
-.floor-item.bar {
-  width: 60px;
-  height: 100px;
-  background: var(--gray-800);
-  color: var(--primary-red);
-}
-
-.floor-item.kitchen {
-  width: 80px;
-  height: 60px;
-  background: var(--gray-400);
-  color: var(--primary-red);
-}
-
-.floor-item.restroom {
-  width: 80px;
-  height: 40px;
-  background: var(--gray-500);
-  color: var(--primary-red);
-}
-
-.floor-item.window {
-  width: 30px;
-  height: 150px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 2px solid #3b82f6;
-  color: var(--primary-red);
-}
-
-.floor-item.storage {
-  width: 80px;
-  height: 80px;
-  background: var(--gray-600);
-  color: var(--primary-red);
-}
-
-.floor-item.decoration {
-  width: 60px;
-  height: 60px;
-  background: var(--gray-700);
-  color: var(--primary-red);
-}
-
-.floor-item.wall {
-  width: 120px;
-  height: 30px;
-  background: var(--gray-800);
-  color: var(--primary-red);
-  border: 2px solid var(--gray-900);
-}
-
-.floor-item-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.floor-item-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  width: 100%;
-  height: 100%;
-}
-
-.floor-item-content svg {
-  width: 60%;
-  height: 60%;
-  flex-shrink: 0;
-  max-width: 100%;
-  max-height: 100%;
-}
 
 .floor-info {
   padding: 1rem;
   background: var(--cream);
   border-radius: var(--border-radius);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
   text-align: center;
 }
 
@@ -466,7 +377,7 @@ body {
   background: var(--white);
   border-radius: var(--border-radius-xl);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
   padding: 2rem;
 }
 
@@ -481,7 +392,7 @@ body {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid var(--gray-200);
+  border-bottom: 2px solid var(--color-gray-200);
 }
 
 .tab-btn {
@@ -513,8 +424,8 @@ body {
 
 .element-card {
   padding: 1rem;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-200);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
   transition: all 0.2s ease;
   cursor: pointer;
@@ -564,7 +475,7 @@ body {
   gap: 0.5rem;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--gray-200);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .element-card-actions button {
@@ -588,7 +499,7 @@ body {
 }
 
 .btn-delete {
-  background: var(--error);
+  background: var(--primary-red-dark);
   color: white;
 }
 
@@ -601,7 +512,7 @@ body {
   background: var(--white);
   border-radius: var(--border-radius-xl);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
   padding: 1.5rem;
   height: fit-content;
   position: sticky;
@@ -631,19 +542,19 @@ body {
 .prop-group input,
 .prop-group select {
   padding: 0.5rem;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius);
   font-family: var(--font-primary);
   font-size: 0.9rem;
-  background: var(--gray-50);
+  background: var(--color-gray-50);
   color: var(--text-primary);
 }
 
 .prop-name-display {
   padding: 0.5rem;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius);
-  background: var(--gray-50);
+  background: var(--color-gray-50);
   color: var(--text-primary);
   font-weight: 500;
   font-size: 0.9rem;
@@ -677,7 +588,7 @@ body {
 }
 
 .btn-delete {
-  background: var(--error);
+  background: var(--color-error);
   color: white;
   width: 100%;
 }
@@ -687,12 +598,12 @@ body {
 }
 
 .btn-secondary {
-  background: var(--gray-200);
+  background: var(--color-gray-200);
   color: var(--text-primary);
 }
 
 .btn-secondary:hover {
-  background: var(--gray-300);
+  background: var(--color-gray-300);
 }
 
 .no-selection-msg {
@@ -721,7 +632,7 @@ body {
 
 .modal-content {
   background: var(--white);
-  border-radius: var(--border-radius-2xl);
+  border-radius: var(--radius-xl);
   max-width: 500px;
   width: 90%;
   max-height: 85vh;
@@ -755,7 +666,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h2 {
@@ -804,11 +715,11 @@ body {
 .form-group input,
 .form-group select {
   padding: 0.75rem;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius);
   font-family: var(--font-primary);
   font-size: 0.95rem;
-  background: var(--gray-50);
+  background: var(--color-gray-50);
   color: var(--text-primary);
 }
 
@@ -847,12 +758,12 @@ body {
 }
 
 .modal-cancel {
-  background: var(--gray-200);
+  background: var(--color-gray-200);
   color: var(--text-primary);
 }
 
 .modal-cancel:hover {
-  background: var(--gray-300);
+  background: var(--color-gray-300);
 }
 
 /* Zoom Controls */
@@ -870,8 +781,8 @@ body {
   width: 36px;
   height: 36px;
   padding: 0;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-300);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius);
   color: var(--text-primary);
   cursor: pointer;

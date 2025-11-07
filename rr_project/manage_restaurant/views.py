@@ -1,16 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from restaurants.models import Restaurant, Table
-from reservations.models import Reservation
+from restaurants.models import Restaurant, Table, Element, Floorplan
+from reservations.models import Reservation, TableReservation
 from accounts.models import Owner
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from email_service.views import send_reservation_cancellation_email, send_reservation_confirmation_email
+from email_service.views import send_reservation_cancellation_email, send_reservation_confirmation_email, send_reservation_completion_email
+import json
 @login_required
 def view_restaurants(request):
     # show restaurants the user owns
     owner = get_object_or_404(Owner, user=request.user)
     restaurants = Restaurant.objects.filter(owner=owner)
-    return render(request, "manage_restaurant/list.html", {"restaurants": restaurants})
+    restaurants_dicts = [r.to_dict() for r in restaurants]
+    return render(request, "manage_restaurant/list.html", {"restaurants": restaurants_dicts})
 @login_required
 def manage_reservations(request, restaurant_id):
     owner = get_object_or_404(Owner, user=request.user)
@@ -24,11 +26,31 @@ def manage_reservations(request, restaurant_id):
         if data.get('action') == 'confirm':
             reservation.status = 'CONFIRMED'
             reservation.save()
+            for number in reservation.table_numbers:
+                table = Table.objects.get(floorplan=restaurant.floorplan, number=number)
+                table.status = 'RESERVED'
+                table.save()
+                table_reservation = TableReservation.objects.create(
+                    table=table,
+                    reservation=reservation
+                )
+                table_reservation.save()
             if send_reservation_confirmation_email(reservation):
-                messages.success(request, f"Confirmation email to {reservation.customer.user.name} has been sent")
+                messages.success(request, f"Confirmation email to {reservation.customer.user.first_name} has been sent")
         elif data.get('action') == 'complete':
             reservation.status = 'COMPLETED'
+            for number in reservation.table_numbers:
+                table = Table.objects.get(floorplan=restaurant.floorplan, number=number)
+                table.status = 'AVAILABLE'
+                table.save()
+                table_reservation = TableReservation.objects.get(
+                    table=table,
+                    reservation=reservation
+                )
+                table_reservation.delete()
             reservation.save()
+            if send_reservation_completion_email(reservation):
+                messages.success(request, f"Thank you email to {reservation.customer.user.first_name} has been sent")
         elif data.get('action') == 'delete':
             reservation.delete()
         else:
@@ -37,14 +59,23 @@ def manage_reservations(request, restaurant_id):
                 'reason': reason,
                 'sender': 'HOST'
             }
+            for number in reservation.table_numbers:
+                table = Table.objects.get(floorplan=restaurant.floorplan, number=number)
+                table.status = 'AVAILABLE'
+                table.save()
+                table_reservation = TableReservation.objects.get(
+                    table=table,
+                    reservation=reservation
+                )
+                table_reservation.delete()
             reservation.delete()
             if send_reservation_cancellation_email(reservation):
-                messages.success(request, f"Cancellation email to {reservation.customer.user.name} has been sent")
+                messages.success(request, f"Cancellation email to {reservation.customer.user.first_name} has been sent")
         return redirect('manage_restaurant:reservations', restaurant_id=restaurant_id)
     
     context = {
-        "restaurant": restaurant,
-        "reservations": reservations,
+        "restaurant": restaurant.to_dict(),
+        "reservations": [r.to_dict() for r in reservations],
         "has_reservations": reservations.exists(),
     }
     return render(request, "manage_restaurant/manage_reservation.html", context)
@@ -53,11 +84,14 @@ def manage_reservations(request, restaurant_id):
 def manage_tables(request, restaurant_id):
     owner = get_object_or_404(Owner, user=request.user)
     restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
-    tables = Table.objects.filter(restaurant=restaurant)
-    
+    floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
+    tables = Table.objects.filter(floorplan=floorplan)
+    elements = Element.objects.filter(floorplan=floorplan)
     context = {
-        "restaurant": restaurant,
-        "tables": tables,
+        "restaurant_id": restaurant_id,
+        'floorplan': json.dumps(floorplan.to_dict()),
+        "tables": json.dumps([t.to_dict() for t in tables]),
+        "elements": json.dumps([e.to_dict() for e in elements])
     }
     return render(request, "manage_restaurant/manage_tables.html", context)
 
@@ -115,7 +149,7 @@ def manage_details(request, restaurant_id):
             messages.error(request, f'Error updating restaurant details: {str(e)}')
     
     context = {
-        "restaurant": restaurant,
+        "restaurant": restaurant.to_dict(),
     }
     return render(request, "manage_restaurant/manage_details.html", context)
 
@@ -128,10 +162,10 @@ def dashboard(request, restaurant_id):
     total_reservations = Reservation.objects.filter(restaurant=restaurant).count()
     pending_reservations = Reservation.objects.filter(restaurant=restaurant, status='PENDING').count()
     confirmed_reservations = Reservation.objects.filter(restaurant=restaurant, status='CONFIRMED').count()
-    total_tables = Table.objects.filter(restaurant=restaurant).count()
+    total_tables = Table.objects.filter(floorplan=restaurant.floorplan).count()
     
     context = {
-        "restaurant": restaurant,
+        "restaurant": restaurant.to_dict(),
         "total_reservations": total_reservations,
         "pending_reservations": pending_reservations,
         "confirmed_reservations": confirmed_reservations,

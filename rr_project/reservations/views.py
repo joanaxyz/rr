@@ -4,29 +4,32 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from .models import *
+from restaurants.models import Table, Element, Floorplan
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ReservationForm
 from email_service.views import send_reservation_updated_email
 from django.contrib import messages
-
+import json
 
 @login_required
 def reservation(request, restaurant_id):
     """Reservation page for a specific restaurant"""
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     reserve_form = None
-
+    floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
+    tables = Table.objects.filter(floorplan=floorplan)
+    elements = Element.objects.filter(floorplan=floorplan)
     if request.method == 'POST':
         reserve_form = ReservationForm(request.POST, restaurant=restaurant)
         if reserve_form.is_valid():
             try:
-                customer = Customer.objects.filter(user=request.user).first()
+                customer = get_object_or_404(Customer,user=request.user)
                 reservation = reserve_form.save(commit=False)
                 reservation.customer = customer
                 reservation.restaurant = restaurant
                 reservation.save()
                 
-                messages.success(request, f'Reservation created! You will receive a confirmation email shortly.')
+                messages.success(request, f'Reservation created! You will receive an email once a staff has confirmed your reservation.')
                 return redirect('restaurants:restaurant_detail', restaurant_id=restaurant.id)
             except Exception as e:
                 messages.error(request, f'An error occured during reservation: {str(e)}')
@@ -37,7 +40,10 @@ def reservation(request, restaurant_id):
         }, restaurant=restaurant)
 
     context = {
-        'restaurant': restaurant,
+        'restaurant': restaurant.to_dict(),
+        'floorplan': json.dumps(floorplan.to_dict()),
+        'tables': json.dumps([t.to_dict() for t in tables]),
+        'elements': json.dumps([e.to_dict() for e in elements]),
         'reserve_form': reserve_form,
     }
     return render(request, 'reservations/reservation.html', context)
@@ -78,7 +84,7 @@ def reservation_management_view(request):
             return redirect('reservations:reservation_management')
 
     context = {
-        'reservations': reservations,
+        'reservations': [r.to_dict() for r in reservations],
         'has_reservations': reservations.exists(),
     }
     return render(request, 'reservations/reservation_list.html', context)
@@ -103,9 +109,15 @@ def edit_reservation(request, reservation_id):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = ReservationForm(instance=reservation, restaurant=reservation.restaurant)
-
+    
+    floorplan = get_object_or_404(Floorplan, restaurant=reservation.restaurant)
+    tables = Table.objects.filter(floorplan=floorplan)
+    elements = Element.objects.filter(floorplan=floorplan)
     context = {
-        'restaurant': reservation.restaurant,
+        'restaurant': reservation.restaurant.to_dict(),
+        'tables': json.dumps([t.to_dict() for t in tables]),
+        'elements': json.dumps([e.to_dict() for e in elements]),
+        'floorplan': json.dumps(floorplan.to_dict()),
         'reserve_form': form,
         'edit_mode': True,
     }

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from restaurants.models import Restaurant
+from restaurants.models import Restaurant, Table
 from accounts.models import Customer
 from django.utils.timezone import localtime
 
@@ -62,8 +62,8 @@ class Reservation(models.Model):
             "table_numbers": list(self.table_numbers or []),
             "status": self.status,
             "cancellation_info":{
-                'reason':self.cancellation_reason.get('reason'),
-                'sender':self.cancellation_reason.get('sender')
+                'reason': self.cancellation_info.get('reason') if self.cancellation_info else None,
+                'sender': self.cancellation_info.get('sender') if self.cancellation_info else None
             },
             "restaurant": self.restaurant.name if self.restaurant else None,
             "restaurant_id": self.restaurant.id if self.restaurant else None,
@@ -75,3 +75,6 @@ class Reservation(models.Model):
             "created_at": localtime(self.created_at).isoformat() if self.created_at else None
         }
     
+class TableReservation(models.Model):
+    table = models.ForeignKey(Table, on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)

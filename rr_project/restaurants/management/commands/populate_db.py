@@ -3,7 +3,7 @@ from django.utils import timezone
 from datetime import datetime, time
 from decimal import Decimal
 from accounts.models import User, Customer, Owner
-from restaurants.models import Restaurant, Cuisine, Tags, Review, Element, Table
+from restaurants.models import Restaurant, Cuisine, Tags, Review, Element, Table, Floorplan
 from reservations.models import Reservation
 
 
@@ -276,17 +276,24 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(self.style.SUCCESS(f'[OK] Created review for {restaurant.name}'))
 
-        # Create Elements (decorative elements/fixtures) for each restaurant
+        # Create Floorplans and Elements for each restaurant
         try:
             element_names = ['Window', 'Bar', 'Entrance', 'Kitchen', 'Restroom', 'Storage']
             elements_created = 0
             for restaurant in restaurants:
+                floorplan = Floorplan.objects.create(
+                    restaurant=restaurant,
+                    width=Decimal('1000.00'),
+                    height=Decimal('600.00')
+                )
                 for idx, element_name in enumerate(element_names):  # All elements per restaurant
                     element = Element.objects.create(
                         name=element_name,
-                        x=50 + (idx * 100),
-                        y=50 + (idx * 75),
-                        restaurant=restaurant
+                        x=Decimal('50') + Decimal(idx * 100),
+                        y=Decimal('50') + Decimal(idx * 75),
+                        width=Decimal('100.00'),
+                        height=Decimal('80.00'),
+                        floorplan=floorplan
                     )
                     elements_created += 1
                     self.stdout.write(self.style.SUCCESS(f'[OK] Created element "{element_name}" for {restaurant.name}'))
@@ -305,6 +312,7 @@ class Command(BaseCommand):
 
             tables_created = 0
             for restaurant in restaurants:
+                floorplan = Floorplan.objects.get(restaurant=restaurant)
                 table_number = 1
                 for config in table_configs:
                     for i in range(config['count']):
@@ -313,7 +321,7 @@ class Command(BaseCommand):
                             capacity=config['capacity'],
                             x=50 + (i * 200),
                             y=100 + (config['capacity'] * 50),
-                            restaurant=restaurant,
+                            floorplan=floorplan,
                             status='available'
                         )
                         table_number += 1

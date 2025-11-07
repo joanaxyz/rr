@@ -6,6 +6,34 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from accounts.models import Customer, Owner
 
+class Floorplan(models.Model):
+    width = models.IntegerField(default=800, help_text="Floor plan canvas width in pixels")
+    height = models.IntegerField(default=500, help_text="Floor plan canvas height in pixels")
+    restaurant = models.OneToOneField(
+        'Restaurant',
+        on_delete=models.CASCADE,
+        related_name='floorplan',
+        null=True,
+        blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-updated_at']
+    
+    def __str__(self):
+        return f"Floorplan {self.id} ({self.width}x{self.height})"
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "width": self.width,
+            "height": self.height,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat()
+        }
+
 class Restaurant(models.Model):
     name = models.CharField(max_length=100)
     # Separated address components
@@ -115,10 +143,12 @@ class Restaurant(models.Model):
 
 class Element(models.Model):
     name = models.CharField(max_length = 50)
-    x = models.IntegerField()
-    y = models.IntegerField()
-    restaurant = models.ForeignKey(
-        Restaurant,
+    x = models.DecimalField(max_digits=10, decimal_places=2)
+    y = models.DecimalField(max_digits=10, decimal_places=2)
+    width = models.DecimalField(max_digits=10, decimal_places=2)
+    height = models.DecimalField(max_digits=10, decimal_places=2)
+    floorplan = models.ForeignKey(
+        Floorplan,
         on_delete=models.CASCADE,
         related_name='elements',
         null=True
@@ -129,28 +159,34 @@ class Element(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "x": float(self.x),
+            "y": float(self.y),
+            "width": float(self.width),
+            "height": float(self.height),
+            "floorplan_id": self.floorplan_id,
+            "created_at": self.created_at.isoformat()
+        }
 class Table(models.Model):
     number = models.IntegerField()
     capacity = models.IntegerField()
-    x = models.IntegerField()
-    y = models.IntegerField()
+    x = models.DecimalField(max_digits=10, decimal_places=2)
+    y = models.DecimalField(max_digits=10, decimal_places=2)
     TABLE_STATUS_CHOICES = [
-        ('available', 'Available'),
-        ('reserved', 'Reserved'),
-        ('occupied', 'Occupied'),
-        ('cleaning', 'Cleaning'),
-        ('unavailable', 'Unavailable'),
+        ('available', 'AVAILABLE'),
+        ('reserved', 'RESERVED'),
+        ('occupied', 'OCCUPIED'),
+        ('cleaning', 'CLEANING'),
+        ('unavailable', 'UNAVAILABLE'),
     ]
-    restaurant = models.ForeignKey(
-        Restaurant,
+    floorplan = models.ForeignKey(
+        Floorplan,
         on_delete=models.CASCADE,
         related_name='tables',
-        null=True
-    )
-    customer = models.OneToOneField(
-        Customer,
-        related_name='table',
-        on_delete=models.SET_NULL,
         null=True
     )
     status = models.CharField(
@@ -165,6 +201,18 @@ class Table(models.Model):
 
     def __str__(self):
         return self.number
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "number": self.number,
+            "capacity": self.capacity,
+            "x": float(self.x),
+            "y": float(self.y),
+            "status": self.status,
+            "floorplan_id": self.floorplan_id,
+            "created_at": self.created_at.isoformat(),
+        }
 
 class Cuisine(models.Model):
     name = models.CharField(max_length=100)
@@ -177,6 +225,12 @@ class Cuisine(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
 
 class Review(models.Model):
     customer = models.ForeignKey(
@@ -206,6 +260,16 @@ class Review(models.Model):
     def __str__(self):
         customer_name = self.customer.user.get_full_name() if self.customer else "Anonymous"
         return f'Review by {customer_name} for {self.restaurant.name}'
+    
+    def to_dict(self):
+        customer_name = self.customer.user.get_full_name() if self.customer else "Anonymous"
+        return {
+            "id": self.id,
+            "rating": float(self.rating),
+            "comment": self.comment,
+            "customer_name": customer_name,
+            "created_at": self.created_at
+        }
 
 
 class Tags(models.Model):
@@ -221,3 +285,9 @@ class Tags(models.Model):
         
     def __str__(self):
         return self.tag
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "tag": self.tag,
+        }

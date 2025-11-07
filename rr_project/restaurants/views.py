@@ -21,8 +21,8 @@ def restaurant_detail_view(request, restaurant_id):
     
     context = {
         'restaurant': restaurant.to_dict(),
-        'reviews': reviews,
-        'recent_reviews': recent_reviews,
+        'reviews': [r.to_dict() for r in reviews],
+        'recent_reviews': [r.to_dict() for r in recent_reviews],
         'avg_rating': avg_rating,
         'review_form': review_form,
     }
@@ -40,6 +40,8 @@ def restaurants_view(request):
     tags = Tags.objects.all().order_by('tag')
 
     restaurant_list = [r.to_dict() for r in restaurants]
+    cuisines_list = [c.to_dict() for c in cuisines]
+    tags_list = [t.to_dict() for t in tags]
 
     city = request.GET.get('city', '')
     guest_count = request.GET.get('guest_count', '')
@@ -56,8 +58,8 @@ def restaurants_view(request):
     
     context = {
         'restaurants': restaurant_list,
-        'cuisines': cuisines,
-        'tags': tags,
+        'cuisines': cuisines_list,
+        'tags': tags_list,
         'day': day,
         'city': city,
         'guest_count': guest_count,

@@ -10,9 +10,17 @@ from django.views.decorators.http import require_http_methods
 # @login_required
 def settings_view(request):
     user = request.user
+    user_dict = {
+        'id': user.id,
+        'username': user.username,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email,
+        'phone_number': user.phone_number,
+    }
     context = {
-        'user': user,
-        'user_profile': user
+        'user': user_dict,
+        'user_profile': user_dict
     }
     return render(request, 'settings/settings.html', context)
 

@@ -106,7 +106,7 @@ def send_reservation_cancellation_email(cancelled_reservation):
     subject = 'Reservation Cancellation - RR'
     template_html='emails/reservation_cancellation_customer.html'
 
-    if cancelled_reservation.cancellation_reason.get('sender') != 'CUSTOMER':
+    if cancelled_reservation.cancellation_info.get('sender') != 'CUSTOMER':
         template_html='emails/reservation_cancellation_host.html',
         
     return send_email(
@@ -150,6 +150,25 @@ def send_reservation_updated_email(reservation):
     return send_email(
         subject=subject,
         template_name='emails/reservation_updated.html',
+        context=context,
+        recipient_email=reservation.email
+    )
+
+def send_reservation_completion_email(reservation):
+    """
+    Send reservation completion thank you email to user
+    """
+    # Email context
+    context = {
+        'reservation': reservation,
+        'site_name': 'RR',
+    }
+    # Email subject
+    subject = 'Thank You for Your Visit - RR'
+    
+    return send_email(
+        subject=subject,
+        template_name='emails/reservation_completion.html',
         context=context,
         recipient_email=reservation.email
     )
