@@ -50,7 +50,7 @@ def reservation(request, restaurant_id):
 
 @login_required
 def reservation_management_view(request):
-    """Display, cancel, delete, or edit reservations"""
+    """Display, cancel, and restore reservations"""
     customer, created = Customer.objects.get_or_create(user=request.user)
     reservations = Reservation.objects.filter(customer=customer).order_by('-date')
 
@@ -62,29 +62,36 @@ def reservation_management_view(request):
 
             try:
                 reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
+                restaurant_name = reservation.restaurant.name if reservation.restaurant else "Unknown Restaurant"
                 reservation.status = 'CANCELLED'
                 reservation.cancellation_info = {
-                    'reason': reason,
-                    'sender': 'CUSTOMER'
+                    "reason": reason,
+                    "sender": request.user.username,
                 }
                 reservation.save()
+                messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
             except Exception:
                 messages.error(request, "Failed to cancel reservation. Please try again.")
             return redirect('reservations:reservation_management')
 
-        # Delete reservation
-        elif 'delete_reservation' in request.POST:
-            reservation_id = request.POST.get('delete_reservation')
+        # Restore reservation
+        elif 'restore_reservation' in request.POST:
+            reservation_id = request.POST.get('restore_reservation')
             try:
                 reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
-                reservation.delete()
-                messages.success(request, "Cancelled reservation has been deleted.")
+                if reservation.status == 'CANCELLED':
+                    reservation.status = 'PENDING'
+                    reservation.cancellation_info = {}
+                    reservation.save()
+                    messages.success(request, f"Reservation has been restored.")
+                else:
+                    messages.warning(request, "Only cancelled reservations can be restored.")
             except Exception:
-                messages.error(request, "Failed to delete reservation. Please try again.")
+                messages.error(request, "Failed to restore reservation. Please try again.")
             return redirect('reservations:reservation_management')
 
     context = {
-        'reservations': [r.to_dict() for r in reservations],
+        'reservations': reservations,
         'has_reservations': reservations.exists(),
     }
     return render(request, 'reservations/reservation_list.html', context)
