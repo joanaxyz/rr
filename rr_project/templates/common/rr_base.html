@@ -16,15 +16,15 @@
   <ul class="nav-links">
     <li><a href="{% url 'home:home' %}"
         class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+        
+    {% if user.role == 'OWNER' %}
     <li class="nav-manage {% if request.resolver_match.url_name in 'list,dashboard,reservations,tables,details' %}active-manage{% endif %}">
-      <a href="{% url 'manage_restaurant:list' %}" class="manage-label {% if request.resolver_match.url_name == 'list' %}active{% endif %}
-        {% if user.role != 'OWNER' %}hidden{% endif %}">
+      <a href="{% url 'manage_restaurant:list' %}" class="manage-label {% if request.resolver_match.url_name == 'list' %}active{% endif %}">
         Manage
         {% with restaurant_id=request.resolver_match.kwargs.restaurant_id|default:'' %}
         {% if restaurant_id %}<i class="fas fa-chevron-down manage-arrow"></i>{% endif %}
         {% endwith %}
       </a>
-      {% if user.role == 'OWNER' %}
       {% with restaurant_id=request.resolver_match.kwargs.restaurant_id|default:'' %}
       {% if restaurant_id %}
       <div class="manage-dropdown manage-dropdown-hover">
@@ -51,7 +51,7 @@
       </div>
       {% endif %}
       {% endwith %}
-      {% endif %}
+    {% endif %}
     </li>
     <li><a href="{% url 'restaurants:restaurants' %}"
         class="{% if request.resolver_match.url_name == 'restaurants' %}active{% endif %} navlast">Restaurants</a></li>
