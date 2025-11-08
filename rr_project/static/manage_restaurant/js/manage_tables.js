@@ -22,6 +22,7 @@ class FloorPlanManager {
     init() {
         this.loadFloorplanDimensions();
         this.setupEventListeners();
+        this.updateItemsList();
         this.render();
     }
 
@@ -546,7 +547,7 @@ class FloorPlanManager {
                 cardContent = `
                     <div class="element-card-header">
                         <span class="element-card-name">${item.name}</span>
-                        <span class="element-card-type">Rectangle</span>
+                        <span class="element-card-type">Element</span>
                     </div>
                     <div class="element-card-info">Size: ${item.width}px × ${item.height}px</div>
                     <div class="element-card-info">Position: ${item.x}px, ${item.y}px</div>
@@ -561,7 +562,8 @@ class FloorPlanManager {
             `;
 
             card.querySelector('.btn-edit').addEventListener('click', () => {
-                this.selectItem(item.id, item._type);
+                console.log('item id:', item.id, 'type:', item._type);
+                this.selectItem(String(item.id), item._type);
                 this.updateItemsList();
             });
 
