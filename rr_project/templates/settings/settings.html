@@ -194,7 +194,7 @@
                     <span class="status-label">Current Role:</span>
                     <span class="status-badge role-{{ user.role|lower }}">
                         <i class="fas fa-circle"></i>
-                        {{ user.get_role_display }}
+                        {{ user.role }}
                     </span>
                 </div>
                 <hr class="divider">
@@ -224,14 +224,14 @@
                     <span class="status-label">Current Role:</span>
                     <span class="status-badge role-{{ user.role|lower }}">
                         <i class="fas fa-circle"></i>
-                        {{ user.get_role_display }}
+                        {{ user.role }}
                     </span>
                 </div>
                 <hr class="divider">
                 <h4 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Verification Status</h4>
-                <div class="verification-status {% if owner.is_verified %}verified{% else %}pending{% endif %}">
+                <div class="verification-status {% if user.owner_profile.is_verified %}verified{% else %}pending{% endif %}">
                     <div class="status-icon">
-                        {% if owner.is_verified %}
+                        {% if user.owner_profile.is_verified %}
                         <i class="fas fa-shield-halved"></i>
                         {% else %}
                         <i class="fas fa-clock"></i>
@@ -239,16 +239,16 @@
                     </div>
                     <div class="status-info">
                         <h4>
-                            {% if owner.is_verified %}
+                            {% if user.owner_profile.is_verified %}
                             <span class="status-badge role-verified"><i class="fas fa-check-circle"></i> Verified Owner</span>
                             {% else %}
                             <span class="status-badge role-pending"><i class="fas fa-exclamation-circle"></i> Verification Pending</span>
                             {% endif %}
                         </h4>
-                        <p>{% if owner.is_verified %}Your account is verified. You can now manage your restaurants.{% else %}We're reviewing your documents. This usually takes 1-2 business days.{% endif %}</p>
+                        <p>{% if user.owner_profile.is_verified %}Your account is verified. You can now manage your restaurants.{% else %}We're reviewing your documents. This usually takes 1-2 business days.{% endif %}</p>
                     </div>
                 </div>
-                {% if not owner.is_verified %}
+                {% if not user.owner_profile.is_verified %}
                 <hr class="divider">
                 <div class="verification-documents">
                     <h4>Submitted Documents</h4>

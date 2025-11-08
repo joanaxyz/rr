@@ -17,6 +17,7 @@ def settings_view(request):
         'last_name': user.last_name,
         'email': user.email,
         'phone_number': user.phone_number,
+        'role': user.role
     }
     context = {
         'user': user_dict,
