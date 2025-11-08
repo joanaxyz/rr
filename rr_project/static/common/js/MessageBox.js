@@ -195,6 +195,7 @@ class MessageBox {
         this.btn_primary.onclick = () => {
             this.hide();
             if (callback) callback();
+            window.LoadingOverlay.show();
         };
         this.btn.onclick = () => {
             this.hide();
@@ -240,6 +241,7 @@ class MessageBox {
                 
                 this.hide();
                 resolve(value);
+                window.LoadingOverlay.show();
             };
 
             this.btn.onclick = () => {
