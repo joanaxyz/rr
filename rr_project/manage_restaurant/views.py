@@ -43,7 +43,7 @@ def manage_reservations(request, restaurant_id):
                 table = Table.objects.get(floorplan=restaurant.floorplan, number=number)
                 table.status = 'AVAILABLE'
                 table.save()
-                table_reservation = TableReservation.objects.get(
+                table_reservation = TableReservation.objects.filter(
                     table=table,
                     reservation=reservation
                 )
@@ -63,7 +63,7 @@ def manage_reservations(request, restaurant_id):
                 table = Table.objects.get(floorplan=restaurant.floorplan, number=number)
                 table.status = 'AVAILABLE'
                 table.save()
-                table_reservation = TableReservation.objects.get(
+                table_reservation = TableReservation.objects.filter(
                     table=table,
                     reservation=reservation
                 )
