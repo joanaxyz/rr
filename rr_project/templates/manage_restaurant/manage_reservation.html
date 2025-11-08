@@ -18,11 +18,11 @@
     </div>
 </div>
 
-<!-- Main Management Container -->
+<!-- Main Container -->
 <div class="manage-restaurant-container">
 
   <!-- Reservations Section -->
-  <section class="manage-section" id="reservations-section" data-section="reservations">
+  <section class="manage-section" id="reservations-section">
 
     <div class="section-content">
       <div class="content-card">
@@ -30,12 +30,13 @@
           <h2>Reservation List</h2>
         </div>
         
+        <!-- Filters -->
         <div class="filters-section">
           <div class="filters-container">
             <div class="filter-group filter-primary">
               <div class="filter-item">
                 <label for="statusFilter" class="filter-label">Status</label>
-                <select class="filter-select" id="statusFilter" title="Filter by status">
+                <select class="filter-select" id="statusFilter">
                   <option value="">All Status</option>
                   <option value="pending">Pending</option>
                   <option value="confirmed">Confirmed</option>
@@ -46,29 +47,29 @@
 
               <div class="filter-item">
                 <label for="dateFromFilter" class="filter-label">From Date</label>
-                <input type="date" class="filter-input" id="dateFromFilter" title="Filter from date">
+                <input type="date" class="filter-input" id="dateFromFilter">
               </div>
 
               <div class="filter-item">
                 <label for="dateToFilter" class="filter-label">To Date</label>
-                <input type="date" class="filter-input" id="dateToFilter" title="Filter to date">
+                <input type="date" class="filter-input" id="dateToFilter">
               </div>
             </div>
 
             <div class="filter-group filter-secondary">
               <div class="filter-item">
                 <label for="guestCountFilter" class="filter-label">Guest Count</label>
-                <input type="number" class="filter-input" id="guestCountFilter" min="1" placeholder="Min guests" title="Filter by number of guests">
+                <input type="number" class="filter-input" id="guestCountFilter" min="1" placeholder="Min guests">
               </div>
 
               <div class="filter-item">
                 <label for="nameSearchFilter" class="filter-label">Guest Name</label>
-                <input type="text" class="filter-input" id="nameSearchFilter" placeholder="Search name..." title="Search by guest name">
+                <input type="text" class="filter-input" id="nameSearchFilter" placeholder="Search name...">
               </div>
 
               <div class="filter-item">
                 <label for="emailSearchFilter" class="filter-label">Email</label>
-                <input type="email" class="filter-input" id="emailSearchFilter" placeholder="Search email..." title="Search by email">
+                <input type="email" class="filter-input" id="emailSearchFilter" placeholder="Search email...">
               </div>
             </div>
 
@@ -78,8 +79,7 @@
           </div>
         </div>
 
-
-
+        <!-- Reservation Table -->
         <div class="card-body">
           {% if has_reservations %}
           <table class="reservation-table">
@@ -98,12 +98,20 @@
             </thead>
             <tbody>
               {% for reservation in reservations %}
-              <tr>
+              <tr 
+                data-name="{{ reservation.name }}"
+                data-email="{{ reservation.customer.user.email }}"
+                data-guest-count="{{ reservation.guest_count }}"
+                data-status="{{ reservation.status }}"
+                data-date="{{ reservation.date }}"
+                data-time="{{ reservation.time }}"
+                data-tables="{{ reservation.table_numbers|join:',' }}"
+                data-created-at="{{ reservation.created_at }}"
+                data-notes="{{ reservation.notes|default:'' }}"
+                data-cancellation-reason="{{ reservation.cancellation_info.reason|default:'' }}"
+              >
                 <td>{{ forloop.counter }}</td>
-                <td>
-                  {{ reservation.name }}
-                  </a>
-                </td>
+                <td>{{ reservation.name }}</td>
                 <td>{{ reservation.date }}</td>
                 <td>{{ reservation.time }}</td>
                 <td>{{ reservation.guest_count }}</td>
@@ -122,23 +130,23 @@
                     <div class="action-buttons">
                       {% if reservation.status == 'CONFIRMED' %}
                       <button type="button" class="complete-btn" 
-                      onclick="completeReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Complete</button>
+                        onclick="completeReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Complete</button>
                       {% elif reservation.status == 'COMPLETED' %}
                       <button type="button" class="delete-btn" 
-                      onclick="deleteReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Delete</button>
+                        onclick="deleteReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Delete</button>
                       {% elif reservation.status == 'PENDING' %}
                       <button type="button" class="confirm-btn" 
-                      onclick="confirmReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm</button>
+                        onclick="confirmReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm</button>
                       <button type="button" class="cancel-btn"
-                      onclick="cancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Cancel</button>
+                        onclick="cancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Cancel</button>
                       {% else %}
                       <button type="button" class="delete-btn"
-                      onclick="confirmCancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm Cancellation</button>
+                        onclick="confirmCancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm Cancellation</button>
                       {% endif %}
                   </form>
                 </td>
                 <td>
-                  <button type="button" class="info-btn" data-reservation-id="{{ reservation.id }}" onclick="openReservationInfo(this)">
+                  <button type="button" class="info-btn" onclick="openReservationInfo(this)">
                     <i class="fa-solid fa-circle-info"></i>
                   </button>
                 </td>
@@ -154,8 +162,8 @@
             <p>No reservations to display</p>
             <small>Reservations will appear here when customers make bookings</small>
           </div>
+          {% endif %}
         </div>
-        {% endif %}
       </div>
     </div>
   </section>
@@ -171,54 +179,24 @@
       </div>
       <div class="modal-body">
         <div class="reservation-info-grid">
-          <div class="info-item">
-            <label class="info-label">Guest Name</label>
-            <p class="info-value" id="infoName">-</p>
-          </div>
-          <div class="info-item">
-            <label class="info-label">Email</label>
-            <p class="info-value" id="infoEmail">-</p>
-          </div>
-          <div class="info-item">
-            <label class="info-label">Guest Count</label>
-            <p class="info-value" id="infoGuestCount">-</p>
-          </div>
-          <div class="info-item">
-            <label class="info-label">Status</label>
-            <p class="info-value" id="infoStatus">-</p>
-          </div>
-          <div class="info-item">
-            <label class="info-label">Reservation Date</label>
-            <p class="info-value" id="infoDate">-</p>
-          </div>
-          <div class="info-item">
-            <label class="info-label">Reservation Time</label>
-            <p class="info-value" id="infoTime">-</p>
-          </div>
-          <div class="info-item">
-            <label class="info-label">Tables</label>
-            <p class="info-value" id="infoTables">-</p>
-          </div>
-          <div class="info-item">
-            <label class="info-label">Booked At</label>
-            <p class="info-value" id="infoCreatedAt">-</p>
-          </div>
-          <div class="info-item full-width">
-            <label class="info-label">Notes</label>
-            <p class="info-value" id="infoNotes">-</p>
-          </div>
-          <div class="info-item full-width">
-            <label class="info-label">Cancellation Reason</label>
-            <p class="info-value" id="infoCancellationReason">-</p>
-          </div>
+          <div class="info-item"><label>Guest Name</label><p id="infoName">-</p></div>
+          <div class="info-item"><label>Email</label><p id="infoEmail">-</p></div>
+          <div class="info-item"><label>Guest Count</label><p id="infoGuestCount">-</p></div>
+          <div class="info-item"><label>Status</label><p id="infoStatus">-</p></div>
+          <div class="info-item"><label>Reservation Date</label><p id="infoDate">-</p></div>
+          <div class="info-item"><label>Reservation Time</label><p id="infoTime">-</p></div>
+          <div class="info-item"><label>Tables</label><p id="infoTables">-</p></div>
+          <div class="info-item"><label>Booked At</label><p id="infoCreatedAt">-</p></div>
+          <div class="info-item full-width"><label>Notes</label><p id="infoNotes">-</p></div>
+          <div class="info-item full-width"><label>Cancellation Reason</label><p id="infoCancellationReason">-</p></div>
         </div>
       </div>
     </div>
   </div>
+
 </div>
 {% endblock %}
 
 {% block rr_base_js %}
-<script src="{% static '/manage_restaurant/js/info_modal.js' %}"></script>
 <script src="{% static '/manage_restaurant/js/manage_reservation.js' %}"></script>
 {% endblock %}
