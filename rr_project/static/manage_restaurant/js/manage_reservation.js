@@ -96,3 +96,29 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("reservationModal").style.display = "none";
   }
 });
+
+
+// ------------------------- Floor Plan -------------------------
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const floorPlan = document.querySelector('.floor-plan');
+    if (floorPlan) {
+        loadFloorplanDimensions(floorPlan);
+        FloorPlanUtils.initializeFloorPlan(floorPlan);
+    }
+});
+
+function loadFloorplanDimensions(floorPlanElement) {
+    const data = JSON.parse(floorPlanElement.dataset.floorplan);
+    const width = data.width || 900;
+    const height = data.height || 600;
+    floorPlanElement.style.width = width + 'px';
+    floorPlanElement.style.height = height + 'px';
+    floorPlanElement.style.minWidth = width + 'px';
+    floorPlanElement.style.minHeight = height + 'px';
+    
+    const container = floorPlanElement.parentElement;
+    if (container) {
+        container.style.minHeight = Math.min(height, 500) + 'px';
+    }
+}

@@ -18,7 +18,9 @@ def manage_reservations(request, restaurant_id):
     owner = get_object_or_404(Owner, user=request.user)
     restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
     reservations = Reservation.objects.filter(restaurant=restaurant)
-    
+    floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
+    tables = Table.objects.filter(floorplan=floorplan)
+    elements = Element.objects.filter(floorplan=floorplan)
     if request.method == 'POST':
         data = request.POST
         reservation_id = data.get('reservation_id')
@@ -77,6 +79,9 @@ def manage_reservations(request, restaurant_id):
         "restaurant": restaurant.to_dict(),
         "reservations": [r.to_dict() for r in reservations],
         "has_reservations": reservations.exists(),
+        'floorplan': json.dumps(floorplan.to_dict()),
+        "tables": json.dumps([t.to_dict() for t in tables]),
+        "elements": json.dumps([e.to_dict() for e in elements])
     }
     return render(request, "manage_restaurant/manage_reservation.html", context)
 

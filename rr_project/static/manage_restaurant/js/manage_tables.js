@@ -12,8 +12,8 @@ class FloorPlanManager {
         this.restaurant_id = this.floorPlan.dataset.restaurant_id;
         this.floorElements = JSON.parse(this.floorPlan.dataset.elements || '[]');
         this.nextTableNumber = Math.max(0, ...this.tables.map(t => t.number)) + 1;
-        this.canvasWidth = 800;
-        this.canvasHeight = 500;
+        this.canvasWidth = 900;
+        this.canvasHeight = 600;
         console.log(this.tables);
         console.log(this.floorElements);
         this.init();
@@ -28,7 +28,7 @@ class FloorPlanManager {
     loadFloorplanDimensions() {
         const data = JSON.parse(this.floorPlan.dataset.floorplan);
         console.log(data.width);
-        this.canvasWidth = data.width || 1000;
+        this.canvasWidth = data.width || 900;
         this.canvasHeight = data.height || 600;
         document.getElementById('canvas-width').value = this.canvasWidth;
         document.getElementById('canvas-height').value = this.canvasHeight;
@@ -40,6 +40,13 @@ class FloorPlanManager {
         this.floorPlan.style.height = this.canvasHeight + 'px';
         this.floorPlan.style.minWidth = this.canvasWidth + 'px';
         this.floorPlan.style.minHeight = this.canvasHeight + 'px';
+        
+        const container = this.floorPlan.closest('.floor-plan-container');
+        if (container) {
+            container.style.height = (this.canvasHeight + 16) + 'px';
+            container.style.maxHeight = (this.canvasHeight + 16) + 'px';
+            container.style.minHeight = (this.canvasHeight + 16) + 'px';
+        }
     }
 
     setupEventListeners() {

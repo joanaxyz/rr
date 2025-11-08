@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_reservation.css' %}">
 <link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/floor-plan-common.css' %}">
 {% endblock %}
 
 {% block rr_base_content %}
@@ -30,6 +31,31 @@
           <h2>Reservation List</h2>
         </div>
         
+        <!-- Floor Plan Section -->
+        <div class="floor-plan-wrapper">
+          <div class="floor-plan-header">
+            <h3>Floor Plan</h3>
+            <p class="floor-plan-subtitle">Visual representation of reserved tables</p>
+          </div>
+          <div class="floor-plan-container reservation-wrapper">
+            <div class="floor-plan" id="floor-plan-reservation" data-restaurant_id='{{ restaurant_id }}'
+                data-tables='{{ tables|safe }}' data-elements='{{ elements|safe }}'
+                data-floorplan='{{ floorplan|safe }}'>
+              <!-- Floor plan will be rendered here -->
+            </div>
+          </div>
+          <div class="floor-plan-legend">
+            <div class="legend-item">
+              <div class="legend-color available"></div>
+              <span>Available</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color reserved"></div>
+              <span>Reserved</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Filters -->
         <div class="filters-section">
           <div class="filters-container">
@@ -198,5 +224,7 @@
 {% endblock %}
 
 {% block rr_base_js %}
+
+<script src="{% static 'common/js/floor-plan-common.js' %}"></script>
 <script src="{% static '/manage_restaurant/js/manage_reservation.js' %}"></script>
 {% endblock %}

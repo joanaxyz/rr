@@ -186,9 +186,6 @@ class Table(models.Model):
     TABLE_STATUS_CHOICES = [
         ('available', 'AVAILABLE'),
         ('reserved', 'RESERVED'),
-        ('occupied', 'OCCUPIED'),
-        ('cleaning', 'CLEANING'),
-        ('unavailable', 'UNAVAILABLE'),
     ]
     floorplan = models.ForeignKey(
         Floorplan,

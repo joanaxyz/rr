@@ -795,3 +795,118 @@ body {
   content: "-";
   color: var(--color-gray-400);
 }
+
+/* ============ FLOOR PLAN SECTION ============ */
+
+.floor-plan-wrapper {
+  background: var(--color-white);
+  border: var(--border-1) solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-base) var(--ease-in-out);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: var(--space-8);
+}
+
+.floor-plan-header {
+  padding: var(--space-6) var(--space-8);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 250, 245, 0.5) 0%,
+    rgba(255, 248, 240, 0.5) 100%
+  );
+  border-bottom: var(--border-1) solid var(--color-gray-200);
+}
+
+.floor-plan-header h3 {
+  font-size: var(--font-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-1) 0;
+  letter-spacing: -0.25px;
+}
+
+.floor-plan-subtitle {
+  font-size: var(--font-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+  font-weight: var(--font-weight-normal);
+}
+
+.floor-plan-container {
+  padding: var(--space-8);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: var(--border-1) solid var(--color-gray-200);
+  position: relative;
+  overflow: auto;
+}
+
+.floor-plan {
+  position: relative;
+  width: 800px;
+  height: 500px;
+  background: var(--color-white);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  background-image: 
+    linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent);
+  background-size: 40px 40px;
+  flex-shrink: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.floor-plan:empty::before {
+  content: "Floor plan will be displayed here";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-gray-400);
+  font-size: var(--font-sm);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.floor-plan-legend {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  background: var(--gray-50);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200);
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.legend-color.available {
+  background: var(--table-available);
+}
+
+.legend-color.reserved {
+  background: var(--table-reserved);
+}
+
+.legend-item span {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}

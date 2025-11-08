@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function loadFloorplanDimensions(floorPlanElement) {
     const data = JSON.parse(floorPlanElement.dataset.floorplan);
-    const width = data.width || 800;
-    const height = data.height || 500;
+    const width = data.width || 900;
+    const height = data.height || 600;
+    console.log(width);
     floorPlanElement.style.width = width + 'px';
     floorPlanElement.style.height = height + 'px';
     floorPlanElement.style.minWidth = width + 'px';
