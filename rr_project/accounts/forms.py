@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from .models import User
+from owner_verification.models import Owner
+
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(
@@ -66,3 +68,18 @@ class CustomAuthenticationForm(AuthenticationForm):
                 self.confirm_login_allowed(user)
                 self.user_cache = user
         return self.cleaned_data
+
+
+class OwnerForm(forms.ModelForm):
+    class Meta:
+        model = Owner
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make these fields optional
+        for field_name in [
+            'user', 'govt_full_name', 'government_id_type',
+            'government_id_number', 'status'
+        ]:
+            self.fields[field_name].required = False

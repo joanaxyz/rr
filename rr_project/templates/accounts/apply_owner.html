@@ -1,0 +1,123 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/apply_owner.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="owner-form-container">
+    <h2>Owner Verification Form</h2>
+
+    {% if first_error %}
+      <div class="alert alert-danger">
+        {{ first_error }}
+      </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" id="ownerForm">
+        {% csrf_token %}
+        
+        <!-- Full Name -->
+        <div class="form-group">
+            <label for="id_govt_full_name">Full Name</label>
+            {{ form.govt_full_name }}
+        </div>
+
+        <!-- Government ID Type -->
+        <div class="form-group">
+            <label for="id_government_id_type">Government ID Type</label>
+            {{ form.government_id_type }}
+        </div>
+
+        <!-- Government ID Number -->
+        <div class="form-group">
+            <label for="id_government_id_number">Government ID Number</label>
+            {{ form.government_id_number }}
+        </div>
+
+        <!-- Business Address -->
+        <div class="form-group">
+            <label for="id_business_address">Business Address</label>
+            {{ form.business_address }}
+        </div>
+
+        <!-- Business Email -->
+        <div class="form-group">
+            <label for="id_business_email">Business Email (optional)</label>
+            {{ form.business_email }}
+        </div>
+
+        <!-- Business License Upload -->
+        <div class="form-group">
+            <label for="id_business_license">Business License</label>
+            {{ form.business_license }}
+            <img id="preview_business_license" class="preview-img" style="display:none; margin-top:10px;" />
+        </div>
+
+        <!-- Government ID Front -->
+        <div class="form-group">
+            <label for="id_government_id_front">Government ID (Front)</label>
+            {{ form.government_id_front }}
+            <img id="preview_govt_front" class="preview-img" style="display:none; margin-top:10px;" />
+        </div>
+
+        <!-- Government ID Back -->
+        <div class="form-group">
+            <label for="id_government_id_back">Government ID (Back)</label>
+            {{ form.government_id_back }}
+            <img id="preview_govt_back" class="preview-img" style="display:none; margin-top:10px;" />
+        </div>
+
+        <!-- Proof of Ownership -->
+        <div class="form-group">
+            <label for="id_proof_of_ownership">Proof of Ownership</label>
+            {{ form.proof_of_ownership }}
+            <img id="preview_proof" class="preview-img" style="display:none; margin-top:10px;" />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group" style="text-align:center; margin-top:20px;">
+            <button type="submit" class="btn btn-primary">Submit Verification</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+<script>
+    // Function to preview selected image files
+    function previewFile(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+                preview.style.maxWidth = '200px';
+                preview.style.borderRadius = '8px';
+                preview.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    }
+
+    // Attach event listeners for file previews
+    document.getElementById('id_business_license')?.addEventListener('change', function() {
+        previewFile(this, 'preview_business_license');
+    });
+    document.getElementById('id_government_id_front')?.addEventListener('change', function() {
+        previewFile(this, 'preview_govt_front');
+    });
+    document.getElementById('id_government_id_back')?.addEventListener('change', function() {
+        previewFile(this, 'preview_govt_back');
+    });
+    document.getElementById('id_proof_of_ownership')?.addEventListener('change', function() {
+        previewFile(this, 'preview_proof');
+    });
+</script>
+{% endblock %}
