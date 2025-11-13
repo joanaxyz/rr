@@ -1,5 +1,7 @@
 // Open/Close Invite Modal
 const inviteModal = document.getElementById('inviteModal');
+const form = document.querySelector('#inviteModal form');
+
 document.getElementById('inviteStaffBtn').addEventListener('click', () => {
     inviteModal.style.display = 'flex';
 });
@@ -10,12 +12,19 @@ document.getElementById('closeInviteModal').addEventListener('click', () => {
 // Send Invite
 document.getElementById('sendInviteBtn').addEventListener('click', () => {
     const email = document.getElementById('inviteEmail').value;
-    const role = document.getElementById('inviteRole').value;
     if (!email) {
         alert('Please enter an email');
         return;
     }
-    alert(`Invite sent to ${email} as ${role}`);
     inviteModal.style.display = 'none';
     document.getElementById('inviteEmail').value = '';
+    form.submit();
 });
+
+// Update hidden action input based on selected role
+document.getElementById('inviteRole').addEventListener('change', (event) => {
+    const selectedRole = event.target.value;
+    const actionInput = inviteModal.querySelector('input[name="action"]');
+    actionInput.value = selectedRole;
+});
+

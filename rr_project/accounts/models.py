@@ -10,9 +10,8 @@ import string
 class UserRole(models.TextChoices):
     CUSTOMER = 'CUSTOMER', 'Customer'
     OWNER = 'OWNER', 'Owner'
-    HOST = 'Host', 'host'
-    SERVER = 'Server', 'server'
-    MANAGER = 'Manager', 'manager'
+    HOST = 'HOST', 'Host'
+    MANAGER = 'MANAGER', 'Manager'
 
 
 class User(AbstractUser):

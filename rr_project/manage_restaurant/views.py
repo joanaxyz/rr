@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from restaurants.models import Restaurant, Table, Element, Floorplan
 from reservations.models import Reservation, TableReservation
-from accounts.models import Owner
+from accounts.models import Owner, User, Host, Manager
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from email_service.views import send_reservation_cancellation_email, send_reservation_confirmation_email, send_reservation_completion_email
@@ -102,7 +102,31 @@ def manage_tables(request, restaurant_id):
 @login_required
 def manage_staffs(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner__user=request.user)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        email = request.POST.get('email')
+        if action and email:
+            try:
+                user = User.objects.get(email=email)
+                if action == 'host':
+                    user.role = 'HOST'
+                    user.save()
+                    Host.objects.get_or_create(user=user)
+                    messages.success(request, f"{user.email} has been added as Host.")
+                elif action == 'manager':
+                    user.role = 'MANAGER'
+                    user.save()
+                    Manager.objects.get_or_create(user=user)
+                    messages.success(request, f"{user.email} has been added as Manager.")
+                else:
+                    messages.error(request, "Invalid role selected.")
+            except User.DoesNotExist:
+                messages.error(request, f"No user found with email: {email}")
+        else:
+            messages.error(request, "Email and role are required to invite staff.")
     return render(request, "manage_restaurant/manage_staffs.html")
+
 @login_required
 def manage_details(request, restaurant_id):
     owner = get_object_or_404(Owner, user=request.user)
