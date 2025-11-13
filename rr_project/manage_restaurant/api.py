@@ -109,4 +109,3 @@ def api_save_floor_plan(request):
         return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
-

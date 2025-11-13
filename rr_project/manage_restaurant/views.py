@@ -108,21 +108,21 @@ def manage_staffs(request, restaurant_id):
         email = request.POST.get('email')
         if action and email:
             try:
-                user = User.objects.get(email=email)
-                if action == 'host':
-                    user.role = 'HOST'
-                    user.save()
-                    Host.objects.get_or_create(user=user)
-                    messages.success(request, f"{user.email} has been added as Host.")
-                elif action == 'manager':
-                    user.role = 'MANAGER'
-                    user.save()
-                    Manager.objects.get_or_create(user=user)
-                    messages.success(request, f"{user.email} has been added as Manager.")
-                else:
-                    messages.error(request, "Invalid role selected.")
-            except User.DoesNotExist:
-                messages.error(request, f"No user found with email: {email}")
+            #     user = User.objects.get(email=email)
+            #     if action == 'host':
+            #         user.role = 'HOST'
+            #         user.save()
+            #         Host.objects.get_or_create(user=user)
+            #         messages.success(request, f"{user.email} has been added as Host.")
+            #     elif action == 'manager':
+            #         user.role = 'MANAGER'
+            #         user.save()
+            #         Manager.objects.get_or_create(user=user)
+            #         messages.success(request, f"{user.email} has been added as Manager.")
+            #     else:
+            #         messages.error(request, "Invalid role selected.")
+            # except User.DoesNotExist:
+            #     messages.error(request, f"No user found with email: {email}")
         else:
             messages.error(request, "Email and role are required to invite staff.")
     return render(request, "manage_restaurant/manage_staffs.html")
