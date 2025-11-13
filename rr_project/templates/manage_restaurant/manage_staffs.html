@@ -76,11 +76,12 @@
         </button>
       </div>
       <div class="modal-body">
+        <input type="hidden" name="action"></input>
         <label for="inviteEmail">Staff Email</label>
         <input type="email" id="inviteEmail" placeholder="Enter staff email">
         <label for="inviteRole">Role</label>
         <select id="inviteRole">
-          <option value="staff">Staff</option>
+          <option value="host">Host</option>
           <option value="manager">Manager</option>
         </select>
         <button class="btn btn-primary" id="sendInviteBtn">Send Invite</button>

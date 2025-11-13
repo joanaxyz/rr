@@ -4,7 +4,7 @@ from django.db import models
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
-from accounts.models import Customer, Owner
+from accounts.models import Customer, Owner, Manager, Host
 
 class Floorplan(models.Model):
     width = models.IntegerField(default=800, help_text="Floor plan canvas width in pixels")
@@ -55,6 +55,7 @@ class Restaurant(models.Model):
         related_name='restaurants',
         blank=True
     )
+ 
     price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Minimum food price")
     price_max = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Maximum food price")
     image = models.ImageField(upload_to='restaurants/', blank=True, null=True)

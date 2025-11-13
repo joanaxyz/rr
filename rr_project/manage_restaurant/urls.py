@@ -9,6 +9,7 @@ urlpatterns = [
     path("<int:restaurant_id>/reservations/", views.manage_reservations, name="reservations"),
     path("<int:restaurant_id>/tables/", views.manage_tables, name="tables"),
     path("<int:restaurant_id>/details/", views.manage_details, name="details"),
-    
+    path("<int:restaurant_id>/staffs/", views.manage_staffs, name="staffs"),
+
     path("api/save_floor_plan/", api.api_save_floor_plan, name="save_floor_plan"),
 ]

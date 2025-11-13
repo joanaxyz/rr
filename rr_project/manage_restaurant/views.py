@@ -87,8 +87,7 @@ def manage_reservations(request, restaurant_id):
 
 @login_required
 def manage_tables(request, restaurant_id):
-    owner = get_object_or_404(Owner, user=request.user)
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner__user=request.user)
     floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
     tables = Table.objects.filter(floorplan=floorplan)
     elements = Element.objects.filter(floorplan=floorplan)
@@ -100,6 +99,10 @@ def manage_tables(request, restaurant_id):
     }
     return render(request, "manage_restaurant/manage_tables.html", context)
 
+@login_required
+def manage_staffs(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner__user=request.user)
+    return render(request, "manage_restaurant/manage_staffs.html")
 @login_required
 def manage_details(request, restaurant_id):
     owner = get_object_or_404(Owner, user=request.user)
