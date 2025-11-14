@@ -8,9 +8,6 @@ document.addEventListener('DOMNodeInserted', (e) => {
     if (e.target.tagName === 'FORM' || e.target.querySelector?.('form')) {
         attachSubmitListeners(e.target);
     }
-    if (e.target.classList?.contains('messagebox') || e.target.querySelector?.('.messagebox')) {
-        attachMessageboxPrimaryButtonListeners(e.target);
-    }
 }, true);
 
 function attachSubmitListeners(container) {

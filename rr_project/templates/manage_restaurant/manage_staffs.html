@@ -76,13 +76,14 @@
         </button>
       </div>
       <form method = "post" class="modal-body">
-        <input type="hidden" name="action"></input>
+        <input type="hidden" name="modalOpened">
+        {% csrf_token %}
         <label for="inviteEmail">Staff Email</label>
         <input type="email" name="email" id="inviteEmail" placeholder="Enter staff email">
         <label for="inviteRole">Role</label>
-        <select id="inviteRole">
-          <option value="host">Host</option>
-          <option value="manager">Manager</option>
+        <select id="inviteRole" name="role">
+          <option value="HOST">Host</option>
+          <option value="MANAGER">Manager</option>
         </select>
         <button type="submit" class="btn btn-primary" id="sendInviteBtn">Send Invite</button>
       </form>
@@ -93,5 +94,5 @@
 {% endblock %}
 
 {% block rr_base_js %}
-<script src="{% static 'manage_restaurant/js/manage_staff.js' %}"></script>
+<script src="{% static 'manage_restaurant/js/manage_staffs.js' %}"></script>
 {% endblock %}

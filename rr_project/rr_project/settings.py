@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'settings',
     'owner_verification',
     'manage_restaurant',
+    'email_service',
 ]
 
 MIDDLEWARE = [

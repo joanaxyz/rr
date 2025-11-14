@@ -38,21 +38,27 @@
           <i class="fas fa-calendar-check"></i>
           <span>Reservations</span>
         </a>
+        {% if role == 'OWNER' or role == 'MANAGER' %}
         <a href="{% url 'manage_restaurant:tables' restaurant_id %}" 
            class="manage-dropdown-item {% if request.resolver_match.url_name == 'tables' %}active{% endif %}">
           <i class="fas fa-table"></i>
           <span>Tables</span>
         </a>
+        {% endif %}
+        {% if role == 'OWNER' or role == 'MANAGER' %}
         <a href="{% url 'manage_restaurant:staffs' restaurant_id %}" 
            class="manage-dropdown-item {% if request.resolver_match.url_name == 'staffs' %}active{% endif %}">
           <i class="fas fa-user"></i>
           <span>Staffs</span>
         </a>
+        {% endif %}
+        {% if role == 'OWNER' %}
         <a href="{% url 'manage_restaurant:details' restaurant_id %}" 
            class="manage-dropdown-item {% if request.resolver_match.url_name == 'details' %}active{% endif %}">
           <i class="fas fa-info-circle"></i>
           <span>Details</span>
         </a>
+        {% endif %}
       </div>
       {% endif %}
       {% endwith %}

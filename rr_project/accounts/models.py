@@ -65,7 +65,6 @@ class Owner(models.Model):
         return f"Owner: {self.user.email or self.user.username}"
 class Host(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='host_profile')
-
     def __str__(self):
         return f"Host: {self.user.email or self.user.username}"
 

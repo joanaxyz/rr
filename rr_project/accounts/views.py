@@ -18,7 +18,9 @@ from django.contrib.auth.hashers import check_password
 def register_view(request):
     """User registration view"""
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        post_data = request.POST.copy()
+        post_data['role'] = 'CUSTOMER'
+        form = CustomUserCreationForm(post_data)
         if form.is_valid():
             try:
                 # Save user but mark as inactive until email verification
@@ -54,7 +56,9 @@ def register_view(request):
                 if first_error_list:
                     first_error = first_error_list[0]
     else:
-        form = CustomUserCreationForm()
+        form = CustomUserCreationForm(initial={
+            'role': 'CUSTOMER'
+        })
         first_error = None
     
     return render(request, 'accounts/register.html', {
@@ -62,6 +66,59 @@ def register_view(request):
         'first_error': first_error
     })
 
+def register_staff_view(request, email, role, restaurant_id):
+    """User registration view"""
+    first_error = None
+    
+    if request.method == 'POST':
+        post_data = request.POST.copy()
+        post_data['username'] = email
+        post_data['role'] = role
+        form = CustomUserCreationForm(post_data)
+        if form.is_valid():
+            try:
+                # Save user but mark as inactive until email verification
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
+                
+                # Generate verification token
+                user.generate_verification_token()
+                
+                from email_service.views import send_staff_verification_email
+                # Send verification email
+                if send_staff_verification_email(user, request, restaurant_id):
+                    messages.success(
+                        request, 
+                        'Registration successful! A verification email has been sent to your email address. '
+                        'Please check your email and click the verification link to activate your account.'
+                    )
+                    return redirect('accounts:login')
+                else:
+                    messages.error(request, 'Account created but failed to send verification email. Please contact support.')
+                    return redirect('accounts:login')
+                    
+            except Exception as e:
+                messages.error(request, f'An error occurred during registration: {str(e)}')
+        else:
+            # Get the first error message for display
+            if form.non_field_errors():
+                first_error = form.non_field_errors()[0]
+            elif form.errors:
+                # Get first field error
+                first_error_list = next(iter(form.errors.values()))
+                if first_error_list:
+                    first_error = first_error_list[0]
+    else:
+        form = CustomUserCreationForm(initial={
+            'username': email,
+            'role': role,
+        })
+    
+    return render(request, 'accounts/register.html', {
+        'form': form,
+        'first_error': first_error,
+    })
 
 def login_view(request):
     """User login view"""
@@ -321,7 +378,27 @@ def resend_reset_code_view(request):
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 
+def invite_staff(request, id, role, restaurant_id):
+    user = get_object_or_404(User, id=id)
+    user.role = role
 
+    from restaurants.models import Restaurant
+    restaurant = get_object_or_404(Restaurant, id = restaurant_id)
+
+    if role == 'MANAGER':
+        from accounts.models import Manager
+        manager = Manager.objects.create(user=user)
+        restaurant.managers.add(manager)
+    else:
+        from accounts.models import Host
+        host = Host.objects.create(user=user)
+        restaurant.hosts.add(host)
+    
+    restaurant.save()
+
+    messages.success(request, '')
+    return redirect('accounts:login')
+    
 
 
 def verify_email_view(request, token):
@@ -348,6 +425,42 @@ def verify_email_view(request, token):
         messages.error(request, 'Invalid or expired verification token.')
         return redirect('accounts:register')
 
+def verify_staff_email_view(request, token, restaurant_id):
+    """Verify email address using token"""
+    try:
+        user = get_object_or_404(User, verification_token=token)
+        
+        # Check if token is expired
+        if user.verification_token_expires and user.verification_token_expires < timezone.now():
+            messages.error(request, 'Verification token has expired. Please sign up again.')
+            user.delete()  # Remove the unverified user
+            return redirect('accounts:register')
+        
+        # Activate user and mark email as verified
+        user.is_active = True
+        user.email_verified = True
+        user.verification_token_expires = None
+        user.save()
+
+        from restaurants.models import Restaurant
+
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        if user.role == 'MANAGER':
+            from accounts.models import Manager
+            manager = Manager.objects.create(user=user)
+            restaurant.managers.add(manager)
+        elif user.role == 'HOST':
+            from accounts.models import Host
+            host = Host.objects.create(user=user)
+            restaurant.hosts.add(host)
+        restaurant.save()
+        
+        messages.success(request, 'Email verified successfully! You can now log in to your account.')
+        return redirect('accounts:login')
+        
+    except User.DoesNotExist:
+        messages.error(request, 'Invalid or expired verification token.')
+        return redirect('accounts:register')
 
 def resend_verification_email_view(request, user_id):
     """Resend verification email"""

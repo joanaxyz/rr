@@ -57,14 +57,24 @@
         <i class="fas fa-calendar-check"></i>
         Manage Reservations
       </a>
+      {% if role == 'OWNER' or role == 'MANAGER' %}
       <a href="{% url 'manage_restaurant:tables' restaurant.id %}" class="action-btn">
         <i class="fas fa-chair"></i>
         Manage Tables
       </a>
+      {% endif %}
+      {% if role == 'OWNER' or role == 'MANAGER' %}
+      <a href="{% url 'manage_restaurant:staffs' restaurant.id %}" class="action-btn">
+        <i class="fas fa-user"></i>
+        Manage Staffs
+      </a>
+      {% endif %}
+      {% if role == 'OWNER' %}
       <a href="{% url 'manage_restaurant:details' restaurant.id %}" class="action-btn">
         <i class="fas fa-building"></i>
         Edit Details
       </a>
+      {% endif %}
     </div>
   </div>
 </div>

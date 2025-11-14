@@ -44,6 +44,51 @@ def send_email(subject, template_name, context, recipient_email, plain_text_fall
         return False
 
 
+def send_staff_invitation_email_u_e(user, restaurant, role, request):
+    """
+    Send email invitation link for existing users
+    """
+    template = 'emails/admin_invitation_email_user_exists.html'
+    invitation_url = request.build_absolute_uri(
+            reverse('accounts:invite_staff', args=[user.id, role, restaurant.id])
+        )
+    context = {
+        'invitation_url': invitation_url,
+        'restaurant': restaurant,
+        'role': role,
+        'email': user.email
+    }
+    subject = 'Staff invitation'
+    return send_email(
+        subject=subject,
+        template_name=template,
+        context=context,
+        recipient_email=user.email,
+    )
+
+def send_staff_invitation_email_u_d_n_e(restaurant, email, role, request):
+    """
+    Send email invitation link for users that don't exist yet
+    """
+    template = 'emails/admin_invitation_email_user_does_not_exist.html'
+    invitation_url = request.build_absolute_uri(
+            reverse('accounts:register_staff', args=[email, role, restaurant.id])
+        )
+    context = {
+        'invitation_url': invitation_url,
+        'restaurant': restaurant,
+        'role': role,
+        'email': email
+    }
+    subject = 'Staff invitation'
+    return send_email(
+        subject=subject,
+        template_name=template,
+        context=context,
+        recipient_email=email
+    )
+
+
 def send_verification_email(user, request):
     """
     Send email verification email to user
@@ -51,6 +96,33 @@ def send_verification_email(user, request):
     # Generate verification URL
     verification_url = request.build_absolute_uri(
         reverse('accounts:verify_email', args=[user.verification_token])
+    )
+    
+    # Email context
+    context = {
+        'user': user,
+        'verification_url': verification_url,
+        'site_name': 'RR',
+    }
+    
+    # Email subject
+    subject = 'Verify your email address - RR'
+    
+    # Use the generic send_email function
+    return send_email(
+        subject=subject,
+        template_name='emails/verification_email.html',
+        context=context,
+        recipient_email=user.email
+    )
+
+def send_staff_verification_email(user, request, restaurant_id):
+    """
+    Send email verification email to user
+    """
+    # Generate verification URL
+    verification_url = request.build_absolute_uri(
+        reverse('accounts:verify_staff_email', args=[user.verification_token, restaurant_id])
     )
     
     # Email context

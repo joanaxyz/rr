@@ -26,9 +26,13 @@ class CustomUserCreationForm(UserCreationForm):
     password2 = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'})
     )
+    role = forms.CharField(
+        widget=forms.TextInput()
+    )
+
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'password1', 'password2')
+        fields = ('first_name', 'last_name', 'username', 'password1', 'password2', 'role')
 
     def clean_username(self):
         email = self.cleaned_data['username']

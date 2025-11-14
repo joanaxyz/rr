@@ -46,9 +46,19 @@ class Restaurant(models.Model):
     phone_number = models.CharField(max_length=20)
     owner = models.ForeignKey(
         Owner,
-        related_name='restaurant',
+        related_name='restaurants',
         on_delete=models.SET_NULL,
         null=True
+    )
+    hosts = models.ManyToManyField(
+        Host,
+        related_name='restaurants',
+        blank=True
+    )
+    managers = models.ManyToManyField(
+        Manager,
+        related_name='restaurants',
+        blank=True
     )
     customers = models.ManyToManyField(
         Customer,
