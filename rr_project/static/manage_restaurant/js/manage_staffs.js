@@ -21,3 +21,28 @@ document.getElementById('sendInviteBtn').addEventListener('click', () => {
     form.submit();
 });
 
+function removeStaff(staff_name, staff_id, role){
+    window.MessageBox.showConfirm(`Are you sure you want to delete, ${staff_name} (${formatRole (role)})?`, async ()=>{
+        try {
+            const response = await APIClient.post(`/manage-restaurant/api/remove_staff/${staff_id}/${role.toUpperCase()}/`,
+                    options=
+                    {
+                        loadingText: 'Deleting Staff from records...'
+                    }
+                );
+
+                if (response.success) {
+                    window.MessageBox.showSuccess(response.message);
+                } else {
+                    window.MessageBox.showError(`Something went wrong ${response.message}`);
+                }
+            } catch (error) {
+                console.log(error);
+        }
+    });
+}
+
+function formatRole(str) {
+    return str.charAt(0) + str.slice(1).toLowerCase();
+}
+

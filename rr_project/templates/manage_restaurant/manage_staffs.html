@@ -42,14 +42,16 @@
             </thead>
             <tbody>
               {% for member in staff %}
-              <tr>
+              <tr{% if member.is_current_user %} class="current-user-row"{% endif %}>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ member.name }}</td>
                 <td>{{ member.email }}</td>
-                <td>{{ member.role|default:"Staff" }}</td>
+                <td><span class="role-badge">{{ member.role|default:"Staff" }}</span></td>
                 <td>{{ member.joined_at|date:"M d, Y" }}</td>
                 <td>
-                  <button class="btn btn-danger btn-sm">Remove</button>
+                  {% if not member.is_current_user %}
+                  <button class="btn btn-danger btn-sm" onclick="removeStaff('{{ member.name }}', '{{ member.id }}', '{{ member.role }}')">Remove</button>
+                  {% endif %}
                 </td>
               </tr>
               {% endfor %}

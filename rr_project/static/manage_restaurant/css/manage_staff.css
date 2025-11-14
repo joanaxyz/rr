@@ -138,6 +138,11 @@ body {
   white-space: nowrap;
 }
 
+.staff-table tbody tr.current-user-row {
+  background-color: #e8f4f8;
+}
+
+
 .staff-table tbody tr {
   border-bottom: var(--border-1) solid var(--color-gray-200);
   transition: all var(--transition-base) var(--ease-in-out);
@@ -158,43 +163,58 @@ body {
   border-bottom: none;
 }
 
-/* ============ BUTTONS ============ */
+/* ============ ROLE BADGE ============ */
 
-.btn {
+.role-badge {
+  display: inline-block;
   padding: var(--space-2) var(--space-4);
-  border: var(--border-1) solid transparent;
+  background: linear-gradient(
+    135deg,
+    rgba(212, 83, 10, 0.12) 0%,
+    rgba(255, 122, 0, 0.1) 100%
+  );
+  color: var(--color-primary);
   border-radius: var(--radius-md);
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
   font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: all var(--transition-base) var(--ease-in-out);
+  border: var(--border-1) solid rgba(212, 83, 10, 0.25);
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.btn-primary {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #2563eb;
-  border-color: rgba(59, 130, 246, 0.3);
+/* ============ ACTION BUTTONS ============ */
+
+.staff-table tbody td:nth-child(6) {
+  text-align: center;
 }
 
-.btn-primary:hover {
-  background-color: rgba(59, 130, 246, 0.25);
-  border-color: rgba(59, 130, 246, 0.5);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+.staff-table .btn-sm {
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--font-xs);
+  min-width: auto;
+  border-radius: var(--radius-md);
 }
 
-.btn-danger {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: #dc2626;
-  border-color: rgba(239, 68, 68, 0.3);
+.staff-table .btn-danger {
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.85) 0%,
+    rgba(220, 38, 38, 0.85) 100%
+  );
+  color: var(--color-white);
+  border: none;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
-.btn-danger:hover {
-  background-color: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.5);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+.staff-table .btn-danger:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(220, 38, 38, 0.9) 0%,
+    rgba(185, 28, 28, 0.9) 100%
+  );
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
 }
 
 /* ============ EMPTY STATE ============ */

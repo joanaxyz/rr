@@ -12,4 +12,5 @@ urlpatterns = [
     path("<int:restaurant_id>/staffs/", views.manage_staffs, name="staffs"),
 
     path("api/save_floor_plan/", api.api_save_floor_plan, name="save_floor_plan"),
+    path("api/remove_staff/<int:staff_id>/<str:role>/", api.api_remove_staff, name="remove_staff"),
 ]

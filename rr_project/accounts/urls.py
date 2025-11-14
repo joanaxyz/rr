@@ -26,9 +26,6 @@ urlpatterns = [
     
     # Forgot Password URLs (Custom implementation)
     path('auth/forgot-password/', forgot_password_view, name='forgot_password'),
-    path('auth/verify-reset-code/', verify_reset_code_view, name='verify_reset_code'),
-    path('auth/reset-password/', reset_password_view, name='reset_password'),
-    path('auth/resend-reset-code/', resend_reset_code_view, name='resend_reset_code'),
 
     # Staff invitation URLS
     path('auth/invite-staff/<int:user_id>/<str:role>/<int:restaurant_id>', invite_staff, name='invite_staff'),

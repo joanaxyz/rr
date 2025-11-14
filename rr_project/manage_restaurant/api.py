@@ -1,5 +1,6 @@
 
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from accounts.models import Owner
 from restaurants.models import Table, Element, Restaurant, Floorplan
 from django.http import JsonResponse
@@ -8,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 import json
 
+@login_required
 @require_http_methods(["POST"])
 @csrf_exempt
 def api_save_floor_plan(request):
@@ -109,3 +111,22 @@ def api_save_floor_plan(request):
         return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+
+@login_required
+def api_remove_staff(request, staff_id, role):
+    from accounts.models import Manager, Host
+    try:
+        if role == 'MANAGER':
+            manager = get_object_or_404(Manager, id=staff_id)
+            manager.delete()
+        elif role == 'HOST':
+            host = get_object_or_404(Host, id=staff_id)
+            host.delete()
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid role'}, status=400)
+        from .utils import capitalize_first_keep_rest_lower
+        return JsonResponse({'success': True, 'message': f'{capitalize_first_keep_rest_lower(role)} removed successfully'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
