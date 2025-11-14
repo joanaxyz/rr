@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from restaurants.models import Restaurant, Table, Element, Floorplan
 from reservations.models import Reservation, TableReservation
-from accounts.models import Owner
+from accounts.models import Owner, User, Host, Manager
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from email_service.views import send_reservation_cancellation_email, send_reservation_confirmation_email, send_reservation_completion_email
@@ -9,14 +9,32 @@ import json
 @login_required
 def view_restaurants(request):
     # show restaurants the user owns
-    owner = get_object_or_404(Owner, user=request.user)
-    restaurants = Restaurant.objects.filter(owner=owner)
+    user = request.user
+    restaurants = None
+    if user.role == 'OWNER':
+        owner = get_object_or_404(Owner, user=request.user)
+        restaurants = owner.restaurants.all()
+    elif user.role == 'HOST':
+        host = get_object_or_404(Host, user=request.user)
+        restaurants = Restaurant.objects.filter(hosts=host)
+    elif user.role == 'MANAGER':
+        manager = get_object_or_404(Manager, user=request.user)
+        restaurants = Restaurant.objects.filter(managers=manager)
     restaurants_dicts = [r.to_dict() for r in restaurants]
     return render(request, "manage_restaurant/list.html", {"restaurants": restaurants_dicts})
 @login_required
 def manage_reservations(request, restaurant_id):
-    owner = get_object_or_404(Owner, user=request.user)
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    user = request.user
+    if user.role == 'OWNER':
+        owner = get_object_or_404(Owner, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    elif user.role == 'HOST':
+        host = get_object_or_404(Host, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, hosts=host)
+    elif user.role == 'MANAGER':
+        manager = get_object_or_404(Manager, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, managers=manager)
+
     reservations = Reservation.objects.filter(restaurant=restaurant)
     floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
     tables = Table.objects.filter(floorplan=floorplan)
@@ -87,8 +105,14 @@ def manage_reservations(request, restaurant_id):
 
 @login_required
 def manage_tables(request, restaurant_id):
-    owner = get_object_or_404(Owner, user=request.user)
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    user = request.user
+    if user.role == 'OWNER':
+        owner = get_object_or_404(Owner, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    elif user.role == 'MANAGER':
+        manager = get_object_or_404(Manager, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, managers=manager)
+
     floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
     tables = Table.objects.filter(floorplan=floorplan)
     elements = Element.objects.filter(floorplan=floorplan)
@@ -99,6 +123,68 @@ def manage_tables(request, restaurant_id):
         "elements": json.dumps([e.to_dict() for e in elements])
     }
     return render(request, "manage_restaurant/manage_tables.html", context)
+
+@login_required
+def manage_staffs(request, restaurant_id):
+    user = request.user
+
+    # Get the restaurant based on the user's role
+    if user.role == 'OWNER':
+        owner = get_object_or_404(Owner, user=user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    elif user.role == 'MANAGER':
+        manager = get_object_or_404(Manager, user=user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, managers=manager)
+
+    # Handle POST request for sending staff invitations
+    if request.method == 'POST':
+        role = request.POST.get('role')
+        email = request.POST.get('email')
+        if role and email:
+            try:
+                from email_service.views import send_staff_invitation_email_u_e
+                invited_user = User.objects.get(email=email, email_verified=True)
+                if send_staff_invitation_email_u_e(invited_user, restaurant, role, request):
+                    messages.success(request, "The staff invitation has been sent. They can now check their email to continue.")
+                else:
+                    messages.error(request, "The staff invitation has not been sent.")
+            except User.DoesNotExist:
+                from email_service.views import send_staff_invitation_email_u_d_n_e
+                if send_staff_invitation_email_u_d_n_e(restaurant, email, role, request):
+                    messages.success(request, "The staff invitation has been sent. They can now check their email to continue.")
+                else:
+                    messages.error(request, "The staff invitation has not been sent.")
+
+    # Prepare the staff members list
+    staff_members = []
+
+    for host in restaurant.hosts.all():
+        staff_members.append({
+            'id': host.id,
+            'name': host.user.get_full_name(),
+            'email': host.user.email,
+            'role': 'Host',
+            'joined_at': host.user.date_joined,
+            'is_current_user': host.user == user
+        })
+
+    for manager in restaurant.managers.all():
+        staff_members.append({
+            'id': manager.id,
+            'name': manager.user.get_full_name(),
+            'email': manager.user.email,
+            'role': 'Manager',
+            'joined_at': manager.user.date_joined,
+            'is_current_user': manager.user == user
+        })
+
+    staff_members.sort(key=lambda x: (not x['is_current_user'], x['name']))
+
+    context = {
+        'staff': staff_members,
+    }
+
+    return render(request, "manage_restaurant/manage_staffs.html", context)
 
 @login_required
 def manage_details(request, restaurant_id):
@@ -160,9 +246,16 @@ def manage_details(request, restaurant_id):
 
 @login_required
 def dashboard(request, restaurant_id):
-    owner = get_object_or_404(Owner, user=request.user)
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
-    
+    user = request.user
+    if user.role == 'OWNER':
+        owner = get_object_or_404(Owner, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    elif user.role == 'HOST':
+        host = get_object_or_404(Host, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, hosts=host)
+    elif user.role == 'MANAGER':
+        manager = get_object_or_404(Manager, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, managers=manager)
     # Get statistics
     total_reservations = Reservation.objects.filter(restaurant=restaurant).count()
     pending_reservations = Reservation.objects.filter(restaurant=restaurant, status='PENDING').count()
@@ -170,6 +263,7 @@ def dashboard(request, restaurant_id):
     total_tables = Table.objects.filter(floorplan=restaurant.floorplan).count()
     
     context = {
+        "role": user.role,
         "restaurant": restaurant.to_dict(),
         "total_reservations": total_reservations,
         "pending_reservations": pending_reservations,

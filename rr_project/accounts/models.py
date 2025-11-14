@@ -11,9 +11,8 @@ import string
 class UserRole(models.TextChoices):
     CUSTOMER = 'CUSTOMER', 'Customer'
     OWNER = 'OWNER', 'Owner'
-    HOST = 'Host', 'host'
-    SERVER = 'Server', 'server'
-    MANAGER = 'Manager', 'manager'
+    HOST = 'HOST', 'Host'
+    MANAGER = 'MANAGER', 'Manager'
 
 
 # -------------------------------
@@ -72,7 +71,7 @@ class Owner(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='owner_profile',
-        null=True,   # make optional
+        null=True,
         blank=True
     )
     govt_full_name = models.CharField(max_length=255, null=True, blank=True)

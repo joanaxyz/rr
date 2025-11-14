@@ -4,6 +4,7 @@ from restaurants.models import Restaurant
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from urllib.parse import urlencode
+from django.contrib.auth.decorators import login_required
 
 def get_guest_ranges(max_guests):
     """Generate guest count ranges: 1-2, 3-4, 5-6, 7+"""
@@ -15,6 +16,7 @@ def get_guest_ranges(max_guests):
         ranges.append("7+")
     return ranges
 
+@login_required
 def home_view(request):
     """User home page"""
     user = request.user

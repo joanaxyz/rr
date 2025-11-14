@@ -148,7 +148,7 @@
 /* ============ FORM INPUTS ============ */
 
 .form-group {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-3);
 }
 
 .form-label {

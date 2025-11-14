@@ -21,7 +21,9 @@ from django.db import IntegrityError
 def register_view(request):
     """User registration view"""
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        post_data = request.POST.copy()
+        post_data['role'] = 'CUSTOMER'
+        form = CustomUserCreationForm(post_data)
         if form.is_valid():
             try:
                 # Save user but mark as inactive until email verification
@@ -57,7 +59,9 @@ def register_view(request):
                 if first_error_list:
                     first_error = first_error_list[0]
     else:
-        form = CustomUserCreationForm()
+        form = CustomUserCreationForm(initial={
+            'role': 'CUSTOMER'
+        })
         first_error = None
     
     return render(request, 'accounts/register.html', {
@@ -65,6 +69,59 @@ def register_view(request):
         'first_error': first_error
     })
 
+def register_staff_view(request, email, role, restaurant_id):
+    """User registration view"""
+    first_error = None
+    
+    if request.method == 'POST':
+        post_data = request.POST.copy()
+        post_data['username'] = email
+        post_data['role'] = role
+        form = CustomUserCreationForm(post_data)
+        if form.is_valid():
+            try:
+                # Save user but mark as inactive until email verification
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
+                
+                # Generate verification token
+                user.generate_verification_token()
+                
+                from email_service.views import send_staff_verification_email
+                # Send verification email
+                if send_staff_verification_email(user, request, restaurant_id):
+                    messages.success(
+                        request, 
+                        'Registration successful! A verification email has been sent to your email address. '
+                        'Please check your email and click the verification link to activate your account.'
+                    )
+                    return redirect('accounts:login')
+                else:
+                    messages.error(request, 'Account created but failed to send verification email. Please contact support.')
+                    return redirect('accounts:login')
+                    
+            except Exception as e:
+                messages.error(request, f'An error occurred during registration: {str(e)}')
+        else:
+            # Get the first error message for display
+            if form.non_field_errors():
+                first_error = form.non_field_errors()[0]
+            elif form.errors:
+                # Get first field error
+                first_error_list = next(iter(form.errors.values()))
+                if first_error_list:
+                    first_error = first_error_list[0]
+    else:
+        form = CustomUserCreationForm(initial={
+            'username': email,
+            'role': role,
+        })
+    
+    return render(request, 'accounts/register.html', {
+        'form': form,
+        'first_error': first_error,
+    })
 
 def login_view(request):
     """User login view"""
@@ -108,6 +165,7 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('accounts:login')
+
 
 
 def forgot_password_view(request):
@@ -160,171 +218,28 @@ def forgot_password_view(request):
     return render(request, 'accounts/forgot_pass.html')
 
 
-def verify_reset_code_view(request):
-    """Handle password reset verification - Step 2: Code verification"""
-    if request.method == 'POST':
-        try:
-            data = request.POST
-            user_id = data.get('user_id')
-            code = data.get('code', '').strip()
-            
-            if not user_id or not code:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'User ID and verification code are required.'
-                })
-            
-            try:
-                user = User.objects.get(id=user_id, is_active=True)
-                
-                if user.is_password_reset_code_valid(code):
-                    return JsonResponse({
-                        'success': True,
-                        'message': 'Code verified successfully.',
-                        'user_id': user_id,
-                        'verified_code': code
-                    })
-                else:
-                    return JsonResponse({
-                        'success': False,
-                        'message': 'Invalid or expired verification code.'
-                    })
-                    
-            except User.DoesNotExist:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Invalid user.'
-                })
-                
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': 'An error occurred. Please try again.'
-            })
+
+def invite_staff(request, user_id, role, restaurant_id):
+    user = get_object_or_404(User, id=user_id)
+    user.role = role
+
+    from restaurants.models import Restaurant
+    restaurant = get_object_or_404(Restaurant, id = restaurant_id)
+
+    if role == 'MANAGER':
+        from accounts.models import Manager
+        manager = Manager.objects.create(user=user)
+        restaurant.managers.add(manager)
+    else:
+        from accounts.models import Host
+        host = Host.objects.create(user=user)
+        restaurant.hosts.add(host)
     
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+    restaurant.save()
 
-
-def reset_password_view(request):
-    """Handle password reset - Step 3: New password setup"""
-    if request.method == 'POST':
-        try:
-            data = request.POST
-            user_id = data.get('user_id')
-            code = data.get('code')
-            new_password = data.get('new_password')
-            confirm_password = data.get('confirm_password')
-            
-            if not all([user_id, code, new_password, confirm_password]):
-                return JsonResponse({
-                    'success': False,
-                    'message': 'All fields are required.'
-                })
-            
-            if new_password != confirm_password:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Passwords do not match.'
-                })
-            
-            validator = MinimumLengthAndNumberValidator(min_length=8)
-            try:
-                validator.validate(new_password)
-            except ValidationError as e:
-                return JsonResponse({
-                    'success': False,
-                    'message': e.messages[0]
-                })
-        
-            try:
-                user = User.objects.get(id=user_id, is_active=True)
-                
-                if check_password(new_password, user.password):
-                    return JsonResponse({
-                        'success': False,
-                        'message': 'The new password cannot be the same as the old password.'
-                    })
-                
-                # Verify code one more time
-                if user.is_password_reset_code_valid(code):
-                    # Set new password
-                    user.set_password(new_password)
-                    user.clear_password_reset_code()
-                    
-                    messages.success(request, 'Your password has been reset successfully! You can now log in with your new password.')
-                    return JsonResponse({
-                        'success': True,
-                        'message': 'Password reset successfully.',
-                        'redirect_url': reverse('accounts:login')
-                    })
-                else:
-                    return JsonResponse({
-                        'success': False,
-                        'message': 'Invalid or expired verification code.'
-                    })
-                    
-            except User.DoesNotExist:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Invalid user.'
-                })
-                
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': 'An error occurred. Please try again.'
-            })
+    messages.success(request, '')
+    return redirect('accounts:login')
     
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
-
-
-def resend_reset_code_view(request):
-    """Resend password reset code"""
-    if request.method == 'POST':
-        try:
-            data = request.POST
-            user_id = data.get('user_id')
-            
-            if not user_id:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'User ID is required.'
-                })
-            
-            try:
-                user = User.objects.get(id=user_id, is_active=True)
-                
-                # Generate new reset code
-                reset_code = user.generate_password_reset_code()
-                
-                # Send email
-                if send_password_reset_code_email(user, reset_code):
-                    return JsonResponse({
-                        'success': True,
-                        'message': 'New verification code sent to your email address.'
-                    })
-                else:
-                    return JsonResponse({
-                        'success': False,
-                        'message': 'Failed to send verification code. Please try again.'
-                    })
-                    
-            except User.DoesNotExist:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Invalid user.'
-                })
-                
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': 'An error occurred. Please try again.'
-            })
-    
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
-
-
-
 
 
 def verify_email_view(request, token):
@@ -351,6 +266,42 @@ def verify_email_view(request, token):
         messages.error(request, 'Invalid or expired verification token.')
         return redirect('accounts:register')
 
+def verify_staff_email_view(request, token, restaurant_id):
+    """Verify email address using token"""
+    try:
+        user = get_object_or_404(User, verification_token=token)
+        
+        # Check if token is expired
+        if user.verification_token_expires and user.verification_token_expires < timezone.now():
+            messages.error(request, 'Verification token has expired. Please sign up again.')
+            user.delete()  # Remove the unverified user
+            return redirect('accounts:register')
+        
+        # Activate user and mark email as verified
+        user.is_active = True
+        user.email_verified = True
+        user.verification_token_expires = None
+        user.save()
+
+        from restaurants.models import Restaurant
+
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        if user.role == 'MANAGER':
+            from accounts.models import Manager
+            manager = Manager.objects.create(user=user)
+            restaurant.managers.add(manager)
+        elif user.role == 'HOST':
+            from accounts.models import Host
+            host = Host.objects.create(user=user)
+            restaurant.hosts.add(host)
+        restaurant.save()
+        
+        messages.success(request, 'Email verified successfully! You can now log in to your account.')
+        return redirect('accounts:login')
+        
+    except User.DoesNotExist:
+        messages.error(request, 'Invalid or expired verification token.')
+        return redirect('accounts:register')
 
 def resend_verification_email_view(request, user_id):
     """Resend verification email"""

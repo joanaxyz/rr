@@ -13,6 +13,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='table',
             name='status',
-            field=models.CharField(choices=[('available', 'AVAILABLE'), ('reserved', 'RESERVED')], default='available', max_length=20),
+            field=models.CharField(
+                choices=[
+                    ('available', 'AVAILABLE'),
+                    ('reserved', 'RESERVED')
+                ],
+                default='available',
+                max_length=20
+            ),
         ),
     ]

@@ -19,7 +19,11 @@
         Back to Restaurant
     </a>
     <div class="header-content">
+        {% if edit_mode %}
+        <h1>Edit Reservation</h1>
+        {% else %}
         <h1>Make a Reservation</h1>
+        {% endif %}
         <p class="subtitle">at <span class="restaurant-name">{{ restaurant.name }}</span></p>
     </div>
 </div>
