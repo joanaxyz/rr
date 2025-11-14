@@ -1,12 +1,13 @@
 from django.db import models
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 import uuid
 import random
 import string
 
-# Create your models here.
+# -------------------------------
+# User Roles
+# -------------------------------
 class UserRole(models.TextChoices):
     CUSTOMER = 'CUSTOMER', 'Customer'
     OWNER = 'OWNER', 'Owner'
@@ -14,6 +15,9 @@ class UserRole(models.TextChoices):
     MANAGER = 'MANAGER', 'Manager'
 
 
+# -------------------------------
+# Custom User Model
+# -------------------------------
 class User(AbstractUser):
     role = models.CharField(max_length=20, choices=UserRole.choices, default=UserRole.CUSTOMER)
     banned = models.BooleanField(default=False)
@@ -58,21 +62,57 @@ class User(AbstractUser):
         self.password_reset_code_expires = None
         self.save()
 
+
+# -------------------------------
+# Owner Model (UPDATED)
+# -------------------------------
 class Owner(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='owner_profile')
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='owner_profile',
+        null=True,
+        blank=True
+    )
+    govt_full_name = models.CharField(max_length=255, null=True, blank=True)
+    government_id_type = models.CharField(max_length=50, null=True, blank=True)
+    government_id_number = models.CharField(max_length=50, null=True, blank=True)
+    business_address = models.CharField(max_length=255, null=True, blank=True)
+    business_email = models.EmailField(null=True, blank=True)
+    business_license = models.FileField(upload_to='business_licenses/', null=True, blank=True)
+    government_id_front = models.FileField(upload_to='govt_ids/', null=True, blank=True)
+    government_id_back = models.FileField(upload_to='govt_ids/', null=True, blank=True)
+    proof_of_ownership = models.FileField(upload_to='ownership_proofs/', null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return f"Owner: {self.user.email or self.user.username}"
+        return f"Owner: {self.user.email if self.user else 'No User'}"
+
+
+# -------------------------------
+# Other Role Models
+# -------------------------------
 class Host(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='host_profile')
+
     def __str__(self):
         return f"Host: {self.user.email or self.user.username}"
+
+
+class Server(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='server_profile')
+
+    def __str__(self):
+        return f"Server: {self.user.email or self.user.username}"
+
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='manager_profile')
 
     def __str__(self):
         return f"Manager: {self.user.email or self.user.username}"
+
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customer_profile')

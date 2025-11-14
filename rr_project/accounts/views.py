@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from .forms import OwnerForm
+
 
 # Create your views here.
 
@@ -14,6 +16,7 @@ from .models import *
 from email_service.views import send_verification_email, send_password_reset_code_email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
+from django.db import IntegrityError
 
 def register_view(request):
     """User registration view"""
@@ -329,3 +332,17 @@ def resend_verification_email_view(request, user_id):
     
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
+def apply_owner(request):
+    if request.method == 'POST':
+        form = OwnerForm(request.POST, request.FILES)
+        if form.is_valid():
+            owner = form.save(commit=False)
+            owner.user = request.user
+            owner.save()
+            return redirect('accounts:apply_owner')
+        else:
+            print("Form is invalid:", form.errors)
+    else:
+        form = OwnerForm()
+
+    return render(request, 'accounts/apply_owner.html', {'form': form})
