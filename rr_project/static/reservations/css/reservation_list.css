@@ -301,3 +301,37 @@ body {
     opacity: 1;
   }
 }
+
+/* ===== Pagination ===== */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  font-size: 0.875rem;
+}
+
+.pagination a,
+.pagination span {
+  text-decoration: none;
+  color: #333333;
+}
+
+.pagination a:hover {
+  text-decoration: underline;
+}
+
+.pagination .current {
+  font-weight: bold;
+  color: blue;
+  text-decoration: underline;
+}
+
+.pagination .disabled {
+  color: #aaa;
+  cursor: default;
+}
