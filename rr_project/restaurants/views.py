@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from datetime import datetime
 from .models import *
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Avg, Count
 from datetime import timedelta
@@ -56,8 +57,18 @@ def restaurants_view(request):
         except ValueError:
             day = None 
     
+    page_number = request.GET.get('page', 1)
+    paginator = Paginator(restaurants, 5)  # 10 restaurants per page
+    page_obj = paginator.get_page(page_number)
+
+    restaurant_list = [r.to_dict() for r in page_obj.object_list]
+    cuisines_list = [c.to_dict() for c in cuisines]
+    tags_list = [t.to_dict() for t in tags]
+
     context = {
         'restaurants': restaurant_list,
+        'page_obj': page_obj,
+        'total_restaurants': restaurants.count(),
         'cuisines': cuisines_list,
         'tags': tags_list,
         'day': day,
