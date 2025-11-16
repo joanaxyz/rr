@@ -10,10 +10,10 @@
 
 {% block rr_base_content %}
 <div class="manage-header">
-    <div class="header-content">
-        <h1>Manage Staff</h1>
-        <p class="subtitle">Add, remove, or invite staff members</p>
-    </div>
+  <div class="header-content">
+    <h1>Manage Staff</h1>
+    <p class="subtitle">Add, remove, or invite staff members</p>
+  </div>
 </div>
 
 <div class="manage-restaurant-container">
@@ -24,7 +24,38 @@
       <div class="content-card">
         <div class="card-header">
           <h2>Staff Members</h2>
-          <button class="btn btn-primary" id="inviteStaffBtn">Invite Staff</button>
+          
+          <div class="header-actions">
+            <div class="filters-section">
+              <div class="filters-container">
+                <div class="filter-group filter-primary">
+                  <div class="filter-item">
+                    <label for="filterName" class="filter-label">Name</label>
+                    <input type="text" class="filter-input" id="filterName" placeholder="Filter by Name">
+                  </div>
+                  <div class="filter-item">
+                    <label for="filterEmail" class="filter-label">Email</label>
+                    <input type="text" class="filter-input" id="filterEmail" placeholder="Filter by Email">
+                  </div>
+                  <div class="filter-item">
+                    <label for="filterRole" class="filter-label">Role</label>
+                    <select class="filter-select" id="filterRole">
+                      <option value="">All Roles</option>
+                      <option value="HOST">Host</option>
+                      <option value="MANAGER">Manager</option>
+                      <option value="STAFF">Staff</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="filter-actions">
+                  <button class="btn btn-sm btn-secondary" id="resetStaffFilters">Reset All</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invite Staff button -->
+            <button class="btn btn-primary" id="inviteStaffBtn">Invite Staff</button>
+          </div>
         </div>
 
         <div class="card-body">
@@ -69,15 +100,13 @@
   </section>
 
   <!-- Invite Staff Modal -->
-  <div id="inviteModal" class="modal-overlay" style="display: none;">
+  <div id="inviteModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
         <h2>Invite Staff</h2>
-        <button type="button" class="modal-close-btn" id="closeInviteModal">
-          &times;
-        </button>
+        <button type="button" class="modal-close-btn" id="closeInviteModal">&times;</button>
       </div>
-      <form method = "post" class="modal-body">
+      <form method="post" class="modal-body">
         <input type="hidden" name="modalOpened">
         {% csrf_token %}
         <label for="inviteEmail">Staff Email</label>
