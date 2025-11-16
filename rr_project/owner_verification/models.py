@@ -1,67 +1,33 @@
 from django.db import models
 from django.conf import settings
-from django.core.validators import FileExtensionValidator
 
-User = settings.AUTH_USER_MODEL
-
-class Owner(models.Model):
-    GOVERNMENT_ID_CHOICES = [
-        ("DL", "Driver’s License"),
-        ("PP", "Passport"),
-        ("NID", "National ID"),
-        ("OTH", "Other"),
-    ]
-
+class OwnerVerificationRequest(models.Model):
     STATUS_CHOICES = [
-        ("PENDING", "Pending"),
-        ("SUBMITTED", "Submitted"),
-        ("APPROVED", "Approved"),
-        ("REJECTED", "Rejected"),
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('NOT_APPROVED', 'Not Approved'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="owner_verification_profile")
+    # Link to user model
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owner_requests')
 
-    govt_full_name = models.CharField(max_length=255)
-    government_id_type = models.CharField(max_length=10, choices=GOVERNMENT_ID_CHOICES)
-    government_id_number = models.CharField(max_length=100)
-    business_address = models.TextField()
+    gov_full_name = models.CharField(max_length=255)
+    id_type = models.CharField(max_length=50)
+    id_number = models.CharField(max_length=100)
+    business_address = models.CharField(max_length=255)
     business_email = models.EmailField(blank=True, null=True)
+    tax_id = models.CharField(max_length=50, blank=True, null=True)
 
-    business_license = models.FileField(
-        upload_to="owner_docs/",
-        validators=[FileExtensionValidator(["pdf", "jpg", "jpeg", "png"])],
-        blank=True,
-        null=True,
-    )
-    government_id_front = models.FileField(
-        upload_to="owner_docs/",
-        validators=[FileExtensionValidator(["pdf", "jpg", "jpeg", "png"])],
-        blank=True,
-        null=True,
-    )
-    government_id_back = models.FileField(
-        upload_to="owner_docs/",
-        validators=[FileExtensionValidator(["pdf", "jpg", "jpeg", "png"])],
-        blank=True,
-        null=True,
-    )
-    proof_of_ownership = models.FileField(
-        upload_to="owner_docs/",
-        validators=[FileExtensionValidator(["pdf", "jpg", "jpeg", "png"])],
-        blank=True,
-        null=True,
-    )
+    # File uploads
+    business_license = models.FileField(upload_to='owner_verification/licenses/')
+    government_id_doc = models.FileField(upload_to='owner_verification/government_ids/')
+    proof_ownership = models.FileField(upload_to='owner_verification/proofs/')
 
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default="PENDING")
+    # Request status
+    state = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        # If no business email is provided, use the user's email
-        if not self.business_email and hasattr(self.user, "email"):
-            self.business_email = self.user.email
-        super().save(*args, **kwargs)
-
     def __str__(self):
-        return f"{self.user.username} - {self.govt_full_name}"
+        return f"{self.user.username} - {self.state}"
