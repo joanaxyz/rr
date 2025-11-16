@@ -180,6 +180,12 @@
               {% endfor %}
             </tbody>
           </table>
+          <!-- Pagination Controls -->
+            <div class="pagination-container" id="pagination-container">
+              <button class="prev-btn" onclick="changePage(-1)">&#10094;</button>
+              <span id="page-info"></span>
+              <button class="next-btn" onclick="changePage(1)">&#10095;</button>
+            </div>
           {% else %}
           <div class="empty-state">
             <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
