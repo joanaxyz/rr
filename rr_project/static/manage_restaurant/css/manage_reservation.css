@@ -914,32 +914,41 @@ body {
 /* ============ PAGINATION STYLES ============ */
 .pagination-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 20px;
   gap: 8px;
   flex-wrap: wrap;
 }
 
 .pagination-container button {
-  background-color: transparent;
-  color: var(--text-primary, #fff);
-  border: 1px solid transparent; 
-  padding: 3px 6px;
-  border-radius: 4px;
+  background-color: var(--color-white);
+  color: var(--text-primary, #333);
+  border: 1px solid var(--color-gray-300);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 12px;
-  min-width: 24px;
-  transition: all 0.2s ease;
-}
-
-
-.pagination-container button.active {
-  color: blue;
-  text-decoration: underline;
+  font-size: 0.875rem;
+  min-width: 36px;
+  transition: all 0.2s ease-in-out;
 }
 
 .pagination-container button:hover {
-  color: var(--accent-color, #ffd700);
-  border-color: var(--accent-color, #ffd700);
+  background-color: var(--color-gray-100);
+  border-color: var(--color-gray-400);
+  transform: translateY(-1px);
+}
+
+.pagination-container button.active {
+  background-color: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  font-weight: bold;
+}
+
+.pagination-container button.disabled {
+  background-color: var(--color-gray-100);
+  color: #aaa;
+  cursor: default;
+  border-color: var(--color-gray-200);
 }
