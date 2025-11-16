@@ -3,8 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from .models import User
-from owner_verification.models import Owner
-
+from owner_verification.models import OwnerVerificationRequest  # Correct model
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(
@@ -39,8 +38,10 @@ class CustomUserCreationForm(UserCreationForm):
     def clean_username(self):
         email = self.cleaned_data['username']
         if User.objects.filter(username=email).exists():
-            raise forms.ValidationError(_("This email is already in use."),
-                    code='invalid_email')
+            raise forms.ValidationError(
+                _("This email is already in use."),
+                code='invalid_email'
+            )
         return email
     
     def save(self, commit=True):
@@ -66,8 +67,10 @@ class CustomAuthenticationForm(AuthenticationForm):
         if email and password:
             user = authenticate(username=email, password=password)
             if user is None:
-                raise forms.ValidationError(_("The email or password you entered is incorrect. Please try again."),
-                        code='invalid_login')
+                raise forms.ValidationError(
+                    _("The email or password you entered is incorrect. Please try again."),
+                    code='invalid_login'
+                )
             else:
                 self.confirm_login_allowed(user)
                 self.user_cache = user
@@ -76,7 +79,7 @@ class CustomAuthenticationForm(AuthenticationForm):
 
 class OwnerForm(forms.ModelForm):
     class Meta:
-        model = Owner
+        model = OwnerVerificationRequest  # Use the correct model
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -86,4 +89,5 @@ class OwnerForm(forms.ModelForm):
             'user', 'govt_full_name', 'government_id_type',
             'government_id_number', 'status'
         ]:
-            self.fields[field_name].required = False
+            if field_name in self.fields:
+                self.fields[field_name].required = False

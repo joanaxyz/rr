@@ -18,6 +18,7 @@
                 <p>Complete the verification process to manage your restaurant</p>
             </div>
             <div class="settings-content">
+
                 <!-- Step Indicator -->
                 <div class="steps-indicator">
                     <div class="step active">
@@ -34,17 +35,18 @@
                     </div>
                 </div>
 
-                <form id="owner-verification-form" class="verification-form">
+                <!-- IMPORTANT: Django-compatible form -->
+                <form id="owner-verification-form" class="verification-form" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
+
                     <!-- Step 1: Personal Information -->
                     <div class="form-step active" id="step-1">
                         <h3>Personal Information</h3>
                         <p class="step-description">We need to verify your identity and ownership of the restaurant.</p>
-                        
+
                         <div class="form-group">
-                            <label for="owner-full-name">Full Name (as on Government ID)</label>
-                            <input type="text" id="govt_full_name" name="full_name" placeholder="Enter your full name" required>
+                            <label for="govt_full_name">Full Name (as on Government ID)</label>
+                            <input type="text" id="govt_full_name" name="govt_full_name" placeholder="Enter your full name" required>
                             <small>Must match your government-issued ID exactly</small>
                         </div>
 
@@ -71,8 +73,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="owner-email">Business Email</label>
-                            <input type="email" id="owner-email" name="business_email" placeholder="contact@restaurant.com">
+                            <label for="business_email">Business Email</label>
+                            <input type="email" id="business_email" name="business_email" placeholder="contact@restaurant.com">
                             <small>Optional. Can be different from account email</small>
                         </div>
 
@@ -85,29 +87,37 @@
                     <div class="form-step" id="step-2">
                         <h3>Restaurant Ownership Proof</h3>
                         <p class="step-description">Upload documents to verify you own or operate this restaurant.</p>
-                        
+
                         <div class="form-group">
                             <label for="business-license">Business License/Certificate of Registration</label>
-                            <div class="file-upload-box" id="license-upload" ondrop="handleDrop(event, 'license')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div class="file-upload-box" id="license-upload"
+                                ondrop="handleDrop(event, 'business_license')" 
+                                ondragover="handleDragOver(event)" 
+                                ondragleave="handleDragLeave(event)">
                                 <div class="upload-icon">
                                     <i class="fas fa-file-upload"></i>
                                 </div>
                                 <p class="upload-text">Drag & drop or click to upload</p>
                                 <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
-                                <input type="file" id="business-license" name="business_license" accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                                <input type="file" id="business-license" name="business_license"
+                                       accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
                             </div>
                             <div id="license-preview" class="file-preview"></div>
                         </div>
 
                         <div class="form-group">
                             <label for="government-id-doc">Government-Issued ID (Front & Back)</label>
-                            <div class="file-upload-box" id="id-upload" ondrop="handleDrop(event, 'id')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div class="file-upload-box" id="id-upload"
+                                ondrop="handleDrop(event, 'government_id_doc')" 
+                                ondragover="handleDragOver(event)" 
+                                ondragleave="handleDragLeave(event)">
                                 <div class="upload-icon">
                                     <i class="fas fa-id-card"></i>
                                 </div>
                                 <p class="upload-text">Drag & drop or click to upload</p>
                                 <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
-                                <input type="file" id="government-id-doc" name="government_id_doc" accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                                <input type="file" id="government-id-doc" name="government_id_doc"
+                                       accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
                             </div>
                             <div id="id-preview" class="file-preview"></div>
                         </div>
@@ -116,15 +126,20 @@
                             <label for="proof-ownership">Proof of Ownership</label>
                             <p class="hint-text">
                                 <i class="fas fa-info-circle"></i> 
-                                Upload one of: Articles of Incorporation, Certificate of Authority, Lease Agreement, Utility Bill, or Bank Statement showing restaurant name
+                                Upload one of: Articles of Incorporation, Lease Agreement, Utility Bill, Bank Statement, etc.
                             </p>
-                            <div class="file-upload-box" id="ownership-upload" ondrop="handleDrop(event, 'ownership')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+
+                            <div class="file-upload-box" id="ownership-upload"
+                                ondrop="handleDrop(event, 'proof_ownership')" 
+                                ondragover="handleDragOver(event)" 
+                                ondragleave="handleDragLeave(event)">
                                 <div class="upload-icon">
                                     <i class="fas fa-certificate"></i>
                                 </div>
                                 <p class="upload-text">Drag & drop or click to upload</p>
                                 <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
-                                <input type="file" id="proof-ownership" name="proof_ownership" accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                                <input type="file" id="proof-ownership" name="proof_ownership"
+                                       accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
                             </div>
                             <div id="ownership-preview" class="file-preview"></div>
                         </div>
@@ -145,7 +160,7 @@
                     <div class="form-step" id="step-3">
                         <h3>Review Your Information</h3>
                         <p class="step-description">Please review your information before submitting.</p>
-                        
+
                         <div class="review-section">
                             <h4>Personal Information</h4>
                             <div class="review-item">
@@ -184,7 +199,7 @@
 
                         <div class="info-box warning">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <p>By submitting this application, you confirm that all information is accurate and truthful. False information may result in account suspension.</p>
+                            <p>By submitting this application, you confirm that all information is accurate and truthful.</p>
                         </div>
 
                         <div class="checkbox-group">
@@ -198,13 +213,13 @@
                                 <i class="fas fa-check"></i> Submit Application
                             </button>
                         </div>
+
                     </div>
                 </form>
             </div>
         </section>
     </main>
 </div>
-
 {% endblock %}
 
 {% block rr_base_js %}
