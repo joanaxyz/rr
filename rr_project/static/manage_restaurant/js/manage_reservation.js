@@ -77,19 +77,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // ------------------------- Reservation Modal -------------------------
   window.openReservationInfo = function(button) {
     const row = button.closest("tr");
-    const name = row.cells[1].innerText;
-    const email = row.getAttribute("data-email") || "-"; // <-- getAttribute on row
 
-    document.getElementById("infoName").innerText = name;
-    document.getElementById("infoEmail").innerText = email;
-    document.getElementById("infoGuestCount").innerText = row.cells[4].innerText;
-    document.getElementById("infoStatus").innerText = row.cells[6].innerText;
-    document.getElementById("infoDate").innerText = row.cells[2].innerText;
-    document.getElementById("infoTime").innerText = row.cells[3].innerText;
-    document.getElementById("infoTables").innerText = row.cells[5].innerText;
+    document.getElementById("infoName").innerText = row.dataset.name || "-";
+    document.getElementById("infoEmail").innerText = row.dataset.email || "-";
+    document.getElementById("infoGuestCount").innerText = row.dataset.guestCount || "-";
+    document.getElementById("infoStatus").innerText = row.dataset.status || "-";
+    document.getElementById("infoDate").innerText = row.dataset.date || "-";
+    document.getElementById("infoTime").innerText = row.dataset.time || "-";
+    document.getElementById("infoTables").innerText = row.dataset.tables || "-";
+    document.getElementById("infoCreatedAt").innerText = row.dataset.createdAt || "-";
+    document.getElementById("infoNotes").innerText = row.dataset.notes || "-";
+    document.getElementById("infoCancellationReason").innerText = row.dataset.cancellationReason || "-";
 
     document.getElementById("reservationModal").style.display = "block";
-  }
+}
+
 
 
   window.closeReservationInfo = function() {
