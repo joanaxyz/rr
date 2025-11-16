@@ -305,33 +305,46 @@ body {
 /* ===== Pagination ===== */
 .pagination-container {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .pagination {
   display: flex;
   gap: 8px;
   font-size: 0.875rem;
+  list-style: none;
+  padding: 0;
 }
 
 .pagination a,
 .pagination span {
+  display: inline-block;
+  min-width: 32px;
+  padding: 6px 12px;
+  text-align: center;
   text-decoration: none;
+  border-radius: var(--radius-md);
+  border: 1px solid #ddd;
   color: #333333;
+  transition: all 0.2s ease-in-out;
 }
 
 .pagination a:hover {
-  text-decoration: underline;
+  background-color: #f3f3f3;
+  border-color: #bbb;
 }
 
 .pagination .current {
   font-weight: bold;
-  color: blue;
-  text-decoration: underline;
+  color: #fff;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .pagination .disabled {
   color: #aaa;
   cursor: default;
+  border-color: #eee;
+  background-color: #f9f9f9;
 }
