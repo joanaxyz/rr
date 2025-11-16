@@ -910,3 +910,36 @@ body {
   color: var(--text-secondary);
   font-size: 0.95rem;
 }
+
+/* ============ PAGINATION STYLES ============ */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 15px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination-container button {
+  background-color: transparent;
+  color: var(--text-primary, #fff);
+  border: 1px solid transparent; 
+  padding: 3px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  min-width: 24px;
+  transition: all 0.2s ease;
+}
+
+
+.pagination-container button.active {
+  color: blue;
+  text-decoration: underline;
+}
+
+.pagination-container button:hover {
+  color: var(--accent-color, #ffd700);
+  border-color: var(--accent-color, #ffd700);
+}
