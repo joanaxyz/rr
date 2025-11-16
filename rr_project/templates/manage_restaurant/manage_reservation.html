@@ -125,16 +125,16 @@
             <tbody>
               {% for reservation in reservations %}
               <tr 
-                data-name="{{ reservation.name }}"
-                data-email="{{ reservation.customer.user.email }}"
-                data-guest-count="{{ reservation.guest_count }}"
-                data-status="{{ reservation.status }}"
-                data-date="{{ reservation.date }}"
-                data-time="{{ reservation.time }}"
-                data-tables="{{ reservation.table_numbers|join:',' }}"
-                data-created-at="{{ reservation.created_at }}"
-                data-notes="{{ reservation.notes|default:'' }}"
-                data-cancellation-reason="{{ reservation.cancellation_info.reason|default:'' }}"
+                  data-name="{{ reservation.name }}"
+                  data-email="{% firstof reservation.customer.user.email reservation.customer.email reservation.email '-' %}"
+                  data-guest-count="{{ reservation.guest_count }}"
+                  data-status="{{ reservation.status }}"
+                  data-date="{{ reservation.date }}"
+                  data-time="{{ reservation.time }}"
+                  data-tables="{{ reservation.table_numbers|join:',' }}"
+                  data-created-at="{{ reservation.created_at }}"
+                  data-notes="{{ reservation.notes|default:'' }}"
+                  data-cancellation-reason="{{ reservation.cancellation_info.reason|default:'' }}"
               >
                 <td>{{ forloop.counter }}</td>
                 <td>{{ reservation.name }}</td>
