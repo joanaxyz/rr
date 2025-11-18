@@ -25,7 +25,7 @@ function setupMoreLessToggle() {
 document.addEventListener('DOMContentLoaded', () => {
     // Handle +MORE and -LESS toggle
     setupMoreLessToggle();
-    const address = document.getElementById('address').textContent;
+    let address = document.getElementById('address').textContent;
 
     const restaurants = JSON.parse(document.getElementById('restaurant-data').textContent);
     const paginator = new Paginator(restaurants, 5);
@@ -113,6 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
         shouldApplyFilters = true;
     }
 
+    if (address && address !== 'Address') {
+        shouldApplyFilters = true;
+    }
+
     // Apply filters if any context values were set
     if (shouldApplyFilters) {
         applyFiltersAndSort();
@@ -166,6 +170,15 @@ document.addEventListener('DOMContentLoaded', () => {
             applyFiltersAndSort();
         }
     });
+
+    const addressForm = document.getElementById('addressForm');
+    if (addressForm) {
+        addressForm.addEventListener('submit', () => {
+            address = document.getElementById('address').textContent;
+            applyFiltersAndSort();
+            window.LoadingOverlay.hide();
+        });
+    }
     
     function applyFiltersAndSort() {
         const resultNumbers = document.querySelector('.results-count');
@@ -209,15 +222,15 @@ function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay
 
         // Check if restaurant operates on the selected day
         let matchesOperatingDay = true;
-        if (operatingDay) {
+        if (operatingDay && operatingDay !== 'Any Day') {
             const operatingDays = restaurant.operating_days.split(',').map(d => d.trim());
-            matchesOperatingDay = operatingDays.includes(operatingDay) || operatingDay === 'Any Day';
+            matchesOperatingDay = operatingDays.includes(operatingDay);
         }
 
         let matchesAddress = true;
-        if(address) {
-            const restaurantAddress = restaurant.address;
-            matchesAddress = restaurantAddress.includes(address.toLowerCase()) || address == 'Address';
+        if(address && address !== 'Address') {
+            const restaurantAddress = restaurant.address.toLowerCase();
+            matchesAddress = restaurantAddress.includes(address.toLowerCase());
         }
 
         let matchesName = true;

@@ -6,9 +6,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCancel = document.getElementById('modalCancel');
     const modalOverlay = document.querySelector('.modal-overlay');
     const addressForm = document.getElementById('addressForm');
+    const cityInput = document.getElementById('city');
 
     // Open modal
     addressEditTrigger.addEventListener('click', () => {
+        const addressElement = document.getElementById('address');
+        const cityValue = addressElement.getAttribute('data-city');
+        
+        if (cityValue) {
+            cityInput.value = cityValue;
+            console.log('city:', cityValue);
+        }
+        
         modal.classList.add('active');
     });
 
@@ -48,9 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (fullAddress) {
             addressElement.textContent = fullAddress;
+            addressElement.setAttribute('data-city', data.city || '');
         }
-
-        applyFiltersAndSort();
     });
 
     // Close modal when pressing Escape key

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleLogout = () => {
         window.MessageBox.showConfirm('Are you sure you want to logout?', () => {
-            window.location.href='/accounts/auth/logout';
+            window.location.href='/accounts/auth/logout/';
         });
     };
 

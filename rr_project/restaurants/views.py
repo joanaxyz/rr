@@ -63,5 +63,6 @@ def restaurants_view(request):
         'day': day,
         'city': city,
         'guest_count': guest_count,
+        'total_restaurants': len(restaurant_list),
     }
     return render(request, 'restaurants/restaurants.html', context)

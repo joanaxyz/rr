@@ -10,6 +10,9 @@ class LoadingOverlay{
     hide(){
         this.overlay.classList.remove('active');
     }
+    isVisible(){
+        return this.overlay.classList.contains('active');
+    }
 }
 
 window.LoadingOverlay = new LoadingOverlay();

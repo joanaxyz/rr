@@ -17,7 +17,9 @@ function attachSubmitListeners(container) {
         if (!submitBtn) return;
 
         form.addEventListener('submit', () => {
-            window.LoadingOverlay.show();
+            if (!window.LoadingOverlay.isVisible?.()) {
+                window.LoadingOverlay.show();
+            }
         });
     });
 }

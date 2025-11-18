@@ -68,7 +68,6 @@ def settings_view(request):
     
     context = {
         'user': user_dict,
-        'user_profile': user_dict,
         'verification_request': verification_request,
         'staff_assignments': staff_assignments,
         'owned_restaurants': owned_restaurants
@@ -80,11 +79,22 @@ def settings_view(request):
 def update_profile(request):
     """Handle profile information updates via AJAX"""
     try:
+        import json
         user = request.user
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        email = request.POST.get('email', '').strip()
-        phone = request.POST.get('phone', '').strip()
+        
+        # Handle JSON request body
+        if request.content_type == 'application/json':
+            data = json.loads(request.body)
+            first_name = data.get('first_name', '').strip()
+            last_name = data.get('last_name', '').strip()
+            email = data.get('email', '').strip()
+            phone = data.get('phone', '').strip()
+        else:
+            # Fallback to POST data for form submissions
+            first_name = request.POST.get('first_name', '').strip()
+            last_name = request.POST.get('last_name', '').strip()
+            email = request.POST.get('email', '').strip()
+            phone = request.POST.get('phone', '').strip()
         
         errors = {}
         
@@ -134,10 +144,20 @@ def update_profile(request):
 def change_password(request):
     """Handle password changes via AJAX"""
     try:
+        import json
         user = request.user
-        current_password = request.POST.get('current_password', '').strip()
-        new_password = request.POST.get('new_password', '').strip()
-        confirm_password = request.POST.get('confirm_password', '').strip()
+        
+        # Handle JSON request body
+        if request.content_type == 'application/json':
+            data = json.loads(request.body)
+            current_password = data.get('current_password', '').strip()
+            new_password = data.get('new_password', '').strip()
+            confirm_password = data.get('confirm_password', '').strip()
+        else:
+            # Fallback to POST data for form submissions
+            current_password = request.POST.get('current_password', '').strip()
+            new_password = request.POST.get('new_password', '').strip()
+            confirm_password = request.POST.get('confirm_password', '').strip()
         
         errors = {}
         

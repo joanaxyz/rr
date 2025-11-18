@@ -354,7 +354,7 @@
 .toggle-password:hover {
   color: var(--color-primary);
   background: rgba(212, 83, 10, 0.1);
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.1);
 }
 
 /* Helper text styling */
