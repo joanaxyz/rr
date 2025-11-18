@@ -287,40 +287,16 @@ function createRestaurantCard(restaurant) {
         <div class="left" style="background-image: ${imageStyle}"></div>
 
         <div class="center">
-          <h3 class="restaurant-name">${restaurant.name}</h3>
-          <p class="restaurant-cuisines">${restaurant.cuisines.map(c => c.name).join(', ')}</p>
-
-          <div class="restaurant-details">
-            <div class="restaurant-address">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5
-                         M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" />
-              </svg>
-              <span>${restaurant.address || "Address not available"}</span>
+          <div class="card-header">
+            <div class="header-title">
+              <h3 class="restaurant-name">${restaurant.name}</h3>
+              <div class="restaurant-rating">
+                <div class="stars" data-rating="${restaurant.avg_rating || 0}"></div>
+                <span class="rating-text">${avgRating.toFixed(1)}</span>
+              </div>
             </div>
-
-            <div class="restaurant-hours ${isOpen ? "open" : "closed"}">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2
-                         M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
-              </svg>
-              <span>
-                ${isOpen
-            ? `Open until ${restaurant.closing_time}`
-            : restaurant.opening_time
-                ? `Opens at ${restaurant.opening_time}`
-                : "Hours not available"}
-              </span>
-            </div>
-
-            <div class="restaurant-operating-days">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
-              </svg>
-              <span class="operating-days-text">${restaurant.operating_days || "Hours not available"}</span>
-            </div>
-
-            <div class="restaurant-price-wrapper">
+            <div class="header-meta">
+              <span class="review-count">(${reviewCount})</span>
               <div class="restaurant-price">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2
@@ -329,25 +305,55 @@ function createRestaurantCard(restaurant) {
                 <span>${restaurant.price_range_display || "N/A"}</span>
               </div>
             </div>
+          </div>
 
-            <div class="restaurant-guests">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-              </svg>
-              <span>Up to ${restaurant.max_guest_count} guests</span>
+          <p class="restaurant-cuisines">${restaurant.cuisines.map(c => c.name).join(', ')}</p>
+
+          <div class="restaurant-details">
+            <div class="details-row">
+              <div class="restaurant-address">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5
+                           M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" />
+                </svg>
+                <span>${restaurant.address || "Address not available"}</span>
+              </div>
+
+              <div class="restaurant-guests">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                </svg>
+                <span>Up to ${restaurant.max_guest_count} guests</span>
+              </div>
+            </div>
+
+            <div class="details-row">
+              <div class="restaurant-hours ${isOpen ? "open" : "closed"}">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2
+                           M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
+                </svg>
+                <span>
+                  ${isOpen
+              ? `Open until ${restaurant.closing_time}`
+              : restaurant.opening_time
+                  ? `Opens at ${restaurant.opening_time}`
+                  : "Hours not available"}
+                </span>
+              </div>
+
+              <div class="restaurant-operating-days">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
+                </svg>
+                <span class="operating-days-text">${restaurant.operating_days || "Hours not available"}</span>
+              </div>
             </div>
           </div>
 
           ${restaurant.tags?.length
             ? `<div class="restaurant-tags">${restaurant.tags.map(t => t.tag).map(tag => `<span class="restaurant-tag">${tag}</span>`).join('')}</div>`
             : ""}
-
-          <div class="restaurant-rating">
-            <div class="stars" data-rating="${restaurant.avg_rating || 0}"></div>
-            <span class="rating-text">
-                ${avgRating.toFixed(1)} (${reviewCount})
-            </span>
-          </div>
         </div>
     `;
 

@@ -4,45 +4,54 @@
 
 @import '../../common/css/components.css';
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--gradient-surface-dark);
+  color: var(--color-gray-800);
+  font-family: var(--font-primary);
+}
+
 /* ============ LAYOUT STRUCTURE ============ */
 
 .main-container {
   display: flex;
   min-height: 100vh;
   gap: var(--space-8);
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: var(--space-8);
-  background: var(--gradient-surface-dark);
 }
 
 .left-container {
-  flex: 0 0 320px;
+  flex: 0 0 300px;
   background: var(--color-white);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-base);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: var(--space-6);
   height: calc(100vh - var(--space-8) * 2);
   max-height: 85vh;
   overflow-y: auto;
   position: sticky;
-  top: 130px; /* Accounts for fixed navbar (110px) + spacing (20px) */
+  top: 130px;
+  border: 1px solid var(--color-gray-200);
 }
 
-/* Custom scrollbar styling */
 .left-container::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .left-container::-webkit-scrollbar-track {
-  background: var(--color-gray-50);
-  border-radius: var(--radius-base);
+  background: transparent;
 }
 
 .left-container::-webkit-scrollbar-thumb {
   background: var(--color-gray-300);
-  border-radius: var(--radius-base);
-  border: 2px solid var(--color-gray-50);
+  border-radius: var(--radius-full);
 }
 
 .left-container::-webkit-scrollbar-thumb:hover {
@@ -54,6 +63,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  min-width: 0;
 }
 
 /* ============ LOCATION BUTTON ============ */
@@ -63,8 +73,8 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: var(--color-gray-50);
-  border: var(--border-1) solid var(--color-gray-200);
+  background: linear-gradient(135deg, rgba(255, 250, 245, 1) 0%, rgba(255, 248, 240, 1) 100%);
+  border: 1px solid rgba(212, 83, 10, 0.2);
   border-radius: var(--radius-base);
   cursor: pointer;
   transition: var(--transition-base);
@@ -72,13 +82,14 @@
 }
 
 .locationButton:hover {
-  background: var(--color-gray-100);
+  background: linear-gradient(135deg, rgba(255, 245, 235, 1) 0%, rgba(255, 240, 225, 1) 100%);
   border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(212, 83, 10, 0.1);
 }
 
 .locationButton svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   color: var(--color-primary);
   flex-shrink: 0;
 }
@@ -86,7 +97,7 @@
 .locationButton div p:first-child {
   font-size: var(--font-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-700);
+  color: var(--color-gray-900);
   margin: 0;
 }
 
@@ -103,10 +114,10 @@
 }
 
 .filter-title {
-  font-size: var(--font-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-800);
-  margin-bottom: var(--space-3);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-4);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
 }
@@ -115,63 +126,11 @@
 .tags-filter,
 .filter-by {
   margin-bottom: var(--space-6);
-  position: relative;
-  padding-top: var(--space-4);
 }
 
 .guest-count-filter,
 .operating-days-filter {
   margin-bottom: var(--space-6);
-  position: relative;
-  padding-top: var(--space-4);
-}
-
-.operating-days-filter::before {
-  content: 'DAY';
-  position: absolute;
-  top: calc(var(--space-3) * -1);
-  left: 0;
-  font-size: var(--font-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
-}
-
-.cuisines-filter::before {
-  content: 'CUISINES';
-  position: absolute;
-  top: calc(var(--space-3) * -1);
-  left: 0;
-  font-size: var(--font-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
-}
-
-.tags-filter::before {
-  content: 'DIETARY TAGS';
-  position: absolute;
-  top: calc(var(--space-3) * -1);
-  left: 0;
-  font-size: var(--font-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
-}
-
-.filter-by::before {
-  content: 'SORT BY';
-  position: absolute;
-  top: calc(var(--space-3) * -1);
-  left: 0;
-  font-size: var(--font-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
 }
 
 /* ============ FILTER LABELS ============ */
@@ -182,16 +141,20 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
+  padding: var(--space-2);
+  margin: var(--space-1) 0;
   cursor: pointer;
   font-size: var(--font-sm);
   color: var(--color-gray-700);
   transition: var(--transition-base);
+  border-radius: var(--radius-sm);
+  user-select: none;
 }
 
 .cuisines-filter label:hover,
 .tags-filter label:hover,
 .filter-by label:hover {
+  background: rgba(212, 83, 10, 0.06);
   color: var(--color-primary);
 }
 
@@ -201,11 +164,13 @@
 .filter-by input[type="radio"] {
   width: 16px;
   height: 16px;
-  border: var(--border-2) solid var(--color-gray-300);
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-sm);
   background: var(--color-white);
   cursor: pointer;
   transition: var(--transition-base);
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .filter-by input[type="radio"] {
@@ -236,7 +201,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
+  padding: var(--space-2);
   cursor: pointer;
   font-size: var(--font-sm);
   color: var(--color-gray-700);
@@ -246,6 +211,7 @@
 .hidden-cuisines label:hover,
 .hidden-tags label:hover {
   color: var(--color-primary);
+  background: rgba(212, 83, 10, 0.06);
 }
 
 .cuisines-filter p,
@@ -254,26 +220,26 @@
   color: var(--color-primary);
   cursor: pointer;
   margin-top: var(--space-2);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   transition: var(--transition-base);
 }
 
 .cuisines-filter p:hover,
 .tags-filter p:hover {
-  text-decoration: underline;
+  opacity: 0.8;
 }
 
 .more-toggle {
   font-size: var(--font-xs);
   color: var(--color-primary);
   cursor: pointer;
-  margin-top: var(--space-2);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   transition: var(--transition-base);
+  opacity: 0.9;
 }
 
 .more-toggle:hover {
-  text-decoration: underline;
+  opacity: 1;
 }
 
 /* ============ SORT ORDER ============ */
@@ -281,7 +247,7 @@
 .sort-order {
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: var(--border-1) solid var(--color-gray-200);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .sort-order span {
@@ -289,65 +255,53 @@
   font-size: var(--font-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-600);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
 }
 
 .sort-order label {
   margin-right: var(--space-4);
 }
 
-/* ============ SEARCH BAR ============ */
+/* ============ SELECT FILTERS ============ */
 
-.searchbar {
-  display: flex;
-  align-items: center;
+.guest-count-filter select,
+.operating-days-filter select {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-sm);
+  color: var(--color-gray-700);
   background: var(--color-white);
-  border: var(--border-1) solid var(--color-gray-300);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-base);
-  padding: var(--space-3);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-base);
-}
-
-.searchbar:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-primary);
-}
-
-.searchbar input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: var(--font-base);
-  color: var(--color-gray-800);
-  background: transparent;
-}
-
-.searchbar input::placeholder {
-  color: var(--color-gray-400);
-}
-
-.searchbar button {
-  background: transparent;
-  border: none;
-  padding: var(--space-2);
-  color: var(--color-gray-400);
   cursor: pointer;
-  border-radius: var(--radius-sm);
   transition: var(--transition-base);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  background-size: 18px;
+  padding-right: var(--space-8);
 }
 
-.searchbar button:hover {
-  color: var(--color-primary);
-  background: var(--color-gray-50);
+.guest-count-filter select:hover,
+.operating-days-filter select:hover {
+  border-color: var(--color-primary);
+}
+
+.guest-count-filter select:focus,
+.operating-days-filter select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(212, 83, 10, 0.1);
 }
 
 /* ============ RESULTS COUNT ============ */
 
 .results-count {
   font-size: var(--font-sm);
-  color: var(--color-gray-600);
-  margin-bottom: var(--space-4);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: var(--font-weight-medium);
 }
 
@@ -362,16 +316,16 @@
   display: flex;
   background: var(--color-white);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-base);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: var(--transition-base);
   cursor: pointer;
   min-height: 200px;
-  margin-bottom: var(--space-4);
+  border: 1px solid var(--color-gray-200);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
 }
 
@@ -389,7 +343,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
 }
 
 .card .center {
@@ -399,6 +353,35 @@
   flex-direction: column;
   justify-content: flex-start;
   gap: var(--space-3);
+}
+
+.card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.card .header-title {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.card .header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.card .review-count {
+  font-size: var(--font-xs);
+  color: var(--color-gray-500);
+  font-weight: var(--font-weight-medium);
 }
 
 .card .restaurant-name {
@@ -420,17 +403,24 @@
 .card .restaurant-details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
+}
+
+.card .details-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
 }
 
 .card .restaurant-address,
 .card .restaurant-hours,
 .card .restaurant-price {
   font-size: var(--font-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   display: flex;
   align-items: center;
   gap: var(--space-1);
+  margin: 0;
 }
 
 .card .restaurant-address svg,
@@ -439,7 +429,7 @@
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .card .restaurant-hours.open {
@@ -451,30 +441,38 @@
 }
 
 .card .restaurant-price-wrapper {
-  margin-top: var(--space-2);
+  margin-top: 0;
 }
 
 .card .restaurant-price {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  background: rgba(220, 38, 38, 0.06);
+  gap: var(--space-1);
+  background: linear-gradient(135deg, rgba(255, 250, 245, 1) 0%, rgba(255, 248, 240, 1) 100%);
   color: var(--color-primary);
-  font-weight: var(--font-weight-medium);
-  padding: var(--space-2) var(--space-3);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-base);
+  border: 1px solid rgba(212, 83, 10, 0.15);
   transition: var(--transition-base);
+  font-size: var(--font-xs);
 }
 
 .card .restaurant-price:hover {
-  background: rgba(220, 38, 38, 0.1);
+  background: linear-gradient(135deg, rgba(255, 245, 235, 1) 0%, rgba(255, 240, 225, 1) 100%);
+  border-color: rgba(212, 83, 10, 0.3);
+}
+
+.card .restaurant-price svg {
+  width: 12px;
+  height: 12px;
 }
 
 .card .restaurant-tags {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin: var(--space-2) 0;
+  margin: var(--space-2) 0 0 0;
 }
 
 .card .restaurant-tag {
@@ -483,20 +481,25 @@
   color: var(--color-white);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   white-space: nowrap;
+  transition: var(--transition-base);
+}
+
+.card .restaurant-tag:hover {
+  opacity: 0.9;
 }
 
 .card .restaurant-rating {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .card .rating-text {
   font-size: var(--font-sm);
   color: var(--color-gray-600);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
 }
 
 /* ============ STAR RATINGS ============ */
@@ -514,83 +517,16 @@
   flex-shrink: 0;
 }
 
-/* ============ GUEST COUNT FILTER ============ */
-
-.guest-count-filter {
-  margin-bottom: var(--space-6);
-  position: relative;
-}
-
-.guest-count-filter::before {
-  content: 'GUEST COUNT';
-  position: absolute;
-  top: calc(var(--space-3) * -1);
-  left: 0;
-  font-size: var(--font-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
-}
-
-.guest-count-filter label,
-.operating-days-filter label {
-  display: block;
-  font-size: var(--font-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
-  margin-bottom: var(--space-2);
-  cursor: pointer;
-  transition: var(--transition-base);
-}
-
-.guest-count-filter label:hover,
-.operating-days-filter label:hover {
-  color: var(--color-primary);
-}
-
-.guest-count-filter select,
-.operating-days-filter select {
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-sm);
-  color: var(--color-gray-700);
-  background: var(--color-white);
-  border: var(--border-1) solid var(--color-gray-300);
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  transition: var(--transition-base);
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right var(--space-2) center;
-  background-size: 20px;
-  padding-right: var(--space-8);
-}
-
-.guest-count-filter select:hover,
-.operating-days-filter select:hover {
-  border-color: var(--color-primary);
-}
-
-.guest-count-filter select:focus,
-.operating-days-filter select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-
-
 /* ============ OPERATING DAYS & GUESTS DISPLAY ============ */
 
 .card .restaurant-operating-days,
 .card .restaurant-guests {
   font-size: var(--font-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   display: flex;
   align-items: center;
   gap: var(--space-1);
+  margin: 0;
 }
 
 .card .restaurant-operating-days svg,
@@ -598,13 +534,7 @@
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  opacity: 0.7;
-}
-
-.card .operating-days-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  opacity: 0.6;
 }
 
 /* ============ MODAL STYLES ============ */
@@ -639,7 +569,7 @@
   position: relative;
   background: var(--color-white);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   width: 90%;
   max-width: 500px;
   max-height: 80vh;
@@ -652,7 +582,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-5);
-  border-bottom: var(--border-1) solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h2 {
@@ -675,11 +605,6 @@
   transition: var(--transition-base);
 }
 
-.modal-close svg {
-  width: 24px;
-  height: 24px;
-}
-
 .modal-close:hover {
   background: var(--color-gray-100);
   color: var(--color-gray-900);
@@ -695,14 +620,12 @@
   gap: var(--space-4);
 }
 
-/* Form group styles are defined in components.css */
-
 .modal-footer {
   display: flex;
   gap: var(--space-3);
   justify-content: flex-end;
   padding-top: var(--space-4);
-  border-top: var(--border-1) solid var(--color-gray-200);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-cancel,
@@ -731,10 +654,9 @@
 }
 
 .btn-submit:hover {
-  background: var(--color-primary);
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(212, 83, 10, 0.25);
 }
 
 /* ============ RESPONSIVE DESIGN ============ */
@@ -749,6 +671,8 @@
     flex: none;
     position: static;
     order: 2;
+    height: auto;
+    max-height: none;
   }
   
   .right-container {
@@ -772,6 +696,20 @@
     gap: var(--space-2);
   }
   
+  .card .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .card .header-meta {
+    align-items: flex-start;
+  }
+
+  .card .details-row {
+    grid-template-columns: 1fr;
+  }
+  
   .main-container {
     gap: var(--space-4);
     padding: var(--space-3);
@@ -779,7 +717,6 @@
   
   .left-container {
     padding: var(--space-4);
-    top: 115px; /* Adjusted for smaller navbar at tablet size (85px + 30px) */
   }
   
   .card .restaurant-name {
@@ -796,150 +733,25 @@
 }
 
 @media (max-width: 480px) {
-  .card .restaurant-name {
-    font-size: var(--font-lg);
-  }
-  
   .main-container {
     padding: var(--space-2);
   }
   
   .left-container {
+    flex: 0 0 auto;
     padding: var(--space-3);
+    max-height: 50vh;
   }
   
   .card .center {
     padding: var(--space-3);
   }
-}
-
-/* ============ ADDRESS MODAL ============ */
-
-.address-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-.address-modal-content {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.address-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-5);
-  border-bottom: var(--border-1) solid var(--color-gray-200);
-}
-
-.address-modal-header h2 {
-  margin: 0;
-  font-size: var(--font-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-900);
-}
-
-.address-modal-close {
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: var(--color-gray-500);
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  transition: var(--transition-base);
-}
-
-.address-modal-close:hover {
-  background: var(--color-gray-100);
-  color: var(--color-gray-900);
-}
-
-.address-form {
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-/* Form group styles are defined in components.css */
-
-.address-modal-actions {
-  display: flex;
-  gap: var(--space-3);
-  justify-content: flex-end;
-  padding-top: var(--space-4);
-  border-top: var(--border-1) solid var(--color-gray-200);
-}
-
-.btn-cancel,
-.btn-save {
-  padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-base);
-  font-size: var(--font-base);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: var(--transition-base);
-  border: none;
-}
-
-.btn-cancel {
-  background: var(--color-gray-100);
-  color: var(--color-gray-800);
-}
-
-.btn-cancel:hover {
-  background: var(--color-gray-200);
-}
-
-.btn-save {
-  background: var(--color-primary);
-  color: var(--color-white);
-}
-
-.btn-save:hover {
-  background: var(--color-primary);
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-@media (max-width: 640px) {
-  .address-modal-content {
-    width: 95%;
-    max-height: 90vh;
+  
+  .card .restaurant-name {
+    font-size: var(--font-lg);
   }
   
-  .address-form {
-    padding: var(--space-4);
-    gap: var(--space-3);
-  }
-  
-  .address-modal-actions {
-    flex-direction: column-reverse;
-  }
-  
-  .btn-cancel,
-  .btn-save {
-    width: 100%;
+  .card .left {
+    flex: 0 0 150px;
   }
 }
