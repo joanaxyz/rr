@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
+import json
 
 from .forms import (
     CustomUserCreationForm,
@@ -174,49 +175,6 @@ def logout_view(request):
 # FORGOT PASSWORD
 # ------------------------------
 def forgot_password_view(request):
-    if request.method == "POST":
-        try:
-            email = request.POST.get("email", "").strip()
-
-            if not email:
-                return JsonResponse(
-                    {"success": False, "message": "Email address is required."}
-                )
-
-            try:
-                user = User.objects.get(email=email, is_active=True)
-                reset_code = user.generate_password_reset_code()
-
-                if send_password_reset_code_email(user, reset_code):
-                    return JsonResponse(
-                        {
-                            "success": True,
-                            "message": "Verification code sent!",
-                            "user_id": user.id,
-                        }
-                    )
-                else:
-                    return JsonResponse(
-                        {
-                            "success": False,
-                            "message": "Failed to send verification code.",
-                        }
-                    )
-
-            except User.DoesNotExist:
-                return JsonResponse(
-                    {
-                        "success": True,
-                        "message": "If the email exists, a code will be sent.",
-                        "user_id": None,
-                    }
-                )
-
-        except:
-            return JsonResponse(
-                {"success": False, "message": "Something went wrong. Try again."}
-            )
-
     return render(request, "accounts/forgot_pass.html")
 
 
