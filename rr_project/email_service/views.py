@@ -1,9 +1,10 @@
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from django.urls import reverse
+import resend
 
+resend.api_key =  settings.RESEND_API_KEY
 
 def send_email(subject, template_name, context, recipient_email, plain_text_fallback=None):
     """
@@ -29,15 +30,14 @@ def send_email(subject, template_name, context, recipient_email, plain_text_fall
         else:
             plain_message = strip_tags(html_message)
         
-        # Send email
-        send_mail(
-            subject=subject,
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[recipient_email],
-            html_message=html_message,
-            fail_silently=False,
-        )
+        # Send email using Resend
+        resend.Emails.send({
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": recipient_email,
+            "subject": subject,
+            "html": html_message,
+            "text": plain_message,
+        })
         return True
     except Exception as e:
         print(f"Failed to send email: {e}")

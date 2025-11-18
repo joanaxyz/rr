@@ -44,16 +44,6 @@ SUPABASE_SERVICE_ROLE_KEY = config('SUPABASE_SERVICE_ROLE_KEY')
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be set in environment variables")
 
-# Email Configuration for password reset
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT')
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
-
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
@@ -168,3 +158,7 @@ WHITENOISE_MIMETYPES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Configuration
+DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'
+RESEND_API_KEY = config('RESEND_API_KEY')
