@@ -179,7 +179,7 @@ def send_reservation_cancellation_email(cancelled_reservation):
     template_html='emails/reservation_cancellation_customer.html'
 
     if cancelled_reservation.cancellation_info.get('sender') != 'CUSTOMER':
-        template_html='emails/reservation_cancellation_host.html',
+        template_html='emails/reservation_cancellation_host.html'
         
     return send_email(
         subject=subject,
