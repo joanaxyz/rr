@@ -5,18 +5,22 @@ class OwnerVerificationForm(forms.ModelForm):
     class Meta:
         model = OwnerVerificationRequest
         fields = [
-            "gov_full_name",
-            "id_type",
-            "id_number",
-            "business_address",
-            "business_email",
-            "proof_image",
+            'govt_full_name',
+            'government_id_type',
+            'government_id_number',
+            'business_address',
+            'business_email',
+            'tax_id',
+            'business_license',
+            'government_id_front',
+            'government_id_back',
+            'proof_of_ownership',
         ]
-
         widgets = {
-            "gov_full_name": forms.TextInput(attrs={"class": "form-control"}),
-            "id_type": forms.TextInput(attrs={"class": "form-control"}),
-            "id_number": forms.TextInput(attrs={"class": "form-control"}),
-            "business_address": forms.TextInput(attrs={"class": "form-control"}),
-            "business_email": forms.EmailInput(attrs={"class": "form-control"}),
+            'govt_full_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'government_id_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'government_id_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'business_address': forms.TextInput(attrs={'class': 'form-control'}),
+            'business_email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'tax_id': forms.TextInput(attrs={'class': 'form-control'}),
         }

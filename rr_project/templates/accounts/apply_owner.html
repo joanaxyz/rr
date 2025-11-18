@@ -10,14 +10,14 @@
     <h2>Owner Verification Form</h2>
 
     {% if first_error %}
-      <div class="alert alert-danger">
+    <div class="alert alert-danger">
         {{ first_error }}
-      </div>
+    </div>
     {% endif %}
 
-    <form method="POST" enctype="multipart/form-data" id="ownerForm">
+    <form method="POST" enctype="multipart/form-data" id="ownerForm" action="{% url 'accounts:apply_owner' %}">
         {% csrf_token %}
-        
+
         <!-- Full Name -->
         <div class="form-group">
             <label for="id_govt_full_name">Full Name</label>
@@ -48,7 +48,13 @@
             {{ form.business_email }}
         </div>
 
-        <!-- Business License Upload -->
+        <!-- Tax ID -->
+        <div class="form-group">
+            <label for="id_tax_id">Tax ID (optional)</label>
+            {{ form.tax_id }}
+        </div>
+
+        <!-- Business License -->
         <div class="form-group">
             <label for="id_business_license">Business License</label>
             {{ form.business_license }}
@@ -86,38 +92,37 @@
 
 {% block rr_base_js %}
 <script>
-    // Function to preview selected image files
-    function previewFile(input, previewId) {
-        const preview = document.getElementById(previewId);
-        const file = input.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-                preview.style.maxWidth = '200px';
-                preview.style.borderRadius = '8px';
-                preview.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
-            }
-            reader.readAsDataURL(file);
-        } else {
-            preview.src = '';
-            preview.style.display = 'none';
+function previewFile(input, previewId) {
+    const preview = document.getElementById(previewId);
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+            preview.style.maxWidth = '200px';
+            preview.style.borderRadius = '8px';
+            preview.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
         }
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
     }
+}
 
-    // Attach event listeners for file previews
-    document.getElementById('id_business_license')?.addEventListener('change', function() {
-        previewFile(this, 'preview_business_license');
-    });
-    document.getElementById('id_government_id_front')?.addEventListener('change', function() {
-        previewFile(this, 'preview_govt_front');
-    });
-    document.getElementById('id_government_id_back')?.addEventListener('change', function() {
-        previewFile(this, 'preview_govt_back');
-    });
-    document.getElementById('id_proof_of_ownership')?.addEventListener('change', function() {
-        previewFile(this, 'preview_proof');
-    });
+// Attach preview listeners
+document.getElementById('id_business_license')?.addEventListener('change', function() {
+    previewFile(this, 'preview_business_license');
+});
+document.getElementById('id_government_id_front')?.addEventListener('change', function() {
+    previewFile(this, 'preview_govt_front');
+});
+document.getElementById('id_government_id_back')?.addEventListener('change', function() {
+    previewFile(this, 'preview_govt_back');
+});
+document.getElementById('id_proof_of_ownership')?.addEventListener('change', function() {
+    previewFile(this, 'preview_proof');
+});
 </script>
 {% endblock %}

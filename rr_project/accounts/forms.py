@@ -91,3 +91,20 @@ class OwnerForm(forms.ModelForm):
         ]:
             if field_name in self.fields:
                 self.fields[field_name].required = False
+
+
+class OwnerVerificationForm(forms.ModelForm):
+    class Meta:
+        model = OwnerVerificationRequest
+        fields = [
+            "govt_full_name",
+            "government_id_type",
+            "government_id_number",
+            "business_address",
+            "business_email",
+            "business_license",
+            "government_id_front",
+            "government_id_back",
+            "proof_of_ownership",
+            # 'state' is optional because it defaults to PENDING
+        ]
