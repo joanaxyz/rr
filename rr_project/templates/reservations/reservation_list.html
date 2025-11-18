@@ -36,7 +36,8 @@
       <tbody>
         {% for reservation in reservations %}
         <tr>
-          <td>{{ forloop.counter }}</td>
+          <!-- Continuous numbering -->
+          <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
           <td>
             {% if reservation.restaurant %}
               <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
@@ -77,6 +78,34 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Pagination at bottom-right -->
+  {% if page_obj.has_other_pages %}
+  <div class="pagination-container">
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+      {% else %}
+        <span class="disabled">&laquo;</span>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+          <span class="current">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+      {% else %}
+        <span class="disabled">&raquo;</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
   {% else %}
   <p class="no-reservations">
     You have no reservations yet. Start by exploring restaurants and making your first reservation!

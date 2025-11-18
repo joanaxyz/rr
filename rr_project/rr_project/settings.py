@@ -17,7 +17,6 @@ import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-BASE_URL = 'http://127.0.0.1:8000'
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,13 +26,9 @@ BASE_URL = 'http://127.0.0.1:8000'
 SECRET_KEY = 'django-insecure-xs_w$!5xmj-6!gk+(y6n*6j%x^+ay&xz71qjqx*amkp#1i^4s0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-
-# Media
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/') 
 
 # Authentication Configuration
 AUTH_USER_MODEL = 'accounts.User'
@@ -120,7 +115,7 @@ WSGI_APPLICATION = 'rr_project.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        "postgresql://postgres.vrrnlplnanqrrvocwljk:Rr@app1122@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres"
+        config('POSTGRES')
     )
 }
 

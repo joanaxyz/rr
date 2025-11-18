@@ -910,3 +910,45 @@ body {
   color: var(--text-secondary);
   font-size: 0.95rem;
 }
+
+/* ============ PAGINATION STYLES ============ */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination-container button {
+  background-color: var(--color-white);
+  color: var(--text-primary, #333);
+  border: 1px solid var(--color-gray-300);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.875rem;
+  min-width: 36px;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination-container button:hover {
+  background-color: var(--color-gray-100);
+  border-color: var(--color-gray-400);
+  transform: translateY(-1px);
+}
+
+.pagination-container button.active {
+  background-color: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  font-weight: bold;
+}
+
+.pagination-container button.disabled {
+  background-color: var(--color-gray-100);
+  color: #aaa;
+  cursor: default;
+  border-color: var(--color-gray-200);
+}

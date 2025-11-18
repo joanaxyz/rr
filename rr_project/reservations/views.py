@@ -7,6 +7,8 @@ from .models import *
 from restaurants.models import Table, Element, Floorplan
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ReservationForm
+from django.core.paginator import Paginator
+from django.urls import reverse
 from email_service.views import send_reservation_updated_email
 from django.contrib import messages
 import json
@@ -50,29 +52,35 @@ def reservation(request, restaurant_id):
 
 @login_required
 def reservation_management_view(request):
-    """Display, cancel, and restore reservations"""
-    customer, created = Customer.objects.get_or_create(user=request.user)
-    reservations = Reservation.objects.filter(customer=customer).order_by('-date')
+    """Display, cancel, and restore reservations with pagination"""
+    customer, _ = Customer.objects.get_or_create(user=request.user)
+    reservations_list = Reservation.objects.filter(customer=customer).order_by('-date')
+
+    # Pagination
+    paginator = Paginator(reservations_list, 5)  # 5 reservations per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
 
     if request.method == 'POST':
+        current_page = request.GET.get('page', 1)  # preserve current page
+
         # Cancel reservation
         if 'cancel_reservation' in request.POST:
             reservation_id = request.POST.get('cancel_reservation')
             reason = request.POST.get('cancel_reason', '').strip()
-
             try:
                 reservation = get_object_or_404(Reservation, id=reservation_id, customer=customer)
-                restaurant_name = reservation.restaurant.name if reservation.restaurant else "Unknown Restaurant"
                 reservation.status = 'CANCELLED'
                 reservation.cancellation_info = {
                     "reason": reason,
                     "sender": request.user.username,
                 }
                 reservation.save()
+                restaurant_name = reservation.restaurant.name if reservation.restaurant else "Unknown Restaurant"
                 messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
             except Exception:
                 messages.error(request, "Failed to cancel reservation. Please try again.")
-            return redirect('reservations:reservation_management')
+            return redirect(f'{reverse("reservations:reservation_management")}?page={current_page}')
 
         # Restore reservation
         elif 'restore_reservation' in request.POST:
@@ -83,16 +91,17 @@ def reservation_management_view(request):
                     reservation.status = 'PENDING'
                     reservation.cancellation_info = {}
                     reservation.save()
-                    messages.success(request, f"Reservation has been restored.")
+                    messages.success(request, "Reservation has been restored.")
                 else:
                     messages.warning(request, "Only cancelled reservations can be restored.")
             except Exception:
                 messages.error(request, "Failed to restore reservation. Please try again.")
-            return redirect('reservations:reservation_management')
+            return redirect(f'{reverse("reservations:reservation_management")}?page={current_page}')
 
     context = {
-        'reservations': reservations,
-        'has_reservations': reservations.exists(),
+        'reservations': page_obj,
+        'page_obj': page_obj,
+        'has_reservations': reservations_list.exists(),
     }
     return render(request, 'reservations/reservation_list.html', context)
 

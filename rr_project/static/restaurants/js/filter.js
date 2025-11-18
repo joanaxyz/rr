@@ -28,7 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const address = document.getElementById('address').textContent;
 
     const restaurants = JSON.parse(document.getElementById('restaurant-data').textContent);
-    render(restaurants);
+    const paginator = new Paginator(restaurants, 5);
+    renderPage(paginator);
     const cuisineFContainer = document.querySelector('.cuisines-filter');
     const tagsFContainer = document.querySelector('.tags-filter');
     
@@ -172,9 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sortBy) {
             filtered = sortRestaurants(filtered, sortBy, sortOrder);
         }
-        render(filtered);
+        paginator.setItems(filtered);
+        renderPage(paginator);
         resultNumbers.textContent = `${filtered.length} restaurants found`;
     }
+
+    setupPaginationControls(paginator);
 })
 
 
@@ -258,8 +262,9 @@ function sortRestaurants(restaurants, sortBy, sortOrder) {
 }
 
 
-function render(restaurants) {
+function renderPage(paginator) {
     const grid = document.querySelector('.restaurants-grid');
+    const restaurants = paginator.getCurrentPageItems();
     grid.innerHTML = '';
     restaurants.forEach(restaurant => {
         const card = createRestaurantCard(restaurant);
@@ -268,6 +273,85 @@ function render(restaurants) {
         });
         grid.append(card);
     });
+    initStars();
+    updatePaginationControls(paginator);
+}
+
+function setupPaginationControls(paginator) {
+    const paginationContainer = document.querySelector('.pagination');
+    paginationContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('pagination-prev')) {
+            e.preventDefault();
+            paginator.previousPage();
+            renderPage(paginator);
+            window.scrollTo(0, 0);
+        } else if (e.target.classList.contains('pagination-next')) {
+            e.preventDefault();
+            paginator.nextPage();
+            renderPage(paginator);
+            window.scrollTo(0, 0);
+        } else if (e.target.classList.contains('pagination-number')) {
+            e.preventDefault();
+            const pageNum = parseInt(e.target.dataset.page);
+            paginator.currentPage = pageNum;
+            renderPage(paginator);
+            window.scrollTo(0, 0);
+        }
+    });
+}
+
+function updatePaginationControls(paginator) {
+    const paginationContainer = document.querySelector('.pagination');
+    if (!paginationContainer) return;
+    
+    if (paginator.totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    paginationContainer.innerHTML = '';
+
+    if (paginator.hasPreviousPage()) {
+        const prev = document.createElement('a');
+        prev.href = '#';
+        prev.className = 'pagination-prev';
+        prev.textContent = '« Previous';
+        paginationContainer.append(prev);
+    } else {
+        const prev = document.createElement('span');
+        prev.className = 'disabled';
+        prev.textContent = '« Previous';
+        paginationContainer.append(prev);
+    }
+
+    for (let i = 1; i <= paginator.totalPages; i++) {
+        if (i === paginator.currentPage) {
+            const span = document.createElement('span');
+            span.className = 'current';
+            span.textContent = i;
+            paginationContainer.append(span);
+        } else if (i > paginator.currentPage - 3 && i < paginator.currentPage + 3) {
+            const link = document.createElement('a');
+            link.href = '#';
+            link.className = 'pagination-number';
+            link.dataset.page = i;
+            link.textContent = i;
+            paginationContainer.append(link);
+        }
+    }
+
+    if (paginator.hasNextPage()) {
+        const next = document.createElement('a');
+        next.href = '#';
+        next.className = 'pagination-next';
+        next.textContent = 'Next »';
+        paginationContainer.append(next);
+    } else {
+        const next = document.createElement('span');
+        next.className = 'disabled';
+        next.textContent = 'Next »';
+        paginationContainer.append(next);
+    }
 }
 
 function createRestaurantCard(restaurant) {
@@ -293,10 +377,10 @@ function createRestaurantCard(restaurant) {
               <div class="restaurant-rating">
                 <div class="stars" data-rating="${restaurant.avg_rating || 0}"></div>
                 <span class="rating-text">${avgRating.toFixed(1)}</span>
+                <span class="review-count">(${reviewCount})</span>
               </div>
             </div>
             <div class="header-meta">
-              <span class="review-count">(${reviewCount})</span>
               <div class="restaurant-price">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2

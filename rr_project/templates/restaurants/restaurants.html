@@ -115,9 +115,11 @@
 
     <!-- RIGHT CONTENT -->
     <div class="right-container">
-        <p class="results-count">{{ restaurants|length }} restaurants found</p>
+        <p class="results-count">{{ total_restaurants }} restaurants found</p>
 
         <div class="restaurants-grid">
+        </div>
+        <div class="pagination">
         </div>
     </div>
 </div>
@@ -170,6 +172,7 @@
 {% endif %}
 <script src="{% static 'home/js/stars.js' %}"></script>
 <script src="{% static 'home/js/book.js' %}"></script>
+<script src="{% static 'restaurants/js/paginator.js' %}"></script>
 <script src="{% static 'restaurants/js/filter.js' %}"></script>
 <script src="{% static '/restaurants/js/addressModal.js' %}"></script>
 {% endblock %}

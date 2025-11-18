@@ -142,7 +142,6 @@ body {
   background-color: #e8f4f8;
 }
 
-
 .staff-table tbody tr {
   border-bottom: var(--border-1) solid var(--color-gray-200);
   transition: all var(--transition-base) var(--ease-in-out);
@@ -344,4 +343,125 @@ body {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============ FILTERS ============ */
+
+.filters-section {
+  flex: 1;
+  display: flex;
+  justify-content: center; /* center filters horizontally */
+  align-items: center;
+  margin: 0 20px;
+  padding: var(--space-4);
+  background: transparent;
+  border-bottom: var(--border-1) solid var(--color-gray-50);
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  width: 100%;
+}
+
+.filter-group {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group.filter-primary {
+  flex: 1;
+  min-width: 300px;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 120px;
+}
+
+.filter-label {
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-select,
+.filter-input {
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-1) solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-sm);
+  font-family: var(--font-primary);
+  background: var(--color-white);
+  color: var(--color-gray-800);
+  transition: all var(--transition-base) var(--ease-in-out);
+}
+
+.filter-select:hover,
+.filter-input:hover {
+  border-color: var(--color-gray-400);
+  background: var(--color-white);
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-white);
+  box-shadow: 0 0 0 3px rgba(212, 83, 10, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.reset-filters-btn {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-white);
+  border: var(--border-1) solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all var(--transition-base) var(--ease-in-out);
+}
+
+.reset-filters-btn:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-400);
+  transform: translateY(-1px);
+}
+
+/* ============ HEADER ACTIONS ============ */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.staff-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.staff-filters input,
+.staff-filters select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.875rem;
 }
