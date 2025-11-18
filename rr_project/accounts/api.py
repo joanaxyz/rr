@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.urls import reverse
@@ -9,12 +8,12 @@ from .models import User
 from .validators import MinimumLengthAndNumberValidator
 from email_service.views import send_verification_email, send_password_reset_code_email
 
-
+import json
 def api_forgot_password(request):
     """API endpoint for password reset - Step 1: Email submission"""
     if request.method == 'POST':
         try:
-            data = request.POST
+            data = json.loads(request.body)
             email = data.get('email', '').strip()
             
             if not email:
@@ -64,7 +63,7 @@ def api_verify_reset_code(request):
     """API endpoint for password reset - Step 2: Code verification"""
     if request.method == 'POST':
         try:
-            data = request.POST
+            data = json.loads(request.body)
             user_id = data.get('user_id')
             code = data.get('code', '').strip()
             
@@ -109,7 +108,7 @@ def api_reset_password(request):
     """API endpoint for password reset - Step 3: New password setup"""
     if request.method == 'POST':
         try:
-            data = request.POST
+            data = json.loads(request.body)
             user_id = data.get('user_id')
             code = data.get('code')
             new_password = data.get('new_password')
@@ -182,7 +181,7 @@ def api_resend_reset_code(request):
     """API endpoint for resending password reset code"""
     if request.method == 'POST':
         try:
-            data = request.POST
+            data = json.loads(request.body)
             user_id = data.get('user_id')
             
             if not user_id:
