@@ -1,0 +1,553 @@
+/* Reservation Page Styles */
+
+@import '../../common/css/components.css';
+@import '../../common/css/floor-plan-common.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background: var(--gradient-surface-dark);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header Styles */
+.reservation-header {
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 2rem;
+  margin-bottom: 3rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--white);
+  background: var(--primary-red);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.back-button:hover {
+  transform: translateX(-4px);
+  background: var(--primary-red-dark);
+  box-shadow: var(--shadow-lg);
+}
+
+.back-button i {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.reservation-header .header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reservation-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: var(--font-accent);
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.subtitle .restaurant-name {
+  color: var(--primary-red);
+  font-weight: 700;
+}
+
+/* Main Wrapper */
+.reservation-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+/* Restaurant Info Card */
+.restaurant-info-card {
+  background: var(--white);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--gray-200);
+}
+
+.restaurant-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.restaurant-header-info h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.restaurant-meta {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.meta-item svg {
+  color: var(--primary-red);
+  flex-shrink: 0;
+}
+
+/* Main Reservation Content */
+.reservation-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+
+
+/* Table Section */
+.table-section {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+}
+
+.table-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.table-map-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.floor-legend {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  background: var(--gray-50);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200);
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.legend-color.available { background: var(--table-available); }
+.legend-color.reserved { background: var(--table-reserved); }
+.legend-color.selected { background: var(--table-selected); }
+
+.legend-item span {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.table-map-container > .floor-plan {
+  height: 500px;
+  max-height: 500px;
+  min-height: 500px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--border-radius-lg);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  overflow: auto;
+}
+
+.floor-plan {
+  position: relative;
+  width: 800px;
+  height: 500px;
+  background-image: 
+    linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent);
+  background-size: 40px 40px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+/* Floor Elements */
+.entrance {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 40px;
+  background: var(--gray-600);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.window {
+  position: absolute;
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px solid var(--info);
+  color: var(--info);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--border-radius);
+}
+
+.window-top {
+  top: 20px;
+  left: 50px;
+  width: 200px;
+  height: 30px;
+}
+
+.window-right {
+  top: 100px;
+  right: 20px;
+  width: 30px;
+  height: 150px;
+  writing-mode: vertical-rl;
+}
+
+.bar-area {
+  position: absolute;
+  top: 60px;
+  left: 20px;
+  width: 60px;
+  height: 100px;
+  background: var(--gray-800);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+  writing-mode: vertical-rl;
+}
+
+.kitchen {
+  position: absolute;
+  top: 20px;
+  right: 80px;
+  width: 80px;
+  height: 60px;
+  background: var(--gray-400);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.restroom {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 80px;
+  height: 40px;
+  background: var(--gray-500);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+
+
+.table-selection-info {
+  padding: 1rem;
+  background: var(--cream);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200);
+  text-align: center;
+  width: 100%;
+}
+
+.table-selection-info p {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Reservation Form Section */
+.reservation-form-section {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+}
+
+.reservation-form-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.reservation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Form group and form-row styles are defined in components.css */
+
+.selected-table-display {
+  padding: 1rem;
+  background: var(--gray-50);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200);
+}
+
+.table-selection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.reserve-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--color-primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.reserve-btn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.reserve-btn:disabled {
+  background: var(--color-gray-400);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Policies Section */
+.policies-section {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+}
+
+.policies-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.policies-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.policy-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--gray-50);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--gray-200);
+  transition: all 0.3s ease;
+}
+
+.policy-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.policy-item svg {
+  color: var(--success);
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.policy-item div {
+  flex: 1;
+}
+
+.policy-item h4 {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.policy-item p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .restaurant-header-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reservation-main {
+    gap: 1.5rem;
+  }
+
+  .floor-plan {
+    height: 400px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .reservation-header {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .reservation-header h1 {
+    font-size: 1.875rem;
+  }
+
+  .reservation-wrapper {
+    padding: 0 1rem 2rem;
+  }
+
+  .table-section,
+  .reservation-form-section,
+  .policies-section {
+    padding: 1.5rem;
+  }
+
+  .floor-legend {
+    gap: 1rem;
+  }
+
+  .floor-plan {
+    height: 300px;
+  }
+
+  .policies-list {
+    grid-template-columns: 1fr;
+  }
+
+  .restaurant-meta {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .reservation-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .restaurant-info-card {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .table-section h2,
+  .reservation-form-section h2,
+  .policies-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .table-section,
+  .reservation-form-section,
+  .policies-section {
+    padding: 1rem;
+  }
+
+  .reservation-form {
+    gap: 1rem;
+  }
+
+  .reserve-btn {
+    width: 100%;
+  }
+}

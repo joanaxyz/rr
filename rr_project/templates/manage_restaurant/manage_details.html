@@ -1,0 +1,169 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_details.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<!-- Management Header -->
+<div class="manage-header">
+    <div class="header-content">
+        <h1>Restaurant Details</h1>
+        <p class="subtitle">Update your restaurant information and settings</p>
+    </div>
+</div>
+
+<!-- Main Management Container -->
+<div class="manage-restaurant-container">
+
+  <!-- Details Section -->
+  <section class="manage-section" id="details-section" data-section="details">
+
+    <div class="section-content">
+      <div class="content-card">
+        <div class="card-header">
+          <h2>Basic Information</h2>
+        </div>
+
+        <div class="card-body">
+          <form class="form-details" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Basic Information Section -->
+            <div class="form-section">
+              <h3 class="section-title">Basic Information</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Restaurant Name</label>
+                  <input type="text" class="form-input" name="name" placeholder="Enter restaurant name" value="{{ restaurant.name }}" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Phone Number</label>
+                  <input type="tel" class="form-input" name="phone_number" placeholder="Enter phone number" value="{{ restaurant.phone_number }}" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Email Address</label>
+                  <input type="email" class="form-input" name="email" placeholder="Enter email address" value="{{ restaurant.email }}" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-input" name="description" placeholder="Describe your restaurant..." rows="5" required>{{ restaurant.description }}</textarea>
+              </div>
+
+              <div class="form-group image-upload-group">
+                <label class="form-label">Restaurant Image</label>
+                
+                {% if restaurant.image %}
+                  <div class="image-preview-container">
+                    <span class="image-preview-label">Current Image</span>
+                    <div class="image-preview-wrapper">
+                      <img src="{{ restaurant.image }}" alt="Restaurant image">
+                    </div>
+                  </div>
+                {% endif %}
+                
+                <div>
+                  <input type="file" class="form-input" name="image" accept="image/*">
+                  <p class="form-text-muted">JPG, PNG or GIF (Max 10MB)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="form-section">
+              <h3 class="section-title">Address Information</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Street Number</label>
+                  <input type="text" class="form-input" name="street_number" placeholder="Building/House number" value="{{ restaurant.street_number }}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Street Name</label>
+                  <input type="text" class="form-input" name="street_name" placeholder="Street name" value="{{ restaurant.street_name }}">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Block/District</label>
+                  <input type="text" class="form-input" name="street_block" placeholder="Block or District" value="{{ restaurant.street_block }}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-input" name="city" placeholder="Enter city" value="{{ restaurant.city }}">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Postal Code</label>
+                <input type="text" class="form-input" name="postal_code" placeholder="Enter postal code" value="{{ restaurant.postal_code }}">
+              </div>
+            </div>
+
+            <!-- Operating Hours Section -->
+            <div class="form-section">
+              <h3 class="section-title">Operating Hours</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Opening Time</label>
+                  <input type="time" class="form-input" name="opening_time" value="{{ restaurant.opening_time }}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Closing Time</label>
+                  <input type="time" class="form-input" name="closing_time" value="{{ restaurant.closing_time }}">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Operating Days</label>
+                <p class="form-text-small">Comma-separated list (e.g., Mon,Tue,Wed,Thu,Fri,Sat,Sun)</p>
+                <input type="text" class="form-input" name="operating_days" placeholder="Mon,Tue,Wed,Thu,Fri,Sat,Sun" value="{{ restaurant.operating_days }}">
+              </div>
+            </div>
+
+            <!-- Pricing & Capacity Section -->
+            <div class="form-section">
+              <h3 class="section-title">Pricing & Capacity</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Minimum Price (₱)</label>
+                  <input type="number" class="form-input" name="price_min" placeholder="0.00" step="0.01" value="{{ restaurant.price_min }}" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Maximum Price (₱)</label>
+                  <input type="number" class="form-input" name="price_max" placeholder="0.00" step="0.01" value="{{ restaurant.price_max }}" min="0">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Maximum Guest Count</label>
+                <input type="number" class="form-input" name="max_guest_count" placeholder="Enter maximum number of guests" value="{{ restaurant.max_guest_count }}" required min="1">
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="reset" class="btn btn-secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

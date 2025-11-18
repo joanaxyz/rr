@@ -1,0 +1,236 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_reservation.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/floor-plan-common.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<!-- Management Header -->
+<div class="manage-header">
+    <div class="header-content">
+        <h1>Manage Reservations</h1>
+        <p class="subtitle">View, accept, reject, or modify customer reservations</p>
+    </div>
+</div>
+
+<!-- Main Container -->
+<div class="manage-restaurant-container">
+
+  <!-- Reservations Section -->
+  <section class="manage-section" id="reservations-section">
+
+    <div class="section-content">
+      <div class="content-card">
+        <div class="card-header">
+          <h2>Reservation List</h2>
+        </div>
+        
+        <!-- Floor Plan Section -->
+        <div class="floor-plan-wrapper">
+          <div class="floor-plan-header">
+            <h3>Floor Plan</h3>
+            <p class="floor-plan-subtitle">Visual representation of reserved tables</p>
+          </div>
+          <div class="floor-plan-container reservation-wrapper">
+            <div class="floor-plan" id="floor-plan-reservation" data-restaurant_id='{{ restaurant_id }}'
+                data-tables='{{ tables|safe }}' data-elements='{{ elements|safe }}'
+                data-floorplan='{{ floorplan|safe }}'>
+              <!-- Floor plan will be rendered here -->
+            </div>
+          </div>
+          <div class="floor-plan-legend">
+            <div class="legend-item">
+              <div class="legend-color available"></div>
+              <span>Available</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color reserved"></div>
+              <span>Reserved</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+          <div class="filters-container">
+            <div class="filter-group filter-primary">
+              <div class="filter-item">
+                <label for="statusFilter" class="filter-label">Status</label>
+                <select class="filter-select" id="statusFilter">
+                  <option value="">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              <div class="filter-item">
+                <label for="dateFromFilter" class="filter-label">From Date</label>
+                <input type="date" class="filter-input" id="dateFromFilter">
+              </div>
+
+              <div class="filter-item">
+                <label for="dateToFilter" class="filter-label">To Date</label>
+                <input type="date" class="filter-input" id="dateToFilter">
+              </div>
+            </div>
+
+            <div class="filter-group filter-secondary">
+              <div class="filter-item">
+                <label for="guestCountFilter" class="filter-label">Guest Count</label>
+                <input type="number" class="filter-input" id="guestCountFilter" min="1" placeholder="Min guests">
+              </div>
+
+              <div class="filter-item">
+                <label for="nameSearchFilter" class="filter-label">Guest Name</label>
+                <input type="text" class="filter-input" id="nameSearchFilter" placeholder="Search name...">
+              </div>
+
+              <div class="filter-item">
+                <label for="emailSearchFilter" class="filter-label">Email</label>
+                <input type="email" class="filter-input" id="emailSearchFilter" placeholder="Search email...">
+              </div>
+            </div>
+
+            <div class="filter-actions">
+              <button class="btn btn-sm btn-secondary" id="resetFilters">Reset All</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reservation Table -->
+        <div class="card-body">
+          {% if has_reservations %}
+          <table class="reservation-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Guests</th>
+                <th>Tables</th>
+                <th>Status</th>
+                <th>Action</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for reservation in reservations %}
+              <tr 
+                  data-name="{{ reservation.name }}"
+                  data-email="{% firstof reservation.customer.user.email reservation.customer.email reservation.email '-' %}"
+                  data-guest-count="{{ reservation.guest_count }}"
+                  data-status="{{ reservation.status }}"
+                  data-date="{{ reservation.date }}"
+                  data-time="{{ reservation.time }}"
+                  data-tables="{{ reservation.table_numbers|join:',' }}"
+                  data-created-at="{{ reservation.created_at }}"
+                  data-notes="{{ reservation.notes|default:'' }}"
+                  data-cancellation-reason="{{ reservation.cancellation_info.reason|default:'' }}"
+              >
+                <td>{{ forloop.counter }}</td>
+                <td>{{ reservation.name }}</td>
+                <td>{{ reservation.date }}</td>
+                <td>{{ reservation.time }}</td>
+                <td>{{ reservation.guest_count }}</td>
+                <td>{{ reservation.table_numbers|join:',' }}</td>
+                <td>
+                  <span class="status-badge {{ reservation.status|lower }}">
+                    {{ reservation.status|title }}
+                  </span>
+                </td>
+                <td>
+                  <form method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="action">
+                    <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+                    <input type="hidden" name="cancellation_reason">
+                    <div class="action-buttons">
+                      {% if reservation.status == 'CONFIRMED' %}
+                      <button type="button" class="complete-btn" 
+                        onclick="completeReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Complete</button>
+                      {% elif reservation.status == 'COMPLETED' %}
+                      <button type="button" class="delete-btn" 
+                        onclick="deleteReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Delete</button>
+                      {% elif reservation.status == 'PENDING' %}
+                      <button type="button" class="confirm-btn" 
+                        onclick="confirmReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm</button>
+                      <button type="button" class="cancel-btn"
+                        onclick="cancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Cancel</button>
+                      {% else %}
+                      <button type="button" class="delete-btn"
+                        onclick="confirmCancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm Cancellation</button>
+                      {% endif %}
+                  </form>
+                </td>
+                <td>
+                  <button type="button" class="info-btn" onclick="openReservationInfo(this)">
+                    <i class="fa-solid fa-circle-info"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <!-- Pagination Controls -->
+            <div class="pagination-container" id="pagination-container">
+              <button class="prev-btn" onclick="changePage(-1)">&#10094;</button>
+              <span id="page-info"></span>
+              <button class="next-btn" onclick="changePage(1)">&#10095;</button>
+            </div>
+          {% else %}
+          <div class="empty-state">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <p>No reservations to display</p>
+            <small>Reservations will appear here when customers make bookings</small>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reservation Info Modal -->
+  <div id="reservationModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Reservation Details</h2>
+        <button type="button" class="modal-close-btn" onclick="closeReservationInfo()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="reservation-info-grid">
+          <div class="info-item"><label>Guest Name</label><p id="infoName">-</p></div>
+          <div class="info-item"><label>Email</label><p id="infoEmail">-</p></div>
+          <div class="info-item"><label>Guest Count</label><p id="infoGuestCount">-</p></div>
+          <div class="info-item"><label>Status</label><p id="infoStatus">-</p></div>
+          <div class="info-item"><label>Reservation Date</label><p id="infoDate">-</p></div>
+          <div class="info-item"><label>Reservation Time</label><p id="infoTime">-</p></div>
+          <div class="info-item"><label>Tables</label><p id="infoTables">-</p></div>
+          <div class="info-item"><label>Booked At</label><p id="infoCreatedAt">-</p></div>
+          <div class="info-item full-width"><label>Notes</label><p id="infoNotes">-</p></div>
+          <div class="info-item full-width"><label>Cancellation Reason</label><p id="infoCancellationReason">-</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+
+<script src="{% static 'common/js/floor-plan-common.js' %}"></script>
+<script src="{% static '/manage_restaurant/js/manage_reservation.js' %}"></script>
+{% endblock %}

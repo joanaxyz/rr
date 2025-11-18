@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Updated</title>
+    {% load static %}
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; margin: 0; padding: 20px; background-color: #ffffff; }
+        .verify-container { max-width: 600px; margin: 0 auto; }
+        .verify-content { width: 100%; }
+        .logo-header { text-align: center; background-color: #D4530A; color: #ffffff; padding: 30px 20px; margin: 0; }
+        .logo-header img { max-width: 80px; height: auto; margin: 0 0 15px 0; display: block; margin-left: auto; margin-right: auto; }
+        .company-name { margin: 10px 0 5px 0; font-size: 28px; font-weight: bold; color: #ffffff; }
+        .company-tagline { margin: 0; font-size: 14px; color: #ffffff; }
+        .verify-main { background-color: #f9fafb; padding: 40px 30px; margin: 0; border: 1px solid #d1d5db; }
+        .verify-icon { text-align: center; margin-bottom: 20px; }
+        .verify-icon svg { width: 64px; height: 64px; }
+        .verify-title { text-align: center; color: #333333; margin: 20px 0 15px 0; font-size: 24px; font-weight: bold; }
+        .verify-description { text-align: center; margin: 15px 0; font-size: 16px; line-height: 1.6; color: #555555; }
+        .account-details { background-color: #ffffff; border: 1px solid #d1d5db; padding: 20px; margin: 20px 0; text-align: center; }
+        .detail-item { margin: 15px 0; padding: 10px 0; border-bottom: 1px solid #d1d5db; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { display: block; font-weight: bold; color: #666666; font-size: 12px; margin-bottom: 5px; }
+        .detail-value { display: block; color: #333333; font-size: 16px; }
+        .btn-verify { display: inline-block; background-color: #D4530A; color: #ffffff !important; text-decoration: none; padding: 15px 40px; margin: 20px auto; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .button-container { text-align: center; margin: 25px 0; }
+        .reset-code { text-align: center; background-color: #ffffff; border: 2px solid #D4530A; padding: 20px; margin: 20px 0; font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #D4530A; font-family: 'Courier New', monospace; }
+        .verification-link { word-break: break-all; color: #D4530A; font-size: 14px; text-decoration: none; }
+        .warning { background-color: #fff3cd; border: 1px solid #ffc107; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; color: #856404; font-size: 14px; }
+        .info-box { background-color: #f0f8ff; border: 1px solid #D4530A; border-left: 4px solid #D4530A; padding: 15px; margin: 20px 0; color: #333333; font-size: 14px; }
+        .success-box { background-color: #d4edda; border: 1px solid #28a745; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; color: #155724; font-size: 14px; }
+        .error-box { background-color: #f8d7da; border: 1px solid #dc2626; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; color: #721c24; font-size: 14px; }
+        .verify-footer { text-align: center; color: #666666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; }
+        .verify-footer p { margin: 8px 0; line-height: 1.5; }
+        .footer { text-align: center; color: #666666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; }
+        .footer p { margin: 5px 0; line-height: 1.5; }
+        .footer a { color: #D4530A; text-decoration: none; }
+        h1, h2, h3, h4, h5, h6 { margin: 15px 0; }
+        p { margin: 15px 0; }
+        img { max-width: 100%; height: auto; }
+        a { color: #D4530A; }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <div class="verify-content">
+            <!-- Logo -->
+            <div class="logo-header">
+                <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
+                <h1 class="company-name">RR - Restaurant Reservation</h1>
+                <p class="company-tagline">Your One Stop Destination for Restaurant Reservations</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="verify-main">
+                <div class="verify-icon">
+                    <!-- Edit/Update Icon -->
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17.25V21h3.75L17.81 9.94L14.06 6.19L3 17.25Z" stroke="#667eea" stroke-width="2" fill="none"/>
+                        <path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" stroke="#667eea" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+
+                <h2 class="verify-title">Reservation Updated</h2>
+
+                <p class="verify-description">
+                    Your reservation at {{ reservation.restaurant.name|default:"the restaurant" }} has been successfully updated. Please review the new details below.
+                </p>
+
+                <div class="info-box">
+                    <strong>Updated Reservation Details:</strong>
+                </div>
+
+                <div class="account-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Restaurant</span>
+                        <span class="detail-value">{{ reservation.restaurant.name|default:"N/A" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Guest Name</span>
+                        <span class="detail-value">{{ reservation.name|default:"N/A" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">New Date & Time</span>
+                        <span class="detail-value">{{ reservation.date|default:"N/A"|date:"D, d M Y" }} at {{ reservation.time|default:"N/A"|time:"H:i A" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Party Size</span>
+                        <span class="detail-value">{{ reservation.guest_count|default:"N/A" }} guest{% if reservation.guest_count != 1 %}s{% endif %}</span>
+                    </div>
+                    {% if reservation.notes %}
+                    <div class="detail-item">
+                        <span class="detail-label">Special Requests</span>
+                        <span class="detail-value">{{ reservation.notes }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="detail-item">
+                        <span class="detail-label">Current Status</span>
+                        <span class="detail-value">{{ reservation.status|title }}</span>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <strong>Important:</strong> If you made significant changes (such as date, time, or party size), the restaurant will need to re-confirm your updated reservation. You may receive another confirmation email from them shortly.
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="verify-footer">
+                <p>Keep this email for your records. You can manage your reservations anytime from your account.</p>
+                <p>Thank you for using RR - Restaurant Reservation System.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/list.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<!-- Management Header -->
+<div class="manage-header">
+    <div class="header-content">
+        <h1>My Restaurants</h1>
+        <p class="subtitle">Manage and organize your restaurant properties</p>
+    </div>
+</div>
+
+<!-- Main Management Container -->
+<div class="manage-restaurants-container">
+
+  <!-- <div class="action">
+  </div> -->
+  {% if restaurants %}
+    <div class="restaurants-list">
+      {% for restaurant in restaurants %}
+        <div class="restaurant-item">
+          <div class="restaurant-name-section">
+            <h2>{{ restaurant.name }}</h2>
+          </div>
+          <a href="{% url 'manage_restaurant:dashboard' restaurant.id %}" class="manage-btn">Manage</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-restaurants">
+      <p>No restaurants to manage</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+{% endblock %}

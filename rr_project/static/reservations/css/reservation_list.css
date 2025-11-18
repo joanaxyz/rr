@@ -1,0 +1,350 @@
+@import '../../common/css/components.css';
+
+/* ===== Base Layout ===== */
+body {
+  background-color: var(--color-gray-50);
+  font-family: var(--font-brand);
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Container ===== */
+.reservation-container {
+  max-width: 900px;
+  margin: 60px auto;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-10);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== Header ===== */
+.header h1 {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-5);
+  color: var(--color-gray-800);
+  text-align: center;
+}
+
+/* ===== Messages (like "No customer" alert) ===== */
+.messages {
+  margin-bottom: var(--space-5);
+}
+
+.message {
+  padding: var(--space-3);
+  border-radius: var(--radius-base);
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+.message.error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+.message.success {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.message.info {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+}
+
+/* ===== Table Styling ===== */
+.table-container {
+  overflow-x: auto;
+}
+
+.reservation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.reservation-table th,
+.reservation-table td {
+  text-align: left;
+  padding: var(--space-4) var(--space-4);
+  border-bottom: var(--border-1) solid var(--color-gray-200);
+}
+
+.reservation-table th {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-sm);
+}
+
+.reservation-table td {
+  font-size: var(--font-sm);
+  color: var(--color-gray-700);
+}
+
+/* ===== Restaurant Name Link ===== */
+.reservation-table a {
+  color: var(--color-orange);
+  text-decoration: underline;
+  transition: color var(--transition-base);
+}
+
+.reservation-table a:hover {
+  color: var(--color-orange-hover);
+}
+
+/* ===== Status Badges ===== */
+.status-badge {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.status-badge.pending {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.status-badge.confirmed {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.status-badge.cancelled {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+/* ===== Buttons ===== */
+.cancel-btn {
+  background-color: var(--color-orange);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-base);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  font-size: var(--font-sm);
+}
+
+.cancel-btn:hover {
+  background-color: var(--color-orange-hover);
+}
+
+.edit-btn {
+  background-color: var(--color-gray-600);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-base);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  font-size: var(--font-sm);
+}
+
+.edit-btn:hover {
+  background-color: var(--color-gray-400);
+}
+
+.delete-btn {
+  background-color: var(--color-error);
+  color: var(--color-white);
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  transition: background-color var(--transition-base);
+}
+
+.delete-btn:hover {
+  background-color: var(--color-error);
+}
+
+.restore-btn {
+  background-color: var(--color-success);
+  color: var(--color-white);
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  transition: background-color var(--transition-base);
+}
+
+.restore-btn:hover {
+  background-color: var(--color-success-hover);
+}
+
+.cancelled-text {
+  color: var(--color-gray-500);
+  font-weight: var(--font-weight-medium);
+  font-style: italic;
+}
+
+/* ===== No Reservations Section ===== */
+.no-reservations {
+  text-align: center;
+  color: var(--color-gray-500);
+  background: var(--color-white);
+  padding: var(--space-10);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-5);
+  font-size: var(--font-base);
+}
+
+/* ===== Custom Popup (Reason Box) ===== */
+.custom-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+}
+
+.custom-popup.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.popup-content {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  width: 400px;
+  max-width: 90%;
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+  animation: fadeIn var(--duration-200) ease;
+}
+
+.popup-content h3 {
+  margin-bottom: var(--space-3);
+  color: var(--color-gray-800);
+  font-weight: var(--font-weight-semibold);
+}
+
+.popup-content p {
+  color: var(--color-gray-600);
+  font-size: var(--font-sm);
+}
+
+.popup-content textarea {
+  width: 100%;
+  height: 90px;
+  border: var(--border-1) solid var(--color-gray-300);
+  border-radius: var(--radius-base);
+  padding: var(--space-3);
+  font-family: inherit;
+  font-size: var(--font-sm);
+  margin: var(--space-4) 0;
+  resize: none;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.confirm-cancel-btn {
+  background-color: var(--color-orange);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-base);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.confirm-cancel-btn:hover {
+  background-color: var(--color-orange-hover);
+}
+
+.close-btn {
+  background-color: var(--color-gray-300);
+  color: var(--color-gray-800);
+  border: none;
+  border-radius: var(--radius-base);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.close-btn:hover {
+  background-color: var(--color-gray-400);
+}
+
+/* ===== Animation ===== */
+@keyframes fadeIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ===== Pagination ===== */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  font-size: 0.875rem;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination a,
+.pagination span {
+  display: inline-block;
+  min-width: 32px;
+  padding: 6px 12px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  border: 1px solid #ddd;
+  color: #333333;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination a:hover {
+  background-color: #f3f3f3;
+  border-color: #bbb;
+}
+
+.pagination .current {
+  font-weight: bold;
+  color: #fff;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.pagination .disabled {
+  color: #aaa;
+  cursor: default;
+  border-color: #eee;
+  background-color: #f9f9f9;
+}

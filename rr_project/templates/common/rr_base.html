@@ -1,0 +1,137 @@
+{% extends "common/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'common/css/navbar.css' %}">
+{% block rr_base_css %} {% endblock %}
+{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="logo">
+    <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
+    <span class="brand">RESTAURANT RESERVATION</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="{% url 'home:home' %}"
+        class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+        
+    {% if user.role != 'CUSTOMER' %}
+    <li class="nav-manage {% if request.resolver_match.url_name in 'list,dashboard,reservations,tables,details' %}active-manage{% endif %}">
+      <a href="{% url 'manage_restaurant:list' %}" class="manage-label {% if request.resolver_match.url_name == 'list' %}active{% endif %}">
+        Manage
+        {% with restaurant_id=request.resolver_match.kwargs.restaurant_id|default:'' %}
+        {% if restaurant_id %}<i class="fas fa-chevron-down manage-arrow"></i>{% endif %}
+        {% endwith %}
+      </a>
+      {% with restaurant_id=request.resolver_match.kwargs.restaurant_id|default:'' %}
+      {% if restaurant_id %}
+      <div class="manage-dropdown manage-dropdown-hover">
+        <a href="{% url 'manage_restaurant:dashboard' restaurant_id %}" 
+           class="manage-dropdown-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="{% url 'manage_restaurant:reservations' restaurant_id %}" 
+           class="manage-dropdown-item {% if request.resolver_match.url_name == 'reservations' %}active{% endif %}">
+          <i class="fas fa-calendar-check"></i>
+          <span>Reservations</span>
+        </a>
+        {% if role == 'OWNER' or role == 'MANAGER' %}
+        <a href="{% url 'manage_restaurant:tables' restaurant_id %}" 
+           class="manage-dropdown-item {% if request.resolver_match.url_name == 'tables' %}active{% endif %}">
+          <i class="fas fa-table"></i>
+          <span>Tables</span>
+        </a>
+        {% endif %}
+        {% if role == 'OWNER' or role == 'MANAGER' %}
+        <a href="{% url 'manage_restaurant:staffs' restaurant_id %}" 
+           class="manage-dropdown-item {% if request.resolver_match.url_name == 'staffs' %}active{% endif %}">
+          <i class="fas fa-user"></i>
+          <span>Staffs</span>
+        </a>
+        {% endif %}
+        {% if role == 'OWNER' %}
+        <a href="{% url 'manage_restaurant:details' restaurant_id %}" 
+           class="manage-dropdown-item {% if request.resolver_match.url_name == 'details' %}active{% endif %}">
+          <i class="fas fa-info-circle"></i>
+          <span>Details</span>
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endwith %}
+    {% endif %}
+    </li>
+    <li><a href="{% url 'restaurants:restaurants' %}"
+        class="{% if request.resolver_match.url_name == 'restaurants' %}active{% endif %} navlast">Restaurants</a></li>
+  </ul>
+  <div class="navbar-searchbar">
+    <input type="search" placeholder="Search..." />
+    <button aria-label="Search">
+      <i class="fas fa-magnifying-glass"></i>
+    </button>
+  </div>
+  <div id="userProfile" class="user-profile">
+    <div class="profile-icon">
+      <i class="fas fa-circle-user"></i>
+    </div>
+    <div class="profile-dropdown" id="profileDropdown">
+      <div class="dropdown-header">
+        <div class="user-name">{{ user.get_full_name }}</div>
+        <div class="user-email">{{ user.email }}</div>
+      </div>
+      <div class="dropdown-divider"></div>
+      <button class="dropdown-item">My Profile</button>
+      <a href="{% url 'reservations:reservation_management' %}" class="dropdown-item">My Reservations</a>
+      <button class="dropdown-item" id="btnSettings">Settings</button>
+      <div class="dropdown-divider"></div>
+      <button class="dropdown-item" id="btnLogout">Sign Out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Spacer for fixed navbar -->
+<div class="navbar-spacer"></div>
+{% block rr_base_content %}{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'home/js/userProfile.js' %}"></script>
+<script src="{% static 'restaurants/js/search.js' %}"></script>
+<script>
+// Manage dropdown functionality with improved hover stability
+document.addEventListener('DOMContentLoaded', function() {
+  const manageItem = document.querySelector('.nav-manage');
+  const manageDropdown = document.querySelector('.manage-dropdown');
+  let hoverTimeout;
+  
+  if (manageItem && manageDropdown) {
+    manageItem.addEventListener('mouseenter', function() {
+      clearTimeout(hoverTimeout);
+      manageDropdown.classList.add('show');
+    });
+    
+    manageItem.addEventListener('mouseleave', function() {
+      hoverTimeout = setTimeout(function() {
+        manageDropdown.classList.remove('show');
+      }, 150);
+    });
+    
+    
+    manageDropdown.addEventListener('mouseenter', function() {
+      clearTimeout(hoverTimeout);
+      manageDropdown.classList.add('show');
+    });
+    
+    manageDropdown.addEventListener('mouseleave', function() {
+      hoverTimeout = setTimeout(function() {
+        manageDropdown.classList.remove('show');
+      }, 150);
+    });
+  }
+});
+</script>
+{% block rr_base_js %}{% endblock %}
+{% endblock %}

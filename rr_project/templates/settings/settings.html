@@ -1,0 +1,415 @@
+{% extends 'common/rr_base.html' %}
+{% load static %}
+
+{% block title %}Settings{% endblock %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'settings/css/settings.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="settings-container">
+    <!-- Sidebar Navigation -->
+    <aside class="settings-sidebar">
+        <div class="settings-header">
+            <h2>Settings</h2>
+        </div>
+        <nav class="settings-nav">
+            <a href="#profile" class="nav-item active" data-section="profile">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#security" class="nav-item" data-section="security">
+                <i class="fas fa-lock"></i>
+                <span>Security</span>
+            </a>
+            <a href="#notifications" class="nav-item" data-section="notifications">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+            </a>
+            <a href="#owner-application" class="nav-item" data-section="owner-application">
+                <i class="fas fa-check-circle"></i>
+                <span>Status</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="settings-main">
+        <!-- Profile Section -->
+        <section id="profile-section" class="settings-section active">
+            <div class="section-header">
+                <h3>Profile Information</h3>
+                <p>Manage your personal information</p>
+            </div>
+            <div class="settings-content">
+                <!-- Error Container for Profile Form -->
+                <div id="profile-form-errors" class="form-errors" role="alert" aria-live="polite"></div>
+                
+                <form class="settings-form" id="profile-form" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input 
+                            type="text" 
+                            id="first-name" 
+                            name="first_name" 
+                            value="{{ user.first_name }}" 
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input 
+                            type="text" 
+                            id="last-name" 
+                            name="last_name" 
+                            value="{{ user.last_name }}" 
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            value="{{ user.email }}" 
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            value="{{ user.phone_number|default:'' }}"
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section id="security-section" class="settings-section">
+            <div class="section-header">
+                <h3>Security Settings</h3>
+                <p>Manage your account security and password</p>
+            </div>
+            <div class="settings-content">
+                <div class="security-option">
+                    <div class="option-header">
+                        <h4>Change Password</h4>
+                        <p>Update your password regularly to keep your account secure</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="openPasswordModal()">Change Password</button>
+                </div>
+                <hr class="divider">
+                <div class="security-option">
+                    <div class="option-header">
+                        <h4>Two-Factor Authentication</h4>
+                        <p>Add an extra layer of security to your account</p>
+                    </div>
+                    <button class="btn btn-outline">Enable 2FA</button>
+                </div>
+                <hr class="divider">
+                <div class="security-option">
+                    <div class="option-header">
+                        <h4>Active Sessions</h4>
+                        <p>Manage devices where you're signed in</p>
+                    </div>
+                    <div class="sessions-list">
+                        <div class="session-item">
+                            <div class="session-info">
+                                <span class="session-device">Current Device</span>
+                                <span class="session-location">{{ request.META.HTTP_USER_AGENT|truncatechars:50 }}</span>
+                            </div>
+                            <span class="session-status">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section id="notifications-section" class="settings-section">
+            <div class="section-header">
+                <h3>Notifications</h3>
+                <p>Control how you receive updates and alerts</p>
+            </div>
+            <div class="settings-content">
+                <div class="notification-option">
+                    <div class="option-header">
+                        <h4>Email Notifications</h4>
+                        <p>Receive updates via email</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <hr class="divider">
+                <div class="notification-option">
+                    <div class="option-header">
+                        <h4>Reservation Updates</h4>
+                        <p>Get notified about new reservations and changes</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <hr class="divider">
+                <div class="notification-option">
+                    <div class="option-header">
+                        <h4>Marketing Emails</h4>
+                        <p>Receive promotional offers and updates</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Owner Application/Status Section -->
+        <section id="owner-application-section" class="settings-section">
+            <div class="section-header">
+                <h3>Account Status</h3>
+                <p>Manage your account and explore business opportunities</p>
+            </div>
+            <div class="settings-content">
+                <div class="user-status-badge">
+                    <span class="status-label">Current Role:</span>
+                    <span class="status-badge role-{{ user.role|lower }}">
+                        <i class="fas fa-circle"></i>
+                        {{ user.role }}
+                    </span>
+                </div>
+                <hr class="divider">
+
+                {% if verification_request %}
+                    <!-- Verification Status (for users applying to become owner) -->
+                    <h4 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Verification Status</h4>
+                    
+                    {% if verification_request.state == 'PENDING' %}
+                    <div class="verification-status pending">
+                        <div class="status-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="status-info">
+                            <h4>
+                                <span class="status-badge role-pending"><i class="fas fa-exclamation-circle"></i> Verification Pending</span>
+                            </h4>
+                            <p>We're reviewing your documents. This usually takes 1-2 business days.</p>
+                        </div>
+                    </div>
+                    {% elif verification_request.state == 'ACCEPTED' %}
+                    <div class="verification-status verified">
+                        <div class="status-icon">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div class="status-info">
+                            <h4>
+                                <span class="status-badge role-verified"><i class="fas fa-check-circle"></i> Verified Owner</span>
+                            </h4>
+                            <p>Your account is verified. You can now manage your restaurants.</p>
+                        </div>
+                    </div>
+                    {% elif verification_request.state == 'NOT_APPROVED' %}
+                    <div class="verification-status rejected">
+                        <div class="status-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="status-info">
+                            <h4>
+                                <span class="status-badge role-rejected"><i class="fas fa-times-circle"></i> Application Not Approved</span>
+                            </h4>
+                            <p>Unfortunately, your verification application was not approved. You may submit a new application after reviewing the requirements.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <hr class="divider">
+                {% else %}
+                    <!-- No Verification Request - Offer Verification -->
+                    {% if user.role != 'OWNER' and user.role != 'HOST' and user.role != 'MANAGER' %}
+                    <div class="owner-application-intro">
+                        <div class="intro-card">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Join Our Platform as Owner</h4>
+                            <p>Grow your restaurant business by connecting with diners through our platform. We verify restaurant owners to maintain quality and trust.</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'owner_verification:owner_verification' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-right"></i> Start Owner Verification
+                    </a>
+                    <hr class="divider">
+                    {% endif %}
+                {% endif %}
+
+                {% if user.role == 'OWNER' %}
+                    <!-- Registered Restaurants Section (for verified owners) -->
+                    <h4 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Registered Restaurants</h4>
+                    
+                    {% if owned_restaurants %}
+                        {% for restaurant in owned_restaurants %}
+                        <div class="restaurant-card">
+                            <div class="restaurant-header">
+                                <div class="restaurant-name-section">
+                                    <h5>{{ restaurant.restaurant_name }}</h5>
+                                    <p class="registered-date"><i class="fas fa-calendar"></i> Registered: {{ restaurant.registered_date }}</p>
+                                </div>
+                                <span class="status-badge role-owner"><i class="fas fa-check-circle"></i> Active</span>
+                            </div>
+                            
+                            <div class="restaurant-details">
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-map-marker-alt"></i> Address:</span>
+                                    <span class="detail-value">{{ restaurant.address }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-phone"></i> Phone:</span>
+                                    <span class="detail-value">{{ restaurant.phone }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-envelope"></i> Email:</span>
+                                    <span class="detail-value">{{ restaurant.email }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-users"></i> Max Capacity:</span>
+                                    <span class="detail-value">{{ restaurant.max_guests }} guests</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-dollar-sign"></i> Price Range:</span>
+                                    <span class="detail-value">{{ restaurant.price_range }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-restaurants">
+                            <i class="fas fa-store"></i>
+                            <p>You haven't registered any restaurants yet.</p>
+                            <a href="#" class="btn btn-primary btn-sm" style="margin-top: var(--space-4);">
+                                <i class="fas fa-plus"></i> Add Restaurant
+                            </a>
+                        </div>
+                    {% endif %}
+                
+                {% elif user.role in 'HOST,MANAGER' %}
+                    <!-- Staff Status Section -->
+                    <h4 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Staff Assignments</h4>
+                    
+                    {% if staff_assignments %}
+                        {% for assignment in staff_assignments %}
+                        <div class="staff-assignment-card">
+                            <div class="assignment-header">
+                                <div class="restaurant-info">
+                                    <h5>{{ assignment.restaurant_name }}</h5>
+                                    <p class="role-label">{{ user.role }}</p>
+                                </div>
+                                <span class="status-badge role-active"><i class="fas fa-check-circle"></i> Active</span>
+                            </div>
+                            
+                            <div class="assignment-details">
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-user-tie"></i> Employer/Owner:</span>
+                                    <span class="detail-value">{{ assignment.owner_name }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-envelope"></i> Owner Email:</span>
+                                    <span class="detail-value">{{ assignment.owner_email }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-phone"></i> Restaurant Phone:</span>
+                                    <span class="detail-value">{{ assignment.phone }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="fas fa-map-marker-alt"></i> Address:</span>
+                                    <span class="detail-value">{{ assignment.address }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-assignments">
+                            <i class="fas fa-briefcase"></i>
+                            <p>You are not currently assigned to any restaurant.</p>
+                        </div>
+                    {% endif %}
+                
+                {% else %}
+                    <!-- Customer Status -->
+                    <div class="customer-status-info">
+                        <div class="intro-card">
+                            <i class="fas fa-utensils"></i>
+                            <h4>Welcome, {{ user.role }}!</h4>
+                            <p>Explore restaurants, make reservations, and enjoy great dining experiences.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Password Change Modal -->
+<div id="password-modal" class="modal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h2>Change Password</h2>
+            <button class="modal-close" onclick="closeModal('password-modal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Error Container for Modal -->
+            <div id="password-form-errors" class="form-errors" role="alert" aria-live="polite"></div>
+            
+            <form id="password-form" novalidate>
+                {% csrf_token %}
+                <div class="form-group password-wrapper">
+                    <input 
+                        type="password" 
+                        placeholder="Current Password"
+                        id="current-password" 
+                        name="current_password" 
+                        required
+                        autocomplete="current-password"
+                    >
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
+                <div class="form-group password-wrapper">
+                    <input 
+                        type="password" 
+                        placeholder="New Password"
+                        id="new-password" 
+                        name="new_password" 
+                        required
+                        autocomplete="new-password"
+                    >
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
+                <div class="form-group password-wrapper">
+                    <input 
+                        type="password" 
+                        placeholder="Confirm Password"
+                        id="confirm-password" 
+                        name="confirm_password" 
+                        required
+                        autocomplete="new-password"
+                    >        
+                <i class="fas fa-eye toggle-password"></i>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Update Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block rr_base_js %}
+<script src="{% static 'settings/js/settings.js' %}"></script>
+{% endblock %}
