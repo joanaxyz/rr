@@ -35,36 +35,8 @@
                     </div>
                 </div>
 
-                <!-- IMPORTANT: Django-compatible form -->
-                <form id="owner-verification-form"
-                      class="verification-form"
-                      method="POST"
-                      enctype="multipart/form-data">
+                <form id="owner-verification-form" class="verification-form" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-
-                    {# show non-field errors (general form errors) #}
-                    {% if form.non_field_errors %}
-                        <div class="form-errors">
-                            {{ form.non_field_errors }}
-                        </div>
-                    {% endif %}
-
-                    {# show field-specific errors at top for convenience #}
-                    {% if form.errors %}
-                        <div class="alert alert-danger">
-                            <ul>
-                                {% for field, errors in form.errors.items %}
-                                    <li><strong>{{ field }}:</strong>
-                                        <ul>
-                                            {% for err in errors %}
-                                                <li>{{ err }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
 
                     <!-- Step 1: Personal Information -->
                     <div class="form-step active" id="step-1">
@@ -72,59 +44,36 @@
                         <p class="step-description">We need to verify your identity and ownership of the restaurant.</p>
 
                         <div class="form-group">
-                            <label for="gov_full_name">Full Name (as on Government ID)</label>
-                            <input type="text" id="gov_full_name" name="gov_full_name"
-                                   value="{{ form.gov_full_name.value|default_if_none:'' }}"
-                                   placeholder="Enter your full name" required>
-                            {% if form.gov_full_name.errors %}
-                                <div class="field-error">{{ form.gov_full_name.errors.as_text }}</div>
-                            {% endif %}
+                            <label for="govt_full_name">Full Name (as on Government ID)</label>
+                            <input type="text" id="govt_full_name" name="govt_full_name" placeholder="Enter your full name" required>
                             <small>Must match your government-issued ID exactly</small>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="id_type">Government ID Type</label>
-                                <select id="id_type" name="id_type" required>
+                                <label for="id-type">Government ID Type</label>
+                                <select id="id-type" name="government_id_type" required>
                                     <option value="">Select ID type</option>
-                                    <option value="passport" {% if form.id_type.value == "passport" %}selected{% endif %}>Passport</option>
-                                    <option value="national_id" {% if form.id_type.value == "national_id" %}selected{% endif %}>National ID</option>
-                                    <option value="drivers_license" {% if form.id_type.value == "drivers_license" %}selected{% endif %}>Driver's License</option>
-                                    <option value="permit" {% if form.id_type.value == "permit" %}selected{% endif %}>Residence Permit</option>
+                                    <option value="passport">Passport</option>
+                                    <option value="national_id">National ID</option>
+                                    <option value="drivers_license">Driver's License</option>
+                                    <option value="permit">Residence Permit</option>
                                 </select>
-                                {% if form.id_type.errors %}
-                                    <div class="field-error">{{ form.id_type.errors.as_text }}</div>
-                                {% endif %}
                             </div>
                             <div class="form-group">
-                                <label for="id_number">ID Number</label>
-                                <input type="text" id="id_number" name="id_number"
-                                       value="{{ form.id_number.value|default_if_none:'' }}"
-                                       placeholder="e.g., 12345678" required>
-                                {% if form.id_number.errors %}
-                                    <div class="field-error">{{ form.id_number.errors.as_text }}</div>
-                                {% endif %}
+                                <label for="id-number">ID Number</label>
+                                <input type="text" id="id-number" name="government_id_number" placeholder="e.g., 12345678" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="business_address">Business Address</label>
-                            <input type="text" id="business_address" name="business_address"
-                                   value="{{ form.business_address.value|default_if_none:'' }}"
-                                   placeholder="Enter your restaurant's complete address" required>
-                            {% if form.business_address.errors %}
-                                <div class="field-error">{{ form.business_address.errors.as_text }}</div>
-                            {% endif %}
+                            <label for="business-address">Business Address</label>
+                            <input type="text" id="business-address" name="business_address" placeholder="Enter your restaurant's complete address" required>
                         </div>
 
                         <div class="form-group">
                             <label for="business_email">Business Email</label>
-                            <input type="email" id="business_email" name="business_email"
-                                   value="{{ form.business_email.value|default_if_none:'' }}"
-                                   placeholder="contact@restaurant.com">
-                            {% if form.business_email.errors %}
-                                <div class="field-error">{{ form.business_email.errors.as_text }}</div>
-                            {% endif %}
+                            <input type="email" id="business_email" name="business_email" placeholder="contact@restaurant.com">
                             <small>Optional. Can be different from account email</small>
                         </div>
 
@@ -139,31 +88,82 @@
                         <p class="step-description">Upload documents to verify you own or operate this restaurant.</p>
 
                         <div class="form-group">
-                            <label for="proof_image">Upload proof documents (single file or .zip)</label>
-                            <div class="file-upload-box" id="proof-upload"
-                                 onclick="document.getElementById('proof_image').click()"
-                                 ondrop="handleDrop(event, 'proof_image')"
-                                 ondragover="handleDragOver(event)"
-                                 ondragleave="handleDragLeave(event)">
+                            <label for="business-license">Business License/Certificate of Registration</label>
+                            <div class="file-upload-box" id="license-upload"
+                                ondrop="handleDrop(event, 'business_license')" 
+                                ondragover="handleDragOver(event)" 
+                                ondragleave="handleDragLeave(event)">
                                 <div class="upload-icon">
                                     <i class="fas fa-file-upload"></i>
                                 </div>
                                 <p class="upload-text">Drag & drop or click to upload</p>
-                                <small>Accepted: PDF, JPG, PNG (Max 10MB). You may upload a single combined file or a .zip of documents.</small>
-                                <input type="file" id="proof_image" name="proof_image"
-                                       accept=".pdf,.jpg,.jpeg,.png,.zip" style="display:none" required>
+                                <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
+                                <input type="file" id="business-license" name="business_license"
+                                       accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
                             </div>
-                            <div id="proof-preview" class="file-preview"></div>
-                            {% if form.proof_image.errors %}
-                                <div class="field-error">{{ form.proof_image.errors.as_text }}</div>
-                            {% endif %}
+                            <div id="license-preview" class="file-preview"></div>
                         </div>
 
                         <div class="form-group">
-                            <label for="tax_id">Tax ID / Business Registration Number (optional)</label>
-                            <input type="text" id="tax_id" name="tax_id"
-                                   placeholder="e.g., 12-3456789">
-                            <small>Optional but recommended (this field is not saved unless you add it to the model)</small>
+                            <label for="government-id-front">Government-Issued ID (Front)</label>
+                            <div class="file-upload-box" id="id-front-upload"
+                                ondrop="handleDrop(event, 'government_id_front')" 
+                                ondragover="handleDragOver(event)" 
+                                ondragleave="handleDragLeave(event)">
+                                <div class="upload-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <p class="upload-text">Drag & drop or click to upload</p>
+                                <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
+                                <input type="file" id="government-id-front" name="government_id_front"
+                                       accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                            </div>
+                            <div id="id-front-preview" class="file-preview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="government-id-back">Government-Issued ID (Back)</label>
+                            <div class="file-upload-box" id="id-back-upload"
+                                ondrop="handleDrop(event, 'government_id_back')" 
+                                ondragover="handleDragOver(event)" 
+                                ondragleave="handleDragLeave(event)">
+                                <div class="upload-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <p class="upload-text">Drag & drop or click to upload</p>
+                                <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
+                                <input type="file" id="government-id-back" name="government_id_back"
+                                       accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                            </div>
+                            <div id="id-back-preview" class="file-preview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="proof-ownership">Proof of Ownership</label>
+                            <p class="hint-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Upload one of: Articles of Incorporation, Lease Agreement, Utility Bill, Bank Statement, etc.
+                            </p>
+
+                            <div class="file-upload-box" id="ownership-upload"
+                                ondrop="handleDrop(event, 'proof_ownership')" 
+                                ondragover="handleDragOver(event)" 
+                                ondragleave="handleDragLeave(event)">
+                                <div class="upload-icon">
+                                    <i class="fas fa-certificate"></i>
+                                </div>
+                                <p class="upload-text">Drag & drop or click to upload</p>
+                                <small>Accepted: PDF, JPG, PNG (Max 10MB)</small>
+                                <input type="file" id="proof-ownership" name="proof_ownership"
+                                       accept=".pdf,.jpg,.jpeg,.png" style="display:none" required>
+                            </div>
+                            <div id="ownership-preview" class="file-preview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tax-id">Tax ID / Business Registration Number</label>
+                            <input type="text" id="tax-id" name="tax_id" placeholder="e.g., 12-3456789">
+                            <small>Optional but recommended</small>
                         </div>
 
                         <div class="button-group">
@@ -200,8 +200,16 @@
                         <div class="review-section">
                             <h4>Submitted Documents</h4>
                             <div class="review-item">
-                                <span class="label">Proof File:</span>
-                                <span class="value" id="review-proof">-</span>
+                                <span class="label">Business License:</span>
+                                <span class="value" id="review-license">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">Government ID:</span>
+                                <span class="value" id="review-id-doc">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">Proof of Ownership:</span>
+                                <span class="value" id="review-ownership">-</span>
                             </div>
                         </div>
 
@@ -221,7 +229,6 @@
                                 <i class="fas fa-check"></i> Submit Application
                             </button>
                         </div>
-
                     </div>
                 </form>
             </div>
@@ -232,43 +239,6 @@
 
 {% block rr_base_js %}
 <script src="{% static 'settings/js/settings.js' %}"></script>
-
-<!-- small JS to populate review step (keeps your existing UI JS working) -->
-<script>
-function nextStep(step) {
-    // minimal: update review fields when moving to step 3
-    if (step === 3) {
-        document.getElementById('review-name').innerText = document.getElementById('gov_full_name').value || '-';
-        document.getElementById('review-id-type').innerText = document.getElementById('id_type').value || '-';
-        document.getElementById('review-id-number').innerText = document.getElementById('id_number').value || '-';
-        document.getElementById('review-address').innerText = document.getElementById('business_address').value || '-';
-        const proof = document.getElementById('proof_image').files[0];
-        document.getElementById('review-proof').innerText = proof ? proof.name : '-';
-    }
-    // show/hide steps (assumes your settings.js has step navigation too)
-    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step-' + step).classList.add('active');
-}
-
-function previousStep(step) {
-    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step-' + step).classList.add('active');
-}
-
-// simple drag/drop helpers (preserve the ones you had)
-function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
-function handleDragLeave(e) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); }
-function handleDrop(e, inputId) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('drag-over');
-    const input = document.getElementById(inputId);
-    if (e.dataTransfer.files && e.dataTransfer.files.length) {
-        input.files = e.dataTransfer.files;
-        // update preview text
-        const f = input.files[0];
-        const preview = document.getElementById(inputId + '-preview') || document.getElementById('proof-preview');
-        if (preview) preview.innerText = f ? f.name : '';
-    }
-}
-</script>
+<script src="{% static 'owner_verification/js/owner_verification.js' %}"></script>
+></script>
 {% endblock %}

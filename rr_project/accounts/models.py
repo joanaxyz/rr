@@ -63,28 +63,11 @@ class User(AbstractUser):
         self.save()
 
 
-# -------------------------------
-# Owner Model (UPDATED)
-# -------------------------------
 class Owner(models.Model):
     user = models.OneToOneField(
         User,
-        on_delete=models.CASCADE,
-        related_name='owner_profile',
-        null=True,
-        blank=True
+        on_delete=models.CASCADE,related_name='owner_profile'
     )
-    govt_full_name = models.CharField(max_length=255, null=True, blank=True)
-    government_id_type = models.CharField(max_length=50, null=True, blank=True)
-    government_id_number = models.CharField(max_length=50, null=True, blank=True)
-    business_address = models.CharField(max_length=255, null=True, blank=True)
-    business_email = models.EmailField(null=True, blank=True)
-    business_license = models.FileField(upload_to='business_licenses/', null=True, blank=True)
-    government_id_front = models.FileField(upload_to='govt_ids/', null=True, blank=True)
-    government_id_back = models.FileField(upload_to='govt_ids/', null=True, blank=True)
-    proof_of_ownership = models.FileField(upload_to='ownership_proofs/', null=True, blank=True)
-    status = models.CharField(max_length=50, null=True, blank=True)
-    submitted_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return f"Owner: {self.user.email if self.user else 'No User'}"

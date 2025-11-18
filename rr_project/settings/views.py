@@ -6,8 +6,9 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from owner_verification.models import OwnerVerificationRequest
 
-# @login_required
+@login_required
 def settings_view(request):
     user = request.user
     user_dict = {
@@ -19,9 +20,58 @@ def settings_view(request):
         'phone_number': user.phone_number,
         'role': user.role
     }
+    
+    verification_request = None
+    try:
+        verification_request = OwnerVerificationRequest.objects.filter(user=user).latest('created_at')
+    except OwnerVerificationRequest.DoesNotExist:
+        pass
+    
+    from restaurants.models import Restaurant
+    
+    staff_assignments = []
+    if user.role in ['HOST', 'MANAGER']:
+        if user.role == 'HOST':
+            restaurants = Restaurant.objects.filter(hosts=user.host_profile)
+        else:
+            restaurants = Restaurant.objects.filter(managers=user.manager_profile)
+        
+        for restaurant in restaurants:
+            staff_assignments.append({
+                'restaurant_name': restaurant.name,
+                'restaurant_id': restaurant.id,
+                'owner_name': restaurant.owner.user.get_full_name() if restaurant.owner else 'N/A',
+                'owner_email': restaurant.owner.user.email if restaurant.owner else 'N/A',
+                'phone': restaurant.phone_number,
+                'address': restaurant.full_address
+            })
+    
+    owned_restaurants = []
+    if user.role == 'OWNER':
+        try:
+            owner_profile = user.owner_profile
+            restaurants = Restaurant.objects.filter(owner=owner_profile).order_by('-created_at')
+            
+            for restaurant in restaurants:
+                owned_restaurants.append({
+                    'restaurant_name': restaurant.name,
+                    'restaurant_id': restaurant.id,
+                    'address': restaurant.full_address,
+                    'phone': restaurant.phone_number,
+                    'email': restaurant.email,
+                    'registered_date': restaurant.created_at.strftime('%B %d, %Y'),
+                    'max_guests': restaurant.max_guest_count,
+                    'price_range': restaurant.price_range_display
+                })
+        except:
+            pass
+    
     context = {
         'user': user_dict,
-        'user_profile': user_dict
+        'user_profile': user_dict,
+        'verification_request': verification_request,
+        'staff_assignments': staff_assignments,
+        'owned_restaurants': owned_restaurants
     }
     return render(request, 'settings/settings.html', context)
 

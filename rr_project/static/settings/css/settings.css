@@ -492,10 +492,17 @@
 
 .verification-status.verified {
     background: rgba(6, 214, 160, 0.1);
+    border-left: 4px solid var(--color-success);
 }
 
 .verification-status.pending {
     background: rgba(255, 165, 0, 0.1);
+    border-left: 4px solid var(--color-warning);
+}
+
+.verification-status.rejected {
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
 }
 
 .status-icon {
@@ -511,6 +518,10 @@
 .verification-status.pending .status-icon {
     color: var(--color-warning);
     animation: pulse 2s infinite;
+}
+
+.verification-status.rejected .status-icon {
+    color: #ef4444;
 }
 
 @keyframes pulse {
@@ -1220,7 +1231,6 @@ select.error:focus {
     color: #a855f7;
 }
 
-/* Verification status badges */
 .status-badge.role-verified {
     background: rgba(6, 214, 160, 0.15);
     color: var(--color-success);
@@ -1230,4 +1240,212 @@ select.error:focus {
     background: rgba(255, 165, 0, 0.15);
     color: var(--color-warning);
     animation: pulse 2s infinite;
+}
+
+.status-badge.role-rejected {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+/* User Status Badge */
+.user-status-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-gray-200);
+}
+
+.status-label {
+    font-weight: 600;
+    color: var(--color-gray-700);
+    font-size: var(--font-sm);
+}
+
+.status-badge.role-host {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.status-badge.role-manager {
+    background: rgba(8, 145, 178, 0.1);
+    color: #0891b2;
+}
+
+.status-badge.role-active {
+    background: rgba(6, 214, 160, 0.15);
+    color: var(--color-success);
+}
+
+/* ============================================================================
+   STAFF ASSIGNMENT SECTION
+   ============================================================================ */
+
+.staff-assignment-card {
+    padding: var(--space-6);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-gray-200);
+    margin-bottom: var(--space-6);
+    transition: all var(--transition-base);
+}
+
+.staff-assignment-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+}
+
+.assignment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    gap: var(--space-4);
+}
+
+.restaurant-info h5 {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-lg);
+    color: var(--color-gray-900);
+}
+
+.role-label {
+    margin: 0;
+    font-size: var(--font-sm);
+    color: var(--color-gray-500);
+}
+
+.assignment-details {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3);
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-gray-200);
+}
+
+.detail-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 180px;
+    font-weight: 600;
+    color: var(--color-gray-700);
+    font-size: var(--font-sm);
+}
+
+.detail-label i {
+    color: var(--color-primary);
+    font-size: var(--font-base);
+}
+
+.detail-value {
+    flex: 1;
+    color: var(--color-gray-900);
+    font-size: var(--font-sm);
+}
+
+.no-assignments {
+    text-align: center;
+    padding: var(--space-12) var(--space-6);
+    background: var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    color: var(--color-gray-500);
+}
+
+.no-assignments i {
+    font-size: 2.5rem;
+    color: var(--color-gray-300);
+    margin-bottom: var(--space-4);
+}
+
+.no-assignments p {
+    margin: 0;
+    font-size: var(--font-base);
+}
+
+.customer-status-info {
+    margin-bottom: var(--space-10);
+}
+
+/* ============================================================================
+   RESTAURANT CARD SECTION
+   ============================================================================ */
+
+.restaurant-card {
+    padding: var(--space-6);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-gray-200);
+    margin-bottom: var(--space-6);
+    transition: all var(--transition-base);
+}
+
+.restaurant-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+}
+
+.restaurant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-6);
+    gap: var(--space-4);
+}
+
+.restaurant-name-section h5 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-lg);
+    color: var(--color-gray-900);
+}
+
+.registered-date {
+    margin: 0;
+    font-size: var(--font-sm);
+    color: var(--color-gray-500);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.registered-date i {
+    color: var(--color-primary);
+}
+
+.restaurant-details {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.no-restaurants {
+    text-align: center;
+    padding: var(--space-12) var(--space-6);
+    background: var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    color: var(--color-gray-500);
+}
+
+.no-restaurants i {
+    font-size: 2.5rem;
+    color: var(--color-gray-300);
+    margin-bottom: var(--space-4);
+}
+
+.no-restaurants p {
+    margin: 0 0 var(--space-4) 0;
+    font-size: var(--font-base);
+}
+
+.btn-sm {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-sm);
 }

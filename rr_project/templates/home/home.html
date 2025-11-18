@@ -59,7 +59,7 @@
         <div class="restaurant-card{% if forloop.first %} active{% endif %}">
           {% if restaurant.image %}
           <div class="restaurant-card-left"
-            style= "background-image: url('{{ restaurant.image.url }}')">
+            style= "background-image: url('{{ restaurant.image }}')">
           {% else %}
           <div class="restaurant-card-left"
             style= "background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))">

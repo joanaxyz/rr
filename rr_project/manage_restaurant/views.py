@@ -5,7 +5,9 @@ from accounts.models import Owner, User, Host, Manager
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from email_service.views import send_reservation_cancellation_email, send_reservation_confirmation_email, send_reservation_completion_email
+from owner_verification.supabase_utils import upload_to_supabase
 import json
+import uuid
 @login_required
 def view_restaurants(request):
     # show restaurants the user owns
@@ -22,6 +24,7 @@ def view_restaurants(request):
         restaurants = Restaurant.objects.filter(managers=manager)
     restaurants_dicts = [r.to_dict() for r in restaurants]
     return render(request, "manage_restaurant/list.html", {"restaurants": restaurants_dicts})
+
 @login_required
 def manage_reservations(request, restaurant_id):
     user = request.user
@@ -228,9 +231,14 @@ def manage_details(request, restaurant_id):
             
             restaurant.max_guest_count = request.POST.get('max_guest_count', restaurant.max_guest_count)
             
-            # Handle image upload
             if 'image' in request.FILES:
-                restaurant.image = request.FILES['image']
+                image_file = request.FILES['image']
+                file_path = f"restaurants/{uuid.uuid4()}_{image_file.name}"
+                image_url = upload_to_supabase(image_file, "files", file_path)
+                if image_url:
+                    restaurant.image = image_url
+                else:
+                    messages.warning(request, 'Failed to upload image. Restaurant details updated without image.')
             
             restaurant.save()
             messages.success(request, 'Restaurant details updated successfully!')

@@ -182,11 +182,12 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-attachment: local;
   min-height: 550px;
   background-color: var(--color-gray-700);
-  background: var(--color-gray-700);
   transition: transform var(--transition-slow);
   overflow: hidden;
+  aspect-ratio: 1;
 }
 
 .restaurant-card-left::before {
@@ -598,6 +599,7 @@ body {
   
   .restaurant-card-left {
     min-height: 300px;
+    aspect-ratio: auto;
   }
   
   .restaurant-name {
@@ -633,5 +635,13 @@ body {
   .hero-content {
     min-width: auto;
     padding: 0 var(--space-4);
+  }
+  
+  .restaurant-card-left {
+    min-height: 250px;
+  }
+  
+  .restaurant-name {
+    font-size: var(--font-2xl);
   }
 }

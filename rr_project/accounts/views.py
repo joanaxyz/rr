@@ -2,17 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.http import JsonResponse
-from django.urls import reverse
 from django.utils import timezone
-from django.core.exceptions import ValidationError
-from django.contrib.auth.hashers import check_password
-from django.db import IntegrityError
 
-from .validators import MinimumLengthAndNumberValidator
 from .forms import (
     CustomUserCreationForm,
     CustomAuthenticationForm,
-    OwnerVerificationForm,
 )
 from .models import *
 from email_service.views import send_verification_email, send_password_reset_code_email
@@ -351,24 +345,3 @@ def resend_verification_email_view(request, user_id):
             )
 
     return JsonResponse({"success": False, "message": "Invalid request method."})
-
-
-# ------------------------------
-# APPLY OWNER (FIXED VERSION)
-# ------------------------------
-def apply_owner(request):
-    if request.method == 'POST':
-        form = OwnerVerificationForm(request.POST, request.FILES)
-        if form.is_valid():
-            owner_request = form.save(commit=False)
-            owner_request.user = request.user  # assign current logged-in user
-            owner_request.state = 'PENDING'
-            owner_request.save()
-            return redirect('accounts:owner_verification_success')
-        else:
-            print("Form is invalid:", form.errors)  # for debugging
-
-    else:
-        form = OwnerVerificationForm()
-
-    return render(request, 'accounts/apply_owner.html', {'form': form})

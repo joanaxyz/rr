@@ -68,7 +68,7 @@ class Restaurant(models.Model):
  
     price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Minimum food price")
     price_max = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Maximum food price")
-    image = models.ImageField(upload_to='restaurants/', blank=True, null=True)
+    image = models.CharField(max_length=500, blank=True, null=True, help_text="URL to restaurant image stored in Supabase")
     description = models.TextField()
     max_guest_count = models.IntegerField()
     opening_time = models.TimeField(null=True, blank=True, help_text="Restaurant opening time")
@@ -119,7 +119,7 @@ class Restaurant(models.Model):
             "closing_time": self.closing_time.strftime("%H:%M") if self.closing_time else None,
             "avg_rating": getattr(self, "avg_rating", 0),
             "review_count": getattr(self, "review_count", 0),
-            "image": self.image.url if self.image else None,
+            "image": self.image if self.image else None,
             "cuisines": [{"name": c.name, "id": c.id} for c in self.cuisines.all()],
             "tags": [{"tag": t.tag, "id": t.id} for t in self.tags.all()],
             "operating_days": self.operating_days,

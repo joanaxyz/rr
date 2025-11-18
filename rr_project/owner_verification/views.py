@@ -1,65 +1,57 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import OwnerVerificationRequest
+from .supabase_utils import upload_to_supabase
+import uuid
 
 @login_required
 def owner_verification(request):
-    # if the user already submitted a request, show status
-    existing_request = OwnerVerificationRequest.objects.filter(user=request.user).first()
-
-    if existing_request:
-        return render(request, "owner_verification/request_status.html", {
-            "request_obj": existing_request
-        })
-
     if request.method == "POST":
-
-        # Get text fields from POST
-        gov_full_name = request.POST.get("govt_full_name")
-        id_type = request.POST.get("id_type")
-        id_number = request.POST.get("id_number")
+        govt_full_name = request.POST.get("govt_full_name")
+        government_id_type = request.POST.get("government_id_type")
+        government_id_number = request.POST.get("government_id_number")
         business_address = request.POST.get("business_address")
-        business_email = request.POST.get("business_email")
+        business_email = request.POST.get("business_email") or request.user.email
         tax_id = request.POST.get("tax_id")
 
-        # Get uploaded files
-        business_license = request.FILES.get("business_license")
-        government_id_doc = request.FILES.get("government_id_doc")
-        proof_ownership = request.FILES.get("proof_ownership")
+        business_license_file = request.FILES.get("business_license")
+        government_id_front_file = request.FILES.get("government_id_front")
+        government_id_back_file = request.FILES.get("government_id_back")
+        proof_ownership_file = request.FILES.get("proof_ownership")
 
-        # Create verification request
-        req = OwnerVerificationRequest.objects.create(
+        if not all([govt_full_name, government_id_type, government_id_number, business_address, tax_id]):
+            messages.error(request, "All fields are required.")
+            return render(request, "owner_verification/register_restaurant.html")
+
+        req = OwnerVerificationRequest(
             user=request.user,
-            gov_full_name=gov_full_name,
-            id_type=id_type,
-            id_number=id_number,
+            govt_full_name=govt_full_name,
+            government_id_type=government_id_type,
+            government_id_number=government_id_number,
             business_address=business_address,
             business_email=business_email,
             tax_id=tax_id,
-            business_license=business_license,
-            government_id_doc=government_id_doc,
-            proof_ownership=proof_ownership,
-            state="PENDING",
+            state="PENDING"
         )
 
-        req.save()
+        if business_license_file:
+            file_path = f"owner_verification/licenses/{uuid.uuid4()}_{business_license_file.name}"
+            req.business_license = upload_to_supabase(business_license_file, "files", file_path)
 
-        return render(request, "owner_verification/success.html")
+        if government_id_front_file:
+            file_path = f"owner_verification/government_ids/{uuid.uuid4()}_{government_id_front_file.name}"
+            req.government_id_front = upload_to_supabase(government_id_front_file, "files", file_path)
+
+        if government_id_back_file:
+            file_path = f"owner_verification/government_ids/{uuid.uuid4()}_{government_id_back_file.name}"
+            req.government_id_back = upload_to_supabase(government_id_back_file, "files", file_path)
+
+        if proof_ownership_file:
+            file_path = f"owner_verification/proofs/{uuid.uuid4()}_{proof_ownership_file.name}"
+            req.proof_of_ownership = upload_to_supabase(proof_ownership_file, "files", file_path)
+
+        req.save()
+        messages.success(request, "Your request has been sent!")
 
     return render(request, "owner_verification/register_restaurant.html")
-def owner_requests(request):
-    if not request.user.is_staff:  # Only admin/staff can see this
-        return redirect('home')
-
-    requests = OwnerVerificationRequest.objects.all()
-    return render(request, 'owner_verification/list.html', {'requests': requests})
-
-def update_request_status(request, pk, new_status):
-    if not request.user.is_staff:
-        return redirect('home')
-
-    verification = get_object_or_404(OwnerVerificationRequest, pk=pk)
-    if new_status in ['approved', 'not_approved']:
-        verification.status = new_status
-        verification.save()
-    return redirect('owner_verification:owner_requests')

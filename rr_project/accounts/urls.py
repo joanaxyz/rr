@@ -35,12 +35,4 @@ urlpatterns = [
     path('api/reset-password/', api_reset_password, name='api_reset_password'),
     path('api/resend-reset-code/', api_resend_reset_code, name='api_resend_reset_code'),
     path('api/resend-verification/<int:user_id>/', api_resend_verification_email, name='api_resend_verification'),
-
-    # Owner Verification URLs
-    path("apply-owner/", views.apply_owner, name="apply_owner"),
-    path(
-        "apply_owner/success/",
-        TemplateView.as_view(template_name="accounts/apply_owner_success.html"),
-        name="owner_verification_success"
-    ),
 ]
