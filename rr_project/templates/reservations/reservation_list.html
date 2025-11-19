@@ -14,7 +14,7 @@
   {% if messages %}
   <div class="messages">
     {% for message in messages %}
-      <div class="message {{ message.tags }}">{{ message }}</div>
+    <div class="message {{ message.tags }}">{{ message }}</div>
     {% endfor %}
   </div>
   {% endif %}
@@ -40,11 +40,11 @@
           <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
           <td>
             {% if reservation.restaurant %}
-              <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
-                {{ reservation.restaurant.name }}
-              </a>
+            <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
+              {{ reservation.restaurant.name }}
+            </a>
             {% else %}
-              <span>Unknown Restaurant</span>
+            <span>Unknown Restaurant</span>
             {% endif %}
           </td>
           <td>{{ reservation.date }}</td>
@@ -58,17 +58,19 @@
           <td>
             <form method="post" action="">
               {% csrf_token %}
-              {% if reservation.status != 'CANCELLED' %}
-              <div class="action-buttons">
-                <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
-                <input type="hidden" name="cancel_reason" class="cancel-reason-input">
-                <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
-                <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
-              </div>
-              {% else %}
+              {% if reservation.status == "CANCELLED" %}
               <div class="action-buttons">
                 <input type="hidden" name="restore_reservation" value="{{ reservation.id }}">
                 <button type="button" class="restore-btn" onclick="restoreReservation(this.form)">Restore</button>
+              </div>
+
+              {% elif reservation.status != "COMPLETED" and reservation.status != "CONFIRMED" %}
+              <div class="action-buttons">
+                <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
+                <input type="hidden" name="cancel_reason" class="cancel-reason-input">
+
+                <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
+                <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
               </div>
               {% endif %}
             </form>
@@ -84,24 +86,24 @@
   <div class="pagination-container">
     <div class="pagination">
       {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+      <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
       {% else %}
-        <span class="disabled">&laquo;</span>
+      <span class="disabled">&laquo;</span>
       {% endif %}
 
       {% for num in page_obj.paginator.page_range %}
-        {% if num == page_obj.number %}
-          <span class="current">{{ num }}</span>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-          <a href="?page={{ num }}">{{ num }}</a>
+      {% if num == page_obj.number %}
+      <span class="current">{{ num }}</span>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a href="?page={{ num }}">{{ num
+        }}</a>
         {% endif %}
-      {% endfor %}
+        {% endfor %}
 
-      {% if page_obj.has_next %}
+        {% if page_obj.has_next %}
         <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
-      {% else %}
+        {% else %}
         <span class="disabled">&raquo;</span>
-      {% endif %}
+        {% endif %}
     </div>
   </div>
   {% endif %}

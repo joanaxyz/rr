@@ -1,86 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Cancelled</title>
     {% load static %}
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; margin: 0; padding: 20px; background-color: #ffffff; }
+        .verify-container { max-width: 600px; margin: 0 auto; }
+        .verify-content { width: 100%; }
+        .logo-header { text-align: center; background-color: #D4530A; color: #ffffff; padding: 30px 20px; margin: 0; }
+        .logo-header img { max-width: 80px; height: auto; margin: 0 0 15px 0; display: block; margin-left: auto; margin-right: auto; }
+        .company-name { margin: 10px 0 5px 0; font-size: 28px; font-weight: bold; color: #ffffff; }
+        .company-tagline { margin: 0; font-size: 14px; color: #ffffff; }
+        .verify-main { background-color: #f9fafb; padding: 40px 30px; margin: 0; border: 1px solid #d1d5db; }
+        .verify-icon { text-align: center; margin-bottom: 20px; }
+        .verify-icon svg { width: 64px; height: 64px; }
+        .verify-title { text-align: center; color: #333333; margin: 20px 0 15px 0; font-size: 24px; font-weight: bold; }
+        .verify-description { text-align: center; margin: 15px 0; font-size: 16px; line-height: 1.6; color: #555555; }
+        .account-details { background-color: #ffffff; border: 1px solid #d1d5db; padding: 20px; margin: 20px 0; text-align: center; }
+        .detail-item { margin: 15px 0; padding: 10px 0; border-bottom: 1px solid #d1d5db; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { display: block; font-weight: bold; color: #666666; font-size: 12px; margin-bottom: 5px; }
+        .detail-value { display: block; color: #333333; font-size: 16px; }
+        .warning { background-color: #fff3cd; border: 1px solid #ffc107; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; color: #856404; font-size: 14px; }
+        .info-box { background-color: #f0f8ff; border: 1px solid #D4530A; border-left: 4px solid #D4530A; padding: 15px; margin: 20px 0; color: #333333; font-size: 14px; }
+        .verify-footer { text-align: center; color: #666666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; }
+        .verify-footer p { margin: 8px 0; line-height: 1.5; }
+        h1, h2, h3, h4, h5, h6 { margin: 15px 0; }
+        p { margin: 15px 0; }
+        img { max-width: 100%; height: auto; }
+        a { color: #D4530A; }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-        
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-            <div style="margin-bottom: 20px;">
-                <div style="width: 60px; height: 60px; background-color: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 30px; color: white;">🍽️</span>
-                </div>
-            </div>
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">RR - Restaurant Reservation</h1>
-            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">Your One Stop Destination for Restaurant Reservations</p>
-        </div>
-
-        <!-- Content -->
-        <div style="padding: 40px 30px;">
-            <!-- Icon -->
-            <div style="text-align: center; margin-bottom: 30px;">
-                <div style="display: inline-block; width: 80px; height: 80px; background-color: #fee; border-radius: 50%; line-height: 80px;">
-                    <span style="font-size: 40px;">❌</span>
-                </div>
+<body>
+    <div class="verify-container">
+        <div class="verify-content">
+            <!-- Logo -->
+            <div class="logo-header">
+                <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
+                <h1 class="company-name">RR - Restaurant Reservation</h1>
+                <p class="company-tagline">Your One Stop Destination for Restaurant Reservations</p>
             </div>
 
-            <h2 style="color: #333; text-align: center; margin: 0 0 20px 0; font-size: 24px;">Reservation Cancelled</h2>
-
-            <p style="color: #666; line-height: 1.6; text-align: center; margin-bottom: 30px;">
-                Your reservation has been cancelled. We appreciate your understanding and hope to see you again at {{ reservation.restaurant.name|default:"our restaurant" }} in the future.
-            </p>
-
-            <!-- Reservation Details -->
-            <div style="background-color: #f9f9f9; border-radius: 8px; padding: 25px; margin-bottom: 25px;">
-                <div style="margin-bottom: 15px;">
-                    <strong style="color: #667eea; display: block; margin-bottom: 5px;">Restaurant</strong>
-                    <span style="color: #333;">{{ reservation.restaurant.name|default:"N/A" }}</span>
+            <!-- Main Content -->
+            <div class="verify-main">
+                <div class="verify-icon">
+                    <!-- Cancellation Icon -->
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="11" stroke="#dc2626" stroke-width="2"/>
+                        <path d="M8 8L16 16M16 8L8 16" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                 </div>
 
-                <div style="margin-bottom: 15px;">
-                    <strong style="color: #667eea; display: block; margin-bottom: 5px;">Original Reservation Date</strong>
-                    <span style="color: #333;">{{ reservation.date|default:"N/A"|date:"D, d M Y" }} at {{ reservation.time|default:"N/A"|time:"H:i A" }}</span>
-                </div>
+                <h2 class="verify-title">Reservation Cancelled</h2>
 
-                <div style="margin-bottom: 15px;">
-                    <strong style="color: #667eea; display: block; margin-bottom: 5px;">Party Size</strong>
-                    <span style="color: #333;">{{ reservation.guest_count|default:"N/A" }} guest{% if reservation.guest_count != 1 %}s{% endif %}</span>
-                </div>
-
-                {% if reservation.table_numbers %}
-                <div style="margin-bottom: 15px;">
-                    <strong style="color: #667eea; display: block; margin-bottom: 5px;">Table Numbers</strong>
-                    <span style="color: #333;">{{ reservation.table_numbers|join:", " }}</span>
-                </div>
-                {% endif %}
-
-                {% if reservation.cancellation_info %}
-                <div>
-                    <strong style="color: #667eea; display: block; margin-bottom: 5px;">Cancellation Reason</strong>
-                    <span style="color: #333;">{{ reservation.cancellation_info.reason }}</span>
-                </div>
-                {% endif %}
-            </div>
-
-            <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-                <p style="color: #856404; margin: 0; font-size: 14px; line-height: 1.5;">
-                    <strong>What happens next?</strong> If you previously made any special requests or had notes on your reservation, please be aware that the restaurant may have been preparing for your visit. We recommend contacting them directly if you have any questions.
+                <p class="verify-description">
+                    A reservation has been cancelled. We appreciate your understanding and hope to welcome your guests again at {{ reservation.restaurant.name|default:"the restaurant" }} in the future.
                 </p>
-            </div>
-        </div>
 
-        <!-- Footer -->
-        <div style="background-color: #f9f9f9; padding: 30px; text-align: center; border-top: 1px solid #eee;">
-            <p style="color: #999; font-size: 13px; margin: 0 0 10px 0; line-height: 1.5;">
-                If you did not cancel this reservation or have any concerns, please contact our support team immediately.
-            </p>
-            <p style="color: #999; font-size: 13px; margin: 0;">
-                Thank you for using RR - Restaurant Reservation System.
-            </p>
+                <div class="account-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Restaurant</span>
+                        <span class="detail-value">{{ reservation.restaurant.name|default:"N/A" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Original Reservation Date</span>
+                        <span class="detail-value">{{ reservation.date|default:"N/A"|date:"D, d M Y" }} at {{ reservation.time|default:"N/A"|time:"H:i A" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Party Size</span>
+                        <span class="detail-value">{{ reservation.guest_count|default:"N/A" }} guest{% if reservation.guest_count != 1 %}s{% endif %}</span>
+                    </div>
+                    {% if reservation.table_numbers %}
+                    <div class="detail-item">
+                        <span class="detail-label">Table Numbers</span>
+                        <span class="detail-value">{{ reservation.table_numbers|join:", " }}</span>
+                    </div>
+                    {% endif %}
+                    {% if reservation.cancellation_info %}
+                    <div class="detail-item">
+                        <span class="detail-label">Cancellation Reason</span>
+                        <span class="detail-value">{{ reservation.cancellation_info.reason }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="warning">
+                    <strong>Important:</strong> Please note that your table has been released. If you had any special preparations or notes on this reservation, they will no longer apply. Contact the guest directly if you need to discuss any details.
+                </div>
+
+                <div class="info-box">
+                    <strong>Next Steps:</strong> You can manage your reservations and update your restaurant schedule through your dashboard. If you have any questions or concerns, please contact our support team.
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="verify-footer">
+                <p>Thank you for using RR - Restaurant Reservation System.</p>
+                <p>For support or inquiries, please contact our help center.</p>
+            </div>
         </div>
     </div>
 </body>
