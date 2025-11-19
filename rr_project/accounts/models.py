@@ -82,14 +82,6 @@ class Host(models.Model):
     def __str__(self):
         return f"Host: {self.user.email or self.user.username}"
 
-
-class Server(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='server_profile')
-
-    def __str__(self):
-        return f"Server: {self.user.email or self.user.username}"
-
-
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='manager_profile')
 
