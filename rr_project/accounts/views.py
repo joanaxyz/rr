@@ -226,6 +226,8 @@ def verify_email_view(request, token):
         user.verification_token_expires = None
         user.save()
 
+        Customer.objects.create(user=user)
+
         messages.success(request, "Email verified!")
         return redirect("accounts:login")
 
