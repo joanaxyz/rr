@@ -17,10 +17,12 @@ class ReservationForm(forms.ModelForm):
             })
 
         }
+
     def __init__(self, *args, **kwargs):
         restaurant = kwargs.pop('restaurant', None)  # expect restaurant to be passed
         super().__init__(*args, **kwargs)
         
         max_guests = restaurant.max_guest_count if restaurant else 10  # fallback if no restaurant
         self.fields['guest_count'].widget.choices = [(i, i) for i in range(1, max_guests + 1)]
+    
 
