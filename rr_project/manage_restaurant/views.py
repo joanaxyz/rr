@@ -8,6 +8,8 @@ from email_service.views import send_reservation_cancellation_email, send_reserv
 from owner_verification.supabase_utils import upload_to_supabase
 import json
 import uuid
+from .forms import RestaurantForm
+
 @login_required
 def view_restaurants(request):
     # show restaurants the user owns
@@ -279,3 +281,17 @@ def dashboard(request, restaurant_id):
         "total_tables": total_tables,
     }
     return render(request, "manage_restaurant/dashboard.html", context)
+
+def create_restaurant(request):
+    if request.method == 'POST':
+        form = RestaurantForm(request.POST, request.FILES)
+        if form.is_valid():
+            restaurant = form.save(commit=False)
+            restaurant.owner = request.user.owner  # set the owner
+            restaurant.save()
+            # save M2M fields like cuisines
+            form.save_m2m()
+            return redirect('manage_restaurant')  # your manage page
+    else:
+        form = RestaurantForm()
+    return render(request, 'manage_restaurant/create_restaurant.html', {'form': form})

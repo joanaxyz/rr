@@ -106,11 +106,16 @@ WSGI_APPLICATION = 'rr_project.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        config('POSTGRES')
+        config('POSTGRES'),
+        conn_max_age=0
     )
 }
 
+# Force Django to use PostgreSQL backend
+DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+
 print(DATABASES)
+
 
 
 # Password validation

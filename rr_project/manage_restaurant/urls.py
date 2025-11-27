@@ -13,4 +13,5 @@ urlpatterns = [
 
     path("api/save_floor_plan/", api.api_save_floor_plan, name="save_floor_plan"),
     path("api/remove_staff/<int:staff_id>/<str:role>/", api.api_remove_staff, name="remove_staff"),
+    path('create/', views.create_restaurant, name='create_restaurant'),
 ]

@@ -1,0 +1,51 @@
+{% extends 'common/rr_base.html' %}
+
+{% block title %}Create Restaurant{% endblock %}
+
+{% block rr_base_css %}
+<style>
+  .create-restaurant-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .create-restaurant-card h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      text-align: center;
+  }
+
+  .create-restaurant-card form button {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+  }
+
+  .create-restaurant-card form button:hover {
+      background-color: #0056b3;
+  }
+</style>
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="create-restaurant-card">
+    <h2>Create a New Restaurant</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Restaurant</button>
+    </form>
+</div>
+{% endblock %}

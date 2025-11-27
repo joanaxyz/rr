@@ -1,0 +1,67 @@
+/* Make images auto-resize on mobile */
+img, .restaurant-card-left {
+    width: 100%;
+    height: auto;
+    background-size: cover;
+    background-position: center;
+}
+
+/* General mobile layout fixes */
+@media (max-width: 768px) {
+
+    /* Hero Section */
+    .hero-section {
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    .search-card {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .search-field {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .search-button {
+        width: 100%;
+    }
+
+    /* Featured Restaurants */
+    .restaurant-card {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .restaurant-card-left {
+        height: 200px !important;
+    }
+
+    .restaurant-card-right {
+        width: 100%;
+        padding: 15px;
+    }
+
+    /* How It Works Section */
+    .steps-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .step-card {
+        width: 100%;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+}
