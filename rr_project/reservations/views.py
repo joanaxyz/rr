@@ -149,10 +149,16 @@ def edit_reservation(request, reservation_id):
     elements = Element.objects.filter(floorplan=floorplan)
     context = {
         'restaurant': reservation.restaurant.to_dict(),
+        'restaurant_json': json.dumps({
+            'opening_time': reservation.restaurant.opening_time.strftime('%H:%M') if reservation.restaurant.opening_time else '',
+            'closing_time': reservation.restaurant.closing_time.strftime('%H:%M') if reservation.restaurant.closing_time else '',
+            'operating_days': reservation.restaurant.operating_days
+        }),
         'tables': json.dumps([t.to_dict() for t in tables]),
         'elements': json.dumps([e.to_dict() for e in elements]),
         'floorplan': json.dumps(floorplan.to_dict()),
         'reserve_form': form,
         'edit_mode': True,
+        'selected_table_numbers': json.dumps(reservation.table_numbers or []),
     }
     return render(request, 'reservations/reservation.html', context)

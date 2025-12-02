@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleLogout = () => {
-        window.MessageBox.showConfirm('Are you sure you want to logout?', () => {
+        window.Modal.confirm('Are you sure you want to logout?', () => {
             window.location.href = window.logoutUrl || '/accounts/auth/logout/';
         });
     };

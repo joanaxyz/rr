@@ -15,7 +15,8 @@
   <!-- Design System -->
   <link rel="stylesheet" href="{% static 'common/css/design-tokens.css' %}">
   <link rel="stylesheet" href="{% static 'common/css/components.css' %}">
-  <link rel="stylesheet" href="{% static 'common/css/messagebox.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/notification.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/modal.css' %}">
   <link rel="stylesheet" href="{% static 'common/css/spinner.css' %}">
   <link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_base.css' %}">
   
@@ -157,18 +158,6 @@
     </div>
   </div>
 
-  <!-- Message Box -->
-  <div class="messagebox-overlay">
-    <div class="messagebox">
-      <div class="messagebox-title" id="msgbx_title">Title Here</div>
-      <div class="messagebox-message" id="msgbx_body">Your message goes here.</div>
-      <div class="messagebox-buttons">
-        <button class="messagebox-btn" id="msgbx_btn">Cancel</button>
-        <button class="messagebox-btn messagebox-btn-primary" id="msgbx_btn_primary">Confirm</button>
-      </div>
-    </div>
-  </div>
-
   {% if messages %}
   <script id="djangoMessages" type="application/json">
     [
@@ -181,7 +170,8 @@
     ]
   </script>
   {% endif %}
-  <script src="{% static 'common/js/MessageBox.js' %}"></script>
+  <script src="{% static 'common/js/Notification.js' %}"></script>
+  <script src="{% static 'common/js/Modal.js' %}"></script>
   <script src="{% static 'common/js/LoadingOverlay.js' %}"></script>
   <script src="{% static 'common/js/APIClient.js' %}"></script>
   <script src="{% static 'common/js/MessageNotification.js' %}"></script>

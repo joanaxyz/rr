@@ -1,5 +1,5 @@
 async function showCancelReason(form) {
-  window.MessageBox.showPrompt("Please provide a reason for cancellation:", {
+  window.Modal.prompt("Please provide a reason for cancellation:", {
     title: "Cancel Reservation",
     placeholder: "Type your reason here...",
     validator: (value) => {
@@ -26,7 +26,7 @@ function submitCancel(reason, form) {
 
 function deleteReservation(form) {
   if (form) {
-    window.MessageBox.showConfirm("Are you sure you want to delete this reservation?", () => {
+    window.Modal.confirm("Are you sure you want to delete this reservation?", () => {
       form.submit();
     });
   }
@@ -39,10 +39,9 @@ function editReservation(reservationId) {
   window.location.href = editUrl;
 }
 
-// ✅ NEW: Restore cancelled reservation
 function restoreReservation(form) {
   if (form) {
-    window.MessageBox.showConfirm(
+    window.Modal.confirm(
       "Do you want to restore this cancelled reservation?",
       () => {
         form.submit();

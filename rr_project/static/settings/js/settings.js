@@ -98,7 +98,7 @@ function showError(message) {
 }
 
 function showSuccess(message) {
-    window.MessageBox.showSuccess(message);
+    window.Notification.success(message);
 }
 
 function initializeOwnerVerification() {

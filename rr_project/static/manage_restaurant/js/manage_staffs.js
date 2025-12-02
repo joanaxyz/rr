@@ -13,7 +13,7 @@ document.getElementById('sendInviteBtn').addEventListener('click', () => {
     const email = document.getElementById('inviteEmail').value;
 
     if (!email) {
-        window.MessageBox.showWarning('Please enter an email');
+        window.Notification.warning('Please enter an email');
         return;
     }
     inviteModal.style.display = 'none';
@@ -22,16 +22,16 @@ document.getElementById('sendInviteBtn').addEventListener('click', () => {
 
 // ===== Remove Staff =====
 function removeStaff(staff_name, staff_id, role){
-    window.MessageBox.showConfirm(`Are you sure you want to delete, ${staff_name} (${formatRole (role)})?`, async ()=>{
+    window.Modal.confirm(`Are you sure you want to delete, ${staff_name} (${formatRole (role)})?`, async ()=>{
         try {
             const response = await APIClient.post(`/manage-restaurant/api/remove_staff/${staff_id}/${role.toUpperCase()}/`,
                 options = { loadingText: 'Deleting Staff from records...' }
             );
 
             if (response.success) {
-                window.MessageBox.showSuccess(response.message);
+                window.Notification.success(response.message);
             } else {
-                window.MessageBox.showError(`Something went wrong ${response.message}`);
+                window.Notification.error(`Something went wrong ${response.message}`);
             }
         } catch (error) {
             console.log(error);

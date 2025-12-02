@@ -119,12 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show error message
     function showError(message) {
-        window.ErrorMessage.show(message);
+        window.Notification.error(message);
     }
     
     // Show success message
     function showSuccess(message) {
-        window.MessageBox.showSuccess(message);
+        window.Notification.success(message);
     }
     
     // Handle form submission

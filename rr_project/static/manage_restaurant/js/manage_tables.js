@@ -246,7 +246,7 @@ class FloorPlanManager {
         const newHeight = parseInt(document.getElementById('canvas-height').value);
 
         if (isNaN(newWidth) || isNaN(newHeight) || newWidth < 500 || newHeight < 300) {
-            window.MessageBox.showWarning('Please enter valid dimensions (Width: 500-2000px, Height: 300-1500px)');
+            window.Notification.warning('Please enter valid dimensions (Width: 500-2000px, Height: 300-1500px)');
             return;
         }
 
@@ -447,7 +447,7 @@ class FloorPlanManager {
 
         const name = document.getElementById('element-name').value.trim();
         if (!name) {
-            window.MessageBox.showWarning('Please enter an element name');
+            window.Notification.warning('Please enter an element name');
             return;
         }
 
@@ -506,7 +506,7 @@ class FloorPlanManager {
     deleteSelectedItem() {
         if (!this.selectedItem) return;
         const name = this.selectedItem.name ? this.selectedItem.name : "Table " + this.selectedItem.number;
-        window.MessageBox.showConfirm(`Are you sure you want to delete "${name}"?`,()=>{
+        window.Modal.confirm(`Are you sure you want to delete "${name}"?`,()=>{
             if (this.selectedType === 'table') {
                 this.tables = this.tables.filter(el => el.id !== this.selectedItem.id);
                 this.renumberTables();
@@ -786,19 +786,19 @@ class FloorPlanManager {
     }
 
     showNotification(message, type = 'info') {
-        if (window.MessageBox) {
+        if (window.Notification) {
             switch (type) {
                 case 'success':
-                    window.MessageBox.showSuccess(message);
+                    window.Notification.success(message);
                     break;
                 case 'error':
-                    window.MessageBox.showError(message);
+                    window.Notification.error(message);
                     break;
                 case 'warning':
-                    window.MessageBox.showWarning(message);
+                    window.Notification.warning(message);
                     break;
                 default:
-                    window.MessageBox.showInfo(message);
+                    window.Notification.info(message);
             }
         }
     }

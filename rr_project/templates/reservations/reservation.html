@@ -171,6 +171,10 @@
 <script>
     // Make restaurant data available to JavaScript
     window.restaurantData = {{ restaurant_json|safe }};
+    
+    // Make selected tables available for edit mode
+    window.selectedTableNumbers = {{ selected_table_numbers|default:"[]"|safe }};
+    window.editMode = {{ edit_mode|default:"false"|lower }};
 </script>
 <script src="{% static 'reservations/js/reservation.js' %}"></script>
 <script src="{% static 'home/js/stars.js' %}"></script>

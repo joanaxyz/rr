@@ -77,6 +77,18 @@ function initializeTableSelection() {
     const tableNum = document.getElementById('table_num');
 
     let selectedTables = [];
+    
+    // Initialize with pre-selected tables if in edit mode
+    if (window.editMode && window.selectedTableNumbers && window.selectedTableNumbers.length > 0) {
+        tables.forEach(table => {
+            const tableNumber = table.dataset.table;
+            const tableCapacity = parseInt(table.dataset.capacity);
+            if (window.selectedTableNumbers.includes(tableNumber)) {
+                selectedTables.push({ element: table, number: tableNumber, capacity: tableCapacity });
+                table.classList.add('selected');
+            }
+        });
+    }
 
     function refreshUI() {
         const totalCapacity = selectedTables.reduce((sum, t) => sum + t.capacity, 0);

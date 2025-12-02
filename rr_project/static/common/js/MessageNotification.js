@@ -9,18 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     // DEBUG = 10, INFO = 20, SUCCESS = 25, WARNING = 30, ERROR = 40
                     switch (msg.level) {
                         case 25: // SUCCESS
-                            window.MessageBox.showSuccess(msg.text);
+                            window.Notification.success(msg.text);
                             break;
                         case 40: // ERROR
-                            window.MessageBox.showError(msg.text);
+                            window.Notification.error(msg.text);
                             break;
                         case 30: // WARNING
-                            window.MessageBox.showWarning(msg.text);
+                            window.Notification.warning(msg.text);
                             break;
                         case 20: // INFO
                         case 10: // DEBUG
                         default:
-                            window.MessageBox.showInfo(msg.text);
+                            window.Notification.info(msg.text);
                     }
                 });
             }

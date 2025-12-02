@@ -2,28 +2,28 @@
 
 // ------------------------- Reservation Actions -------------------------
 function confirmReservation(form, name, table_numbers) {
-    window.MessageBox.showConfirm(
+    window.Modal.confirm(
         `Are you sure you want to confirm reservation by ${name} at table/s ${table_numbers}?`,
         () => { form.querySelector('input[name="action"]').value = "confirm"; form.submit(); }
     );
 }
 
 function completeReservation(form, name, table_numbers) {
-    window.MessageBox.showConfirm(
+    window.Modal.confirm(
         `Are you sure you want to complete reservation by ${name} at table/s ${table_numbers}?`,
         () => { form.querySelector('input[name="action"]').value = "complete"; form.submit(); }
     );
 }
 
 function deleteReservation(form, name, table_numbers) {
-    window.MessageBox.showConfirm(
+    window.Modal.confirm(
         `Are you sure you want to delete reservation by ${name} at table/s ${table_numbers}?`,
         () => { form.querySelector('input[name="action"]').value = "delete"; form.submit(); }
     );
 }
 
 function cancelReservation(form, name, table_numbers) {
-    window.MessageBox.showConfirm(
+    window.Modal.confirm(
         `Are you sure you want to cancel reservation by ${name} at table/s ${table_numbers}?`,
         () => { promptReason(reason => { 
             form.querySelector('input[name="cancellation_reason"]').value = reason; 
@@ -34,14 +34,14 @@ function cancelReservation(form, name, table_numbers) {
 }
 
 function confirmCancelReservation(form, name, table_numbers) {
-    window.MessageBox.showConfirm(
+    window.Modal.confirm(
         `Are you sure you want to confirm cancel reservation by ${name} at table/s ${table_numbers}?`,
         () => { form.querySelector('input[name="action"]').value = "confirm_cancel"; form.submit(); }
     );
 }
 
 function promptReason(callback) {
-    window.MessageBox.showPrompt("Please provide a reason for cancellation:", {
+    window.Modal.prompt("Please provide a reason for cancellation:", {
         title: "Cancel Reservation",
         placeholder: "Type your reason here...",
         validator: value => value && value.trim().length > 0 ? true : "Please enter a reason before submitting."
