@@ -53,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let sortBy = 'newest';
     let sortOrder = "asc";
     let searchTerm = '';
-    const searchInput = document.querySelector('input[type="search"]');
+    const searchbar = document.querySelector('.navbar-searchbar');
+    const searchInput = searchbar ? searchbar.querySelector('input') : null;
 
 
     cuisines.forEach(c => {
@@ -101,19 +102,23 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOperatingDay = contextOperatingDay;
         shouldApplyFilters = true;
     }
-    const searchValue = searchInput.value;
+    const searchValue = searchInput ? searchInput.value : '';
     console.log('searchvalue:', searchValue);
-    if (searchValue == ''){
-        searchInput.value = localStorage.getItem("searchTerm");
+    if (searchInput && searchValue == ''){
+        const savedSearchTerm = localStorage.getItem("searchTerm");
+        if (savedSearchTerm) {
+            searchInput.value = savedSearchTerm;
+            localStorage.removeItem("searchTerm");
+        }
     }
 
-    searchTerm = searchInput.value;
+    searchTerm = searchInput ? searchInput.value : '';
 
     if(searchTerm){
         shouldApplyFilters = true;
     }
 
-    if (address && address !== 'Address') {
+    if (address && address !== 'Select Location') {
         shouldApplyFilters = true;
     }
 
@@ -156,27 +161,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const searchbar = document.querySelector('.navbar-searchbar');
-    const searchBtn = searchbar.querySelector('button');
-    searchBtn.addEventListener('click',()=>{
-        searchTerm = searchInput.value;
-        applyFiltersAndSort();
-    });
-    
-    
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            searchTerm = searchInput.value;
-            applyFiltersAndSort();
+    if (searchbar && searchInput) {
+        const searchBtn = searchbar.querySelector('button');
+        if (searchBtn) {
+            searchBtn.addEventListener('click',()=>{
+                searchTerm = searchInput.value.trim();
+                applyFiltersAndSort();
+            });
         }
-    });
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchTerm = searchInput.value.trim();
+                applyFiltersAndSort();
+            }
+        });
+    }
 
     const addressForm = document.getElementById('addressForm');
     if (addressForm) {
         addressForm.addEventListener('submit', () => {
-            address = document.getElementById('address').textContent;
-            applyFiltersAndSort();
-            window.LoadingOverlay.hide();
+            setTimeout(() => {
+                address = document.getElementById('address').textContent;
+                applyFiltersAndSort();
+                if (window.LoadingOverlay) {
+                    window.LoadingOverlay.hide();
+                }
+            }, 100);
         });
     }
     
@@ -188,7 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         paginator.setItems(filtered);
         renderPage(paginator);
-        resultNumbers.textContent = `${filtered.length} restaurants found`;
+        if (resultNumbers) {
+            resultNumbers.innerHTML = `<strong>${filtered.length}</strong> restaurants found`;
+        }
     }
 
     setupPaginationControls(paginator);
@@ -228,7 +242,7 @@ function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay
         }
 
         let matchesAddress = true;
-        if(address && address !== 'Address') {
+        if(address && address !== 'Select Location') {
             const restaurantAddress = restaurant.address.toLowerCase();
             matchesAddress = restaurantAddress.includes(address.toLowerCase());
         }
@@ -290,27 +304,37 @@ function renderPage(paginator) {
     updatePaginationControls(paginator);
 }
 
+// Set up pagination event delegation once
+let paginationListenerSetup = false;
+
 function setupPaginationControls(paginator) {
     const paginationContainer = document.querySelector('.pagination');
-    paginationContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('pagination-prev')) {
+    if (!paginationContainer) return;
+    
+    // Set up event delegation once
+    if (!paginationListenerSetup) {
+        paginationListenerSetup = true;
+        paginationContainer.addEventListener('click', (e) => {
             e.preventDefault();
-            paginator.previousPage();
-            renderPage(paginator);
-            window.scrollTo(0, 0);
-        } else if (e.target.classList.contains('pagination-next')) {
-            e.preventDefault();
-            paginator.nextPage();
-            renderPage(paginator);
-            window.scrollTo(0, 0);
-        } else if (e.target.classList.contains('pagination-number')) {
-            e.preventDefault();
-            const pageNum = parseInt(e.target.dataset.page);
-            paginator.currentPage = pageNum;
-            renderPage(paginator);
-            window.scrollTo(0, 0);
-        }
-    });
+            const target = e.target.closest('a, span');
+            if (!target) return;
+            
+            if (target.classList.contains('pagination-prev') && !target.classList.contains('disabled')) {
+                paginator.previousPage();
+                renderPage(paginator);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (target.classList.contains('pagination-next') && !target.classList.contains('disabled')) {
+                paginator.nextPage();
+                renderPage(paginator);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (target.classList.contains('pagination-number') && target.dataset.page) {
+                const pageNum = parseInt(target.dataset.page);
+                paginator.currentPage = pageNum;
+                renderPage(paginator);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
 }
 
 function updatePaginationControls(paginator) {
@@ -324,26 +348,61 @@ function updatePaginationControls(paginator) {
 
     paginationContainer.innerHTML = '';
 
+    // Previous button
     if (paginator.hasPreviousPage()) {
         const prev = document.createElement('a');
         prev.href = '#';
         prev.className = 'pagination-prev';
-        prev.textContent = '« Previous';
+        prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
         paginationContainer.append(prev);
     } else {
         const prev = document.createElement('span');
-        prev.className = 'disabled';
-        prev.textContent = '« Previous';
+        prev.className = 'pagination-prev disabled';
+        prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
         paginationContainer.append(prev);
     }
 
-    for (let i = 1; i <= paginator.totalPages; i++) {
+    // Show all page numbers (or limit to 10 if too many)
+    const maxPages = 10;
+    let startPage = 1;
+    let endPage = paginator.totalPages;
+    
+    if (paginator.totalPages > maxPages) {
+        // Show pages around current page
+        const half = Math.floor(maxPages / 2);
+        startPage = Math.max(1, paginator.currentPage - half);
+        endPage = Math.min(paginator.totalPages, startPage + maxPages - 1);
+        
+        // Adjust if we're near the end
+        if (endPage - startPage < maxPages - 1) {
+            startPage = Math.max(1, endPage - maxPages + 1);
+        }
+        
+        // Show first page if not in range
+        if (startPage > 1) {
+            const first = document.createElement('a');
+            first.href = '#';
+            first.className = 'pagination-number';
+            first.dataset.page = 1;
+            first.textContent = '1';
+            paginationContainer.append(first);
+            
+            if (startPage > 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'pagination-ellipsis';
+                ellipsis.textContent = '...';
+                paginationContainer.append(ellipsis);
+            }
+        }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
         if (i === paginator.currentPage) {
             const span = document.createElement('span');
-            span.className = 'current';
+            span.className = 'pagination-number current';
             span.textContent = i;
             paginationContainer.append(span);
-        } else if (i > paginator.currentPage - 3 && i < paginator.currentPage + 3) {
+        } else {
             const link = document.createElement('a');
             link.href = '#';
             link.className = 'pagination-number';
@@ -353,104 +412,113 @@ function updatePaginationControls(paginator) {
         }
     }
 
+    // Show last page if not in range
+    if (paginator.totalPages > maxPages && endPage < paginator.totalPages) {
+        if (endPage < paginator.totalPages - 1) {
+            const ellipsis = document.createElement('span');
+            ellipsis.className = 'pagination-ellipsis';
+            ellipsis.textContent = '...';
+            paginationContainer.append(ellipsis);
+        }
+        
+        const last = document.createElement('a');
+        last.href = '#';
+        last.className = 'pagination-number';
+        last.dataset.page = paginator.totalPages;
+        last.textContent = paginator.totalPages;
+        paginationContainer.append(last);
+    }
+
+    // Next button
     if (paginator.hasNextPage()) {
         const next = document.createElement('a');
         next.href = '#';
         next.className = 'pagination-next';
-        next.textContent = 'Next »';
+        next.innerHTML = '<i class="fas fa-chevron-right"></i>';
         paginationContainer.append(next);
     } else {
         const next = document.createElement('span');
-        next.className = 'disabled';
-        next.textContent = 'Next »';
+        next.className = 'pagination-next disabled';
+        next.innerHTML = '<i class="fas fa-chevron-right"></i>';
         paginationContainer.append(next);
     }
 }
 
 function createRestaurantCard(restaurant) {
     const card = document.createElement('div');
-    card.className = "card";
+    card.className = "restaurant-card";
     card.dataset.id = restaurant.id;
 
-    const imageStyle = restaurant.image
-        ? `url('${restaurant.image}')`
-        : `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))`;
-
+    const imageUrl = restaurant.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
     const isOpen = restaurant.is_open_now;
     const avgRating = Number(restaurant.avg_rating) || 0;
     const reviewCount = restaurant.review_count || 0;
+    const priceRange = restaurant.price_range_display || "$$";
+    const cuisines = restaurant.cuisines?.slice(0, 3) || [];
+    const tags = restaurant.tags || [];
+    const address = restaurant.address || restaurant.city || "Address not available";
+    const maxGuests = restaurant.max_guest_count || 0;
+    const operatingDays = restaurant.operating_days || "N/A";
+    const hoursText = isOpen 
+        ? `Open until ${restaurant.closing_time || "N/A"}`
+        : restaurant.opening_time 
+            ? `Opens at ${restaurant.opening_time}`
+            : "Hours not available";
 
     card.innerHTML = `
-        <div class="left" style="background-image: ${imageStyle}"></div>
-
-        <div class="center">
-          <div class="card-header">
-            <div class="header-title">
-              <h3 class="restaurant-name">${restaurant.name}</h3>
-              <div class="restaurant-rating">
-                <div class="stars" data-rating="${restaurant.avg_rating || 0}"></div>
-                <span class="rating-text">${avgRating.toFixed(1)}</span>
-                <span class="review-count">(${reviewCount})</span>
-              </div>
+        <div class="card-image" style="background-image: url('${imageUrl}')">
+            <div class="card-overlay">
+                <div class="card-rating">
+                    <i class="fas fa-star"></i>
+                    <span>${avgRating > 0 ? avgRating.toFixed(1) : "New"}</span>
+                </div>
             </div>
-            <div class="header-meta">
-              <div class="restaurant-price">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2
-                           M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4Z"/>
-                </svg>
-                <span>${restaurant.price_range_display || "N/A"}</span>
-              </div>
+        </div>
+        
+        <div class="card-content">
+            <div class="card-header">
+                <h3>${restaurant.name}</h3>
+                <span class="card-price">${priceRange}</span>
             </div>
-          </div>
-
-          <p class="restaurant-cuisines">${restaurant.cuisines.map(c => c.name).join(', ')}</p>
-
-          <div class="restaurant-details">
-            <div class="details-row">
-              <div class="restaurant-address">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5
-                           M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" />
-                </svg>
-                <span>${restaurant.address || "Address not available"}</span>
-              </div>
-
-              <div class="restaurant-guests">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                </svg>
-                <span>Up to ${restaurant.max_guest_count} guests</span>
-              </div>
+            
+            <div class="card-cuisines">
+                ${cuisines.map(c => `<span class="cuisine-tag">${c.name}</span>`).join('')}
             </div>
-
-            <div class="details-row">
-              <div class="restaurant-hours ${isOpen ? "open" : "closed"}">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2
-                           M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
-                </svg>
-                <span>
-                  ${isOpen
-              ? `Open until ${restaurant.closing_time}`
-              : restaurant.opening_time
-                  ? `Opens at ${restaurant.opening_time}`
-                  : "Hours not available"}
+            
+            <div class="card-info">
+                <span class="info-item">
+                    <i class="fas fa-location-dot"></i>
+                    ${address.length > 30 ? address.substring(0, 30) + '...' : address}
                 </span>
-              </div>
-
-              <div class="restaurant-operating-days">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
-                </svg>
-                <span class="operating-days-text">${restaurant.operating_days || "Hours not available"}</span>
-              </div>
+                <span class="info-item ${isOpen ? 'open' : 'closed'}">
+                    <i class="fas fa-clock"></i>
+                    ${isOpen ? 'Open Now' : 'Closed'}
+                </span>
             </div>
-          </div>
-
-          ${restaurant.tags?.length
-            ? `<div class="restaurant-tags">${restaurant.tags.map(t => t.tag).map(tag => `<span class="restaurant-tag">${tag}</span>`).join('')}</div>`
-            : ""}
+            
+            <div class="card-details">
+                <div class="detail-item">
+                    <i class="fas fa-users"></i>
+                    <span>Up to ${maxGuests} guests</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>${operatingDays}</span>
+                </div>
+            </div>
+            
+            ${tags.length > 0 ? `
+                <div class="card-tags">
+                    ${tags.slice(0, 4).map(t => `<span class="tag-badge">${t.tag}</span>`).join('')}
+                </div>
+            ` : ''}
+            
+            <div class="card-actions">
+                <button class="btn-book" onclick="event.stopPropagation(); bookRestaurant('${restaurant.id}')">
+                    Book Now
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
     `;
 

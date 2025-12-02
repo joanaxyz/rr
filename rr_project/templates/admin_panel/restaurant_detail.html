@@ -1,0 +1,79 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Restaurant Details{% endblock %}
+{% block page_title %}Restaurant Details{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>Restaurant Details</h1>
+  <p>View and manage restaurant information</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-utensils"></i> Restaurant Information</h2>
+    <div class="action-buttons">
+      <a href="{% url 'admin_panel:restaurant_edit' restaurant.id %}" class="btn btn-secondary">
+        <i class="fas fa-edit"></i> Edit
+      </a>
+      <a href="{% url 'admin_panel:restaurants' %}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back to Restaurants
+      </a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div>
+      <div class="form-group">
+        <label>Name</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.name }}</div>
+      </div>
+      <div class="form-group">
+        <label>Owner</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.owner.user.email|default:"N/A" }}</div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.email }}</div>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.phone_number }}</div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <div class="form-control" style="background: var(--bg); min-height: 100px;">{{ restaurant.description }}</div>
+      </div>
+    </div>
+    <div>
+      <div class="form-group">
+        <label>Address</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.full_address }}</div>
+      </div>
+      <div class="form-group">
+        <label>Price Range</label>
+        <div class="form-control" style="background: var(--bg);">₱{{ restaurant.price_min }} - ₱{{ restaurant.price_max }}</div>
+      </div>
+      <div class="form-group">
+        <label>Max Guest Count</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.max_guest_count }} guests</div>
+      </div>
+      <div class="form-group">
+        <label>Operating Hours</label>
+        <div class="form-control" style="background: var(--bg);">
+          {{ restaurant.opening_time|time:"H:i" }} - {{ restaurant.closing_time|time:"H:i" }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Operating Days</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.operating_days }}</div>
+      </div>
+      <div class="form-group">
+        <label>Created At</label>
+        <div class="form-control" style="background: var(--bg);">{{ restaurant.created_at|date:"F d, Y H:i" }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

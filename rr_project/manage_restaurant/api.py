@@ -1,15 +1,15 @@
 
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
 from accounts.models import Owner
 from restaurants.models import Table, Element, Restaurant, Floorplan
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
+from .decorators import restaurant_login_required
 import json
 
-@login_required
+@restaurant_login_required
 @require_http_methods(["POST"])
 @csrf_exempt
 def api_save_floor_plan(request):
@@ -113,7 +113,7 @@ def api_save_floor_plan(request):
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 
-@login_required
+@restaurant_login_required
 def api_remove_staff(request, staff_id, role):
     from accounts.models import Manager, Host
     try:

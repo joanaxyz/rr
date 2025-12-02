@@ -1,0 +1,114 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}{% if restaurant %}Edit Restaurant{% else %}Create Restaurant{% endif %}{% endblock %}
+{% block page_title %}{% if restaurant %}Edit Restaurant{% else %}Create Restaurant{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>{% if restaurant %}Edit Restaurant{% else %}Create New Restaurant{% endif %}</h1>
+  <p>{% if restaurant %}Update restaurant information{% else %}Add a new restaurant to the system{% endif %}</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-utensils"></i> Restaurant Form</h2>
+    <a href="{% if restaurant %}{% url 'admin_panel:restaurant_detail' restaurant.id %}{% else %}{% url 'admin_panel:restaurants' %}{% endif %}" class="btn btn-outline">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div>
+        <div class="form-group">
+          <label for="name">Restaurant Name *</label>
+          <input type="text" name="name" id="name" class="form-control" value="{{ restaurant.name|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="owner">Owner *</label>
+          <select name="owner" id="owner" class="form-control" required>
+            <option value="">Select Owner</option>
+            {% for owner in owners %}
+            <option value="{{ owner.id }}" {% if restaurant.owner.id == owner.id %}selected{% endif %}>{{ owner.user.email }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" name="email" id="email" class="form-control" value="{{ restaurant.email|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="phone_number">Phone Number *</label>
+          <input type="text" name="phone_number" id="phone_number" class="form-control" value="{{ restaurant.phone_number|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea name="description" id="description" class="form-control" rows="4" required>{{ restaurant.description|default:'' }}</textarea>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label for="street_number">Street Number</label>
+          <input type="text" name="street_number" id="street_number" class="form-control" value="{{ restaurant.street_number|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="street_name">Street Name</label>
+          <input type="text" name="street_name" id="street_name" class="form-control" value="{{ restaurant.street_name|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="street_block">Street Block</label>
+          <input type="text" name="street_block" id="street_block" class="form-control" value="{{ restaurant.street_block|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" name="city" id="city" class="form-control" value="{{ restaurant.city|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="postal_code">Postal Code</label>
+          <input type="text" name="postal_code" id="postal_code" class="form-control" value="{{ restaurant.postal_code|default:'' }}">
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label for="price_min">Price Min *</label>
+          <input type="number" name="price_min" id="price_min" class="form-control" value="{{ restaurant.price_min|default:0 }}" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="price_max">Price Max *</label>
+          <input type="number" name="price_max" id="price_max" class="form-control" value="{{ restaurant.price_max|default:0 }}" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="max_guest_count">Max Guest Count *</label>
+          <input type="number" name="max_guest_count" id="max_guest_count" class="form-control" value="{{ restaurant.max_guest_count|default:0 }}" required>
+        </div>
+        <div class="form-group">
+          <label for="opening_time">Opening Time</label>
+          <input type="time" name="opening_time" id="opening_time" class="form-control" value="{{ restaurant.opening_time|time:'H:i'|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="closing_time">Closing Time</label>
+          <input type="time" name="closing_time" id="closing_time" class="form-control" value="{{ restaurant.closing_time|time:'H:i'|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="operating_days">Operating Days</label>
+          <input type="text" name="operating_days" id="operating_days" class="form-control" value="{{ restaurant.operating_days|default:'Mon,Tue,Wed,Thu,Fri,Sat,Sun' }}" placeholder="Mon,Tue,Wed,Thu,Fri,Sat,Sun">
+        </div>
+        <div class="form-group">
+          <label for="image">Image URL</label>
+          <input type="text" name="image" id="image" class="form-control" value="{{ restaurant.image|default:'' }}">
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i> {% if restaurant %}Update Restaurant{% else %}Create Restaurant{% endif %}
+      </button>
+      <a href="{% if restaurant %}{% url 'admin_panel:restaurant_detail' restaurant.id %}{% else %}{% url 'admin_panel:restaurants' %}{% endif %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

@@ -23,6 +23,7 @@ class User(AbstractUser):
     banned = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     phone_number = models.CharField(max_length=20, null=True)
+    profile_image = models.CharField(max_length=500, blank=True, null=True, help_text="URL to profile image stored in Supabase")
 
     # Email verification fields
     email_verified = models.BooleanField(default=False)
@@ -81,6 +82,14 @@ class Host(models.Model):
 
     def __str__(self):
         return f"Host: {self.user.email or self.user.username}"
+
+
+class Server(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='server_profile')
+
+    def __str__(self):
+        return f"Server: {self.user.email or self.user.username}"
+
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='manager_profile')

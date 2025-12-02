@@ -33,6 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle form submission
     addressForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        if (window.LoadingOverlay) {
+            window.LoadingOverlay.show('Updating location...');
+        }
+        
         const formData = new FormData(addressForm);
         const data = {
             street_number: formData.get('street_number'),
@@ -41,9 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
             city: formData.get('city'),
             postal_code: formData.get('postal_code'),
         };
-        
-        // Close modal after submission
-        closeModal();
         
         // Update the address display
         const addressElement = document.getElementById('address');
@@ -58,7 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fullAddress) {
             addressElement.textContent = fullAddress;
             addressElement.setAttribute('data-city', data.city || '');
+        } else {
+            addressElement.textContent = 'Address';
+            addressElement.setAttribute('data-city', '');
         }
+        
+        // Close modal after submission
+        closeModal();
     });
 
     // Close modal when pressing Escape key

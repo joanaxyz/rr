@@ -33,7 +33,10 @@ function deleteReservation(form) {
 }
 
 function editReservation(reservationId) {
-  window.location.href = `/reservations/${reservationId}/edit/`;
+  const editUrl = window.getReservationEditUrl 
+    ? window.getReservationEditUrl(reservationId) 
+    : `/reservations/${reservationId}/edit/`;
+  window.location.href = editUrl;
 }
 
 // ✅ NEW: Restore cancelled reservation
@@ -47,4 +50,3 @@ function restoreReservation(form) {
     );
   }
 }
-

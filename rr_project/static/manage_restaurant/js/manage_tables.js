@@ -24,6 +24,21 @@ class FloorPlanManager {
         this.setupEventListeners();
         this.updateItemsList();
         this.render();
+        
+        // Initialize expanded canvas dimensions
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        if (expandedFloorPlan) {
+            expandedFloorPlan.style.width = this.canvasWidth + 'px';
+            expandedFloorPlan.style.height = this.canvasHeight + 'px';
+            expandedFloorPlan.style.minWidth = this.canvasWidth + 'px';
+            expandedFloorPlan.style.minHeight = this.canvasHeight + 'px';
+        }
+
+        // Initialize grid visibility (show by default)
+        const showGrid = document.getElementById('show-grid');
+        if (showGrid) {
+            this.toggleGrid(showGrid.checked);
+        }
     }
 
     loadFloorplanDimensions() {
@@ -48,6 +63,15 @@ class FloorPlanManager {
             container.style.maxHeight = (this.canvasHeight + 16) + 'px';
             container.style.minHeight = (this.canvasHeight + 16) + 'px';
         }
+
+        // Also update expanded canvas if it exists
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        if (expandedFloorPlan) {
+            expandedFloorPlan.style.width = this.canvasWidth + 'px';
+            expandedFloorPlan.style.height = this.canvasHeight + 'px';
+            expandedFloorPlan.style.minWidth = this.canvasWidth + 'px';
+            expandedFloorPlan.style.minHeight = this.canvasHeight + 'px';
+        }
     }
 
     setupEventListeners() {
@@ -63,6 +87,14 @@ class FloorPlanManager {
         document.getElementById('snap-grid').addEventListener('change', (e) => {
             this.snapGrid = e.target.checked ? 20 : 1;
         });
+
+        // Show grid toggle
+        const showGrid = document.getElementById('show-grid');
+        if (showGrid) {
+            showGrid.addEventListener('change', (e) => {
+                this.toggleGrid(e.target.checked);
+            });
+        }
 
         // Dimension controls
         const canvasWidthInput = document.getElementById('canvas-width');
@@ -112,6 +144,54 @@ class FloorPlanManager {
                 this.addTableAtPosition(capacity);
             });
         });
+
+        // Expand canvas button
+        const expandBtn = document.getElementById('expand-canvas-btn');
+        if (expandBtn) {
+            expandBtn.addEventListener('click', () => this.expandCanvas());
+        }
+
+        // Close expanded canvas button
+        const closeExpandedBtn = document.getElementById('close-expanded-btn');
+        if (closeExpandedBtn) {
+            closeExpandedBtn.addEventListener('click', () => this.collapseCanvas());
+        }
+
+        // Sync expanded snap grid
+        const expandedSnapGrid = document.getElementById('expanded-snap-grid');
+        if (expandedSnapGrid) {
+            expandedSnapGrid.addEventListener('change', (e) => {
+                this.snapGrid = e.target.checked ? 20 : 1;
+                // Also sync the main snap grid checkbox
+                const mainSnapGrid = document.getElementById('snap-grid');
+                if (mainSnapGrid) {
+                    mainSnapGrid.checked = e.target.checked;
+                }
+            });
+        }
+
+        // Sync expanded show grid
+        const expandedShowGrid = document.getElementById('expanded-show-grid');
+        if (expandedShowGrid) {
+            expandedShowGrid.addEventListener('change', (e) => {
+                this.toggleGrid(e.target.checked);
+                // Also sync the main show grid checkbox
+                const mainShowGrid = document.getElementById('show-grid');
+                if (mainShowGrid) {
+                    mainShowGrid.checked = e.target.checked;
+                }
+            });
+        }
+
+        // Close overlay on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('expanded-canvas-overlay');
+                if (overlay && overlay.style.display !== 'none') {
+                    this.collapseCanvas();
+                }
+            }
+        });
     }
 
     updateMousePosition(e) {
@@ -128,6 +208,27 @@ class FloorPlanManager {
         }
         
         document.getElementById('cursor-pos').textContent = `${x}, ${y}`;
+        
+        // Also update expanded cursor position if overlay is open
+        const expandedCursorPos = document.getElementById('expanded-cursor-pos');
+        if (expandedCursorPos && document.getElementById('expanded-canvas-overlay').style.display !== 'none') {
+            const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+            if (expandedFloorPlan && e.target.closest('#expanded-floor-plan')) {
+                const expandedRect = expandedFloorPlan.getBoundingClientRect();
+                let expandedX = (e.clientX - expandedRect.left) / this.snapGrid * this.snapGrid;
+                let expandedY = (e.clientY - expandedRect.top) / this.snapGrid * this.snapGrid;
+                
+                if (this.snapGrid > 1) {
+                    expandedX = Math.round(expandedX);
+                    expandedY = Math.round(expandedY);
+                } else {
+                    expandedX = Math.round(expandedX * 100) / 100;
+                    expandedY = Math.round(expandedY * 100) / 100;
+                }
+                
+                expandedCursorPos.textContent = `${expandedX}, ${expandedY}`;
+            }
+        }
     }
 
     validateDimension(e, min, max) {
@@ -159,6 +260,21 @@ class FloorPlanManager {
         this.floorPlan.addEventListener('dragover', (e) => this.dragOver(e));
         this.floorPlan.addEventListener('drop', (e) => this.drop(e));
         this.floorPlan.addEventListener('click', (e) => this.handleFloorItemClick(e));
+
+        // Also set up listeners for expanded canvas
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        if (expandedFloorPlan) {
+            expandedFloorPlan.addEventListener('dragover', (e) => this.dragOver(e));
+            expandedFloorPlan.addEventListener('drop', (e) => this.drop(e));
+            expandedFloorPlan.addEventListener('click', (e) => this.handleFloorItemClick(e));
+            expandedFloorPlan.addEventListener('mousemove', (e) => this.updateMousePosition(e));
+            expandedFloorPlan.addEventListener('mouseleave', () => {
+                const expandedCursorPos = document.getElementById('expanded-cursor-pos');
+                if (expandedCursorPos) {
+                    expandedCursorPos.textContent = '0, 0';
+                }
+            });
+        }
     }
 
     handleFloorItemClick(e) {
@@ -169,10 +285,12 @@ class FloorPlanManager {
         }
     }
 
-    startDrag(e) {
+    startDrag(e, targetCanvas = null) {
         const target = e.currentTarget;
+        const canvas = targetCanvas || this.floorPlan;
 
         this.draggedElement = target;
+        this.currentCanvas = canvas;
         const rect = target.getBoundingClientRect();
 
         // Calculate offset between mouse and element position
@@ -181,7 +299,7 @@ class FloorPlanManager {
 
         // Apply visual feedback
         target.classList.add('dragging');
-        this.floorPlan.classList.add('dragging-element');
+        canvas.classList.add('dragging-element');
 
         const itemId = target.dataset.id;
         const itemType = target.dataset.type;
@@ -218,7 +336,9 @@ class FloorPlanManager {
         const item = collection.find(el => String(el.id) === itemId);
 
         if (item) {
-            const rect = this.floorPlan.getBoundingClientRect();
+            // Determine which canvas we're dropping on
+            const targetCanvas = this.currentCanvas || this.floorPlan;
+            const rect = targetCanvas.getBoundingClientRect();
             let x = (e.clientX - rect.left) - this.dragOffset.x;
             let y = (e.clientY - rect.top) - this.dragOffset.y;
 
@@ -250,7 +370,15 @@ class FloorPlanManager {
             this.draggedElement.classList.remove('dragging');
         }
         this.draggedElement = null;
+        this.currentCanvas = null;
+        
+        // Remove dragging class from both canvases
         this.floorPlan.classList.remove('dragging-element');
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        if (expandedFloorPlan) {
+            expandedFloorPlan.classList.remove('dragging-element');
+        }
+        
         this.dragOffset = { x: 0, y: 0 };
     }
 
@@ -501,6 +629,36 @@ class FloorPlanManager {
             div.addEventListener('dragstart', (e) => this.startDrag(e));
             div.addEventListener('dragend', (e) => this.dragEnd(e));
         });
+
+        // Also render in expanded canvas if it exists and is visible
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        const overlay = document.getElementById('expanded-canvas-overlay');
+        if (expandedFloorPlan && overlay && overlay.style.display !== 'none') {
+            this.renderExpandedCanvas();
+        }
+    }
+
+    renderExpandedCanvas() {
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        if (!expandedFloorPlan) return;
+
+        expandedFloorPlan.innerHTML = '';
+
+        this.tables.forEach(table => {
+            const div = FloorPlanUtils.createTableDiv(table);
+            expandedFloorPlan.appendChild(div);
+
+            div.addEventListener('dragstart', (e) => this.startDrag(e, expandedFloorPlan));
+            div.addEventListener('dragend', (e) => this.dragEnd(e));
+        });
+
+        this.floorElements.forEach(element => {
+            const div = FloorPlanUtils.createFloorElementDiv(element);
+            expandedFloorPlan.appendChild(div);
+
+            div.addEventListener('dragstart', (e) => this.startDrag(e, expandedFloorPlan));
+            div.addEventListener('dragend', (e) => this.dragEnd(e));
+        });
     }
 
     updateItemsList() {
@@ -641,6 +799,67 @@ class FloorPlanManager {
                     break;
                 default:
                     window.MessageBox.showInfo(message);
+            }
+        }
+    }
+
+    expandCanvas() {
+        const overlay = document.getElementById('expanded-canvas-overlay');
+        if (!overlay) return;
+
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+        // Sync snap grid state
+        const expandedSnapGrid = document.getElementById('expanded-snap-grid');
+        const mainSnapGrid = document.getElementById('snap-grid');
+        if (expandedSnapGrid && mainSnapGrid) {
+            expandedSnapGrid.checked = mainSnapGrid.checked;
+        }
+
+        // Sync show grid state
+        const expandedShowGrid = document.getElementById('expanded-show-grid');
+        const mainShowGrid = document.getElementById('show-grid');
+        if (expandedShowGrid && mainShowGrid) {
+            expandedShowGrid.checked = mainShowGrid.checked;
+        }
+
+        // Render the expanded canvas
+        this.renderExpandedCanvas();
+
+        // Set up drag and drop for expanded canvas
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        if (expandedFloorPlan) {
+            this.setupElementListeners();
+        }
+    }
+
+    collapseCanvas() {
+        const overlay = document.getElementById('expanded-canvas-overlay');
+        if (!overlay) return;
+
+        overlay.style.display = 'none';
+        document.body.style.overflow = ''; // Restore scrolling
+
+        // Re-render main canvas to ensure sync
+        this.render();
+    }
+
+    toggleGrid(show) {
+        // Toggle grid on main canvas
+        if (show) {
+            this.floorPlan.classList.remove('no-grid');
+        } else {
+            this.floorPlan.classList.add('no-grid');
+        }
+
+        // Toggle grid on expanded canvas
+        const expandedFloorPlan = document.getElementById('expanded-floor-plan');
+        if (expandedFloorPlan) {
+            if (show) {
+                expandedFloorPlan.classList.remove('no-grid');
+            } else {
+                expandedFloorPlan.classList.add('no-grid');
             }
         }
     }

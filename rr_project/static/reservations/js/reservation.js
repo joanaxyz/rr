@@ -6,7 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
         loadFloorplanDimensions(floorPlan);
         FloorPlanUtils.initializeFloorPlan(floorPlan);
         initializeTableSelection();
+        initializeFloorPlanDrag();
     }
+    
+    // Initialize date and time validation with restaurant operating hours
+    initializeDateTimeValidation();
 });
 
 function loadFloorplanDimensions(floorPlanElement) {
@@ -21,7 +25,11 @@ function loadFloorplanDimensions(floorPlanElement) {
     
     const container = floorPlanElement.parentElement;
     if (container) {
-        container.style.minHeight = Math.min(height, 500) + 'px';
+        // Set container to accommodate the floor plan with padding
+        const containerHeight = height + 40; // 20px padding top and bottom
+        container.style.minHeight = Math.max(containerHeight, 540) + 'px'; // At least 540px (500px + 40px padding)
+        container.style.height = 'auto';
+        container.style.maxHeight = 'none';
     }
 }
 
@@ -150,4 +158,477 @@ function initializeTableSelection() {
 
     // Initial UI refresh
     refreshUI();
+}
+
+// Date and Time Validation with Restaurant Operating Hours
+function initializeDateTimeValidation() {
+    const dateInput = document.querySelector('input[name="date"]');
+    const timeInput = document.querySelector('input[name="time"]');
+    const reservationForm = document.getElementById('reservation-form');
+    
+    if (!dateInput || !timeInput || !reservationForm) {
+        return;
+    }
+    
+    // Get restaurant data from the page (if available)
+    const restaurantData = getRestaurantData();
+    
+    // Set minimum date to today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    dateInput.setAttribute('min', todayStr);
+    
+    // Validate date and time on change
+    function validateDateTime() {
+        const selectedDate = new Date(dateInput.value);
+        const selectedTime = timeInput.value;
+        
+        // Clear previous errors
+        dateInput.setCustomValidity('');
+        timeInput.setCustomValidity('');
+        
+        if (!dateInput.value) {
+            return;
+        }
+        
+        // Check if date is in the past
+        if (selectedDate < today) {
+            dateInput.setCustomValidity('Reservation date cannot be in the past. Please select today or a future date.');
+            return;
+        }
+        
+        // Check if date is too far in the future (1 year)
+        const maxDate = new Date(today);
+        maxDate.setFullYear(maxDate.getFullYear() + 1);
+        if (selectedDate > maxDate) {
+            dateInput.setCustomValidity('Reservations can only be made up to 1 year in advance.');
+            return;
+        }
+        
+        // Validate operating days if restaurant data is available
+        if (restaurantData && restaurantData.operating_days) {
+            const weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            // JavaScript getDay(): 0=Sunday, 1=Monday, ..., 6=Saturday
+            // Convert to Mon=0, Tue=1, ..., Sun=6 format
+            const jsDay = selectedDate.getDay();
+            const dayIndex = jsDay === 0 ? 6 : jsDay - 1; // Sunday becomes 6, Monday becomes 0
+            const selectedDay = weekdayNames[dayIndex];
+            const operatingDays = restaurantData.operating_days.split(',').map(d => d.trim());
+            
+            if (!operatingDays.includes(selectedDay)) {
+                const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                const fullDayName = fullDayNames[dayIndex];
+                dateInput.setCustomValidity(
+                    `The restaurant is closed on ${fullDayName}. ` +
+                    `Please select a date when the restaurant is open. Operating days: ${restaurantData.operating_days}`
+                );
+                return;
+            }
+        }
+        
+        // If date is today, validate time
+        if (selectedDate.toDateString() === today.toDateString() && selectedTime) {
+            const [hours, minutes] = selectedTime.split(':').map(Number);
+            const selectedDateTime = new Date(today);
+            selectedDateTime.setHours(hours, minutes, 0, 0);
+            
+            const now = new Date();
+            if (selectedDateTime < now) {
+                timeInput.setCustomValidity('Reservation time cannot be in the past. Please select a future time.');
+                return;
+            }
+        }
+        
+        // Validate operating hours if restaurant data is available
+        if (restaurantData && selectedTime && restaurantData.opening_time && restaurantData.closing_time) {
+            const [openingHours, openingMinutes] = restaurantData.opening_time.split(':').map(Number);
+            const [closingHours, closingMinutes] = restaurantData.closing_time.split(':').map(Number);
+            const [selectedHours, selectedMinutes] = selectedTime.split(':').map(Number);
+            
+            const openingTime = openingHours * 60 + openingMinutes; // Convert to minutes
+            const closingTime = closingHours * 60 + closingMinutes;
+            const selectedTimeMinutes = selectedHours * 60 + selectedMinutes;
+            
+            let isWithinHours = false;
+            
+            // Handle case where restaurant closes after midnight
+            if (closingTime < openingTime) {
+                // Restaurant closes after midnight (e.g., opens 18:00, closes 02:00)
+                isWithinHours = selectedTimeMinutes >= openingTime || selectedTimeMinutes <= closingTime;
+            } else {
+                // Normal case: opens and closes on same day
+                isWithinHours = selectedTimeMinutes >= openingTime && selectedTimeMinutes <= closingTime;
+            }
+            
+            if (!isWithinHours) {
+                const openingStr = formatTime(openingHours, openingMinutes);
+                const closingStr = formatTime(closingHours, closingMinutes);
+                timeInput.setCustomValidity(
+                    `Reservation time must be within operating hours (${openingStr} - ${closingStr}). ` +
+                    `Please select a time when the restaurant is open.`
+                );
+                return;
+            }
+        }
+    }
+    
+    // Format time to 12-hour format
+    function formatTime(hours, minutes) {
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        const displayMinutes = minutes.toString().padStart(2, '0');
+        return `${displayHours}:${displayMinutes} ${period}`;
+    }
+    
+    // Get restaurant data from the page
+    function getRestaurantData() {
+        // Try to get from a data attribute or script tag
+        const restaurantScript = document.querySelector('script[data-restaurant]');
+        if (restaurantScript) {
+            try {
+                return JSON.parse(restaurantScript.dataset.restaurant);
+            } catch (e) {
+                console.error('Error parsing restaurant data:', e);
+            }
+        }
+        
+        // Try to get from window object (if set by template)
+        if (window.restaurantData) {
+            return window.restaurantData;
+        }
+        
+        return null;
+    }
+    
+    // Validate on input change
+    dateInput.addEventListener('change', validateDateTime);
+    timeInput.addEventListener('change', validateDateTime);
+    
+    // Validate on form submit
+    reservationForm.addEventListener('submit', function(e) {
+        validateDateTime();
+        
+        if (!dateInput.validity.valid || !timeInput.validity.valid) {
+            e.preventDefault();
+            // Show validation messages
+            if (!dateInput.validity.valid) {
+                dateInput.reportValidity();
+            } else if (!timeInput.validity.valid) {
+                timeInput.reportValidity();
+            }
+            return false;
+        }
+    });
+}
+
+// Floor Plan Drag Functionality (removed expand feature)
+function initializeFloorPlanDrag() {
+    const floorPlanContainer = document.querySelector('.table-map-container > .floor-plan');
+    
+    if (!floorPlanContainer) {
+        return;
+    }
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let currentTranslateX = 0;
+    let currentTranslateY = 0;
+
+    // Get or create inner wrapper for dragging
+    function getOrCreateWrapper() {
+        let innerWrapper = floorPlanContainer.querySelector('.floor-plan-inner-wrapper');
+        if (!innerWrapper) {
+            // Only create wrapper if there's actual content (tables/elements)
+            const hasContent = floorPlanContainer.querySelector('.table, .floor-item');
+            if (!hasContent) {
+                return null;
+            }
+            
+            // Create wrapper
+            innerWrapper = document.createElement('div');
+            innerWrapper.className = 'floor-plan-inner-wrapper';
+            innerWrapper.style.position = 'relative';
+            
+            // Get floor plan dimensions from the container's computed style
+            const floorPlanWidth = floorPlanContainer.style.width || 
+                                   window.getComputedStyle(floorPlanContainer).width || 
+                                   '800px';
+            const floorPlanHeight = floorPlanContainer.style.height || 
+                                    window.getComputedStyle(floorPlanContainer).height || 
+                                    '500px';
+            
+            innerWrapper.style.width = floorPlanWidth;
+            innerWrapper.style.height = floorPlanHeight;
+            innerWrapper.style.minWidth = floorPlanWidth;
+            innerWrapper.style.minHeight = floorPlanHeight;
+            
+            // Copy background styles from container to wrapper
+            const containerStyle = window.getComputedStyle(floorPlanContainer);
+            innerWrapper.style.backgroundImage = containerStyle.backgroundImage;
+            innerWrapper.style.backgroundSize = containerStyle.backgroundSize;
+            innerWrapper.style.backgroundColor = containerStyle.backgroundColor;
+            
+            // Move all children to wrapper (tables, elements, etc.)
+            // Use a snapshot to avoid issues with live NodeList
+            const children = Array.from(floorPlanContainer.childNodes);
+            children.forEach(child => {
+                if (child.nodeType === Node.ELEMENT_NODE && 
+                    !child.classList.contains('floor-plan-inner-wrapper') &&
+                    (child.classList.contains('table') || 
+                     child.classList.contains('floor-item') ||
+                     child.classList.contains('entrance') ||
+                     child.classList.contains('bar-area') ||
+                     child.classList.contains('kitchen') ||
+                     child.classList.contains('restroom') ||
+                     child.classList.contains('window'))) {
+                    innerWrapper.appendChild(child);
+                }
+            });
+            
+            // Only add wrapper if it has content
+            if (innerWrapper.children.length > 0) {
+                floorPlanContainer.appendChild(innerWrapper);
+            } else {
+                return null;
+            }
+        }
+        return innerWrapper;
+    }
+
+    // Update floor plan position
+    function updateFloorPlanPosition() {
+        const innerWrapper = floorPlanContainer.querySelector('.floor-plan-inner-wrapper');
+        if (innerWrapper) {
+            innerWrapper.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px)`;
+        }
+    }
+
+    // Check if floor plan overflows container
+    function checkOverflow() {
+        const containerRect = floorPlanContainer.getBoundingClientRect();
+        const innerWrapper = floorPlanContainer.querySelector('.floor-plan-inner-wrapper');
+        
+        if (!innerWrapper) {
+            // If no wrapper, check if content would overflow
+            const computedStyle = window.getComputedStyle(floorPlanContainer);
+            const contentWidth = parseInt(floorPlanContainer.style.width) || 
+                               parseInt(floorPlanContainer.dataset.width) || 
+                               800;
+            const contentHeight = parseInt(floorPlanContainer.style.height) || 
+                                 parseInt(floorPlanContainer.dataset.height) || 
+                                 500;
+            
+            // Account for padding (30px on each side = 60px total)
+            const padding = 60;
+            const availableWidth = containerRect.width - padding;
+            const availableHeight = containerRect.height - padding;
+            
+            return contentWidth > availableWidth || contentHeight > availableHeight;
+        }
+        
+        const contentRect = innerWrapper.getBoundingClientRect();
+        const padding = 60;
+        const availableWidth = containerRect.width - padding;
+        const availableHeight = containerRect.height - padding;
+        
+        return contentRect.width > availableWidth || contentRect.height > availableHeight;
+    }
+
+    // Update cursor based on overflow
+    function updateCursor() {
+        const hasOverflow = checkOverflow();
+        if (hasOverflow) {
+            floorPlanContainer.style.cursor = isDragging ? 'grabbing' : 'grab';
+        } else {
+            floorPlanContainer.style.cursor = 'default';
+        }
+    }
+    
+    // Initialize wrapper and cursor on load - wait for content to be rendered
+    setTimeout(() => {
+        // Wait for floor plan to be fully initialized
+        const hasContent = floorPlanContainer.querySelector('.table, .floor-item');
+        if (hasContent && checkOverflow()) {
+            getOrCreateWrapper();
+            updateCursor();
+        }
+    }, 1000);
+
+    // Handle mouse down for dragging
+    function handleMouseDown(e) {
+        // Don't start drag if clicking on a table or floor item
+        if (e.target.closest('.table, .floor-item')) {
+            return;
+        }
+
+        const hasOverflow = checkOverflow();
+        if (!hasOverflow) {
+            updateCursor();
+            return;
+        }
+
+        isDragging = true;
+        floorPlanContainer.classList.add('dragging');
+        floorPlanContainer.style.cursor = 'grabbing';
+        
+        dragStartX = e.clientX - currentTranslateX;
+        dragStartY = e.clientY - currentTranslateY;
+        
+        e.preventDefault();
+    }
+
+    // Handle mouse move for dragging
+    function handleMouseMove(e) {
+        if (!isDragging) return;
+
+        const hasOverflow = checkOverflow();
+        if (!hasOverflow) {
+            isDragging = false;
+            floorPlanContainer.classList.remove('dragging');
+            return;
+        }
+
+        currentTranslateX = e.clientX - dragStartX;
+        currentTranslateY = e.clientY - dragStartY;
+
+        // Constrain dragging to prevent dragging too far
+        const containerRect = floorPlanContainer.getBoundingClientRect();
+        const innerWrapper = floorPlanContainer.querySelector('.floor-plan-inner-wrapper');
+        const padding = 60;
+        const availableWidth = containerRect.width - padding;
+        const availableHeight = containerRect.height - padding;
+        
+        let contentWidth, contentHeight;
+        if (innerWrapper) {
+            const contentRect = innerWrapper.getBoundingClientRect();
+            contentWidth = contentRect.width;
+            contentHeight = contentRect.height;
+        } else {
+            contentWidth = parseInt(floorPlanContainer.style.width) || 
+                          parseInt(floorPlanContainer.dataset.width) || 
+                          800;
+            contentHeight = parseInt(floorPlanContainer.style.height) || 
+                           parseInt(floorPlanContainer.dataset.height) || 
+                           500;
+        }
+        
+        const maxX = Math.max(0, (contentWidth - availableWidth) / 2);
+        const maxY = Math.max(0, (contentHeight - availableHeight) / 2);
+        
+        currentTranslateX = Math.max(-maxX, Math.min(maxX, currentTranslateX));
+        currentTranslateY = Math.max(-maxY, Math.min(maxY, currentTranslateY));
+
+        updateFloorPlanPosition();
+        e.preventDefault();
+    }
+
+    // Handle mouse up
+    function handleMouseUp(e) {
+        if (isDragging) {
+            isDragging = false;
+            floorPlanContainer.classList.remove('dragging');
+            updateCursor();
+        }
+    }
+
+    // Handle touch events for mobile
+    function handleTouchStart(e) {
+        if (e.target.closest('.table, .floor-item')) {
+            return;
+        }
+
+        const hasOverflow = checkOverflow();
+        if (!hasOverflow) return;
+
+        if (e.touches.length === 1) {
+            isDragging = true;
+            floorPlanContainer.classList.add('dragging');
+            
+            const touch = e.touches[0];
+            dragStartX = touch.clientX - currentTranslateX;
+            dragStartY = touch.clientY - currentTranslateY;
+            
+            e.preventDefault();
+        }
+    }
+
+    function handleTouchMove(e) {
+        if (!isDragging) return;
+
+        const hasOverflow = checkOverflow();
+        if (!hasOverflow) {
+            isDragging = false;
+            floorPlanContainer.classList.remove('dragging');
+            return;
+        }
+
+        if (e.touches.length === 1) {
+            const touch = e.touches[0];
+            currentTranslateX = touch.clientX - dragStartX;
+            currentTranslateY = touch.clientY - dragStartY;
+
+            // Constrain dragging
+            const containerRect = floorPlanContainer.getBoundingClientRect();
+            const innerWrapper = floorPlanContainer.querySelector('.floor-plan-inner-wrapper');
+            const padding = isExpanded ? 40 : 60;
+            const availableWidth = containerRect.width - padding;
+            const availableHeight = containerRect.height - padding;
+            
+            let contentWidth, contentHeight;
+            if (innerWrapper) {
+                const contentRect = innerWrapper.getBoundingClientRect();
+                contentWidth = contentRect.width;
+                contentHeight = contentRect.height;
+            } else {
+                contentWidth = parseInt(floorPlanContainer.style.width) || 
+                              parseInt(floorPlanContainer.dataset.width) || 
+                              800;
+                contentHeight = parseInt(floorPlanContainer.style.height) || 
+                               parseInt(floorPlanContainer.dataset.height) || 
+                               500;
+            }
+            
+            const maxX = Math.max(0, (contentWidth - availableWidth) / 2);
+            const maxY = Math.max(0, (contentHeight - availableHeight) / 2);
+            
+            currentTranslateX = Math.max(-maxX, Math.min(maxX, currentTranslateX));
+            currentTranslateY = Math.max(-maxY, Math.min(maxY, currentTranslateY));
+
+            updateFloorPlanPosition();
+            e.preventDefault();
+        }
+    }
+
+    function handleTouchEnd(e) {
+        if (isDragging) {
+            isDragging = false;
+            floorPlanContainer.classList.remove('dragging');
+            updateCursor();
+        }
+    }
+
+    // Mouse events for dragging
+    floorPlanContainer.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    // Touch events for mobile dragging
+    floorPlanContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchcancel', handleTouchEnd);
+
+    // Prevent default scroll/wheel behavior
+    floorPlanContainer.addEventListener('wheel', function(e) {
+        const hasOverflow = checkOverflow();
+        if (hasOverflow) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Update cursor on window resize
+    window.addEventListener('resize', function() {
+        updateCursor();
+    });
 }

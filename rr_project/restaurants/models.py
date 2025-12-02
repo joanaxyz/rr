@@ -1,10 +1,7 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
-from accounts.models import Customer, Owner, Manager, Host
+from accounts.models import Customer, Owner, Manager, Host, User
 
 class Floorplan(models.Model):
     width = models.IntegerField(default=800, help_text="Floor plan canvas width in pixels")
@@ -141,8 +138,8 @@ class Restaurant(models.Model):
         else:
             # Normal case: opens and closes on same day
             return self.opening_time <= current_time <= self.closing_time
-    @property
     def is_open_on_date(self, date):
+        """Check if restaurant is open on a specific date"""
         # Get the day of the week for the date (0=Monday, 6=Sunday)
         weekday = date.weekday()
         
@@ -306,3 +303,78 @@ class Tags(models.Model):
             "id": self.id,
             "tag": self.tag,
         }
+
+
+class Bookmark(models.Model):
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name='bookmarks'
+    )
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        related_name='bookmarks'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['customer', 'restaurant']
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f'{self.customer.user.email} bookmarked {self.restaurant.name}'
+
+
+class RestaurantCreationRequest(models.Model):
+    """Model for restaurant creation requests that need admin approval"""
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('REJECTED', 'Rejected'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='restaurant_creation_requests')
+    
+    # Restaurant Details
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+    description = models.TextField()
+    
+    # Address components
+    street_number = models.CharField(max_length=50, blank=True, null=True)
+    street_name = models.CharField(max_length=100, blank=True, null=True)
+    street_block = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
+    
+    # Pricing and capacity
+    price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    price_max = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    max_guest_count = models.IntegerField()
+    
+    # Operating hours
+    opening_time = models.TimeField(null=True, blank=True)
+    closing_time = models.TimeField(null=True, blank=True)
+    operating_days = models.CharField(max_length=100, default='Mon,Tue,Wed,Thu,Fri,Sat,Sun')
+    
+    # Image and proof
+    image = models.CharField(max_length=500, blank=True, null=True, help_text="URL to restaurant image stored in Supabase")
+    proof_of_ownership = models.CharField(max_length=500, blank=True, null=True, help_text="URL to proof of ownership document")
+    
+    # Custom tags (stored as comma-separated string)
+    custom_tags = models.TextField(blank=True, null=True, help_text="Comma-separated custom tags")
+    
+    # Status
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    admin_notes = models.TextField(blank=True, null=True, help_text="Admin notes for rejection/acceptance")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} - {self.status} by {self.user.username}"

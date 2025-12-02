@@ -1,0 +1,96 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Cuisines{% endblock %}
+{% block page_title %}Cuisine Management{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>Cuisines</h1>
+  <p>Manage restaurant cuisines</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-fork-knife"></i> All Cuisines</h2>
+    <a href="{% url 'admin_panel:cuisine_create' %}" class="btn btn-success">
+      <i class="fas fa-plus"></i> Add New Cuisine
+    </a>
+  </div>
+  
+  <div class="search-bar">
+    <form method="GET" style="display: flex; gap: 1rem; flex: 1;">
+      <input type="text" name="search" class="search-input" placeholder="Search cuisines..." value="{{ search }}">
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-search"></i> Search
+      </button>
+      {% if search %}
+      <a href="{% url 'admin_panel:cuisines' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Clear
+      </a>
+      {% endif %}
+    </form>
+  </div>
+
+  {% if cuisines %}
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Restaurants</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cuisine in cuisines %}
+          <tr>
+            <td><strong>{{ cuisine.name }}</strong></td>
+            <td>{{ cuisine.restaurant.count }} restaurant{{ cuisine.restaurant.count|pluralize }}</td>
+            <td>{{ cuisine.created_at|date:"M d, Y" }}</td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'admin_panel:cuisine_edit' cuisine.id %}" class="btn btn-sm btn-secondary">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <form method="POST" action="{% url 'admin_panel:cuisine_delete' cuisine.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this cuisine?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if cuisines.has_other_pages %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+      {% if cuisines.has_previous %}
+      <a href="?page={{ cuisines.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-chevron-left"></i> Previous
+      </a>
+      {% endif %}
+      <span style="display: flex; align-items: center; padding: 0 1rem;">
+        Page {{ cuisines.number }} of {{ cuisines.paginator.num_pages }}
+      </span>
+      {% if cuisines.has_next %}
+      <a href="?page={{ cuisines.next_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn btn-secondary btn-sm">
+        Next <i class="fas fa-chevron-right"></i>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  {% else %}
+    <div class="empty-state">
+      <i class="fas fa-fork-knife"></i>
+      <p>No cuisines found</p>
+      <small>{% if search %}Try adjusting your search criteria{% else %}Create your first cuisine{% endif %}</small>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

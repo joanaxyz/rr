@@ -51,7 +51,10 @@ function openReservationInfo(button) {
  */
 async function fetchReservationDetails(reservationId) {
   try {
-    const response = await APIClient.get(`/reservations/api/get/${reservationId}/`, {
+    const apiUrl = window.getReservationApiUrl 
+        ? window.getReservationApiUrl(reservationId)
+        : `/reservations/api/get/${reservationId}/`;
+    const response = await APIClient.get(apiUrl, {
       loadingText: 'Loading reservation details...'
     });
 

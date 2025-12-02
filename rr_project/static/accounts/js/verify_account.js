@@ -12,7 +12,10 @@ async function resendVerificationEmail(userId) {
     messageContainer.innerHTML = '';
     
     try {
-        const data = await APIClient.post(`/accounts/api/resend-verification/${userId}/`, 
+        const apiUrl = window.getResendVerificationUrl 
+            ? window.getResendVerificationUrl(userId)
+            : `/accounts/api/resend-verification/${userId}/`;
+        const data = await APIClient.post(apiUrl, 
             {},
             { loadingText: 'Sending verification email...' }
         );

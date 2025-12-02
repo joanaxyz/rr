@@ -14,37 +14,44 @@
 {% block rr_base_content %}
 <!-- Reservation Header -->
 <div class="reservation-header">
-    <a href="{% url 'restaurants:restaurant_detail' restaurant.id %}" class="back-button">
-        <i class="fas fa-arrow-left"></i>
-        Back to Restaurant
-    </a>
+    <div class="header-bg">
+        <div class="header-gradient"></div>
+        <div class="header-pattern"></div>
+        <div class="header-glow"></div>
+    </div>
     <div class="header-content">
-        {% if edit_mode %}
-        <h1>Edit Reservation</h1>
-        {% else %}
-        <h1>Make a Reservation</h1>
-        {% endif %}
-        <p class="subtitle">at <span class="restaurant-name">{{ restaurant.name }}</span></p>
+        <a href="{% url 'restaurants:detail' restaurant.id %}" class="back-button animate-fade-in">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Restaurant</span>
+        </a>
+        <div class="header-text animate-fade-in-up">
+            {% if edit_mode %}
+            <h1>Edit Reservation</h1>
+            {% else %}
+            <h1>Make a Reservation</h1>
+            {% endif %}
+            <p class="subtitle">at <span class="restaurant-name">{{ restaurant.name }}</span></p>
+        </div>
     </div>
 </div>
 
 <!-- Main Reservation Container -->
 <div class="reservation-wrapper">
     <!-- Restaurant Info Card -->
-    <div class="restaurant-info-card">
+    <div class="restaurant-info-card animate-fade-in-up delay-1">
         <div class="restaurant-header-info">
             <h3>{{ restaurant.name }}</h3>
             <div class="restaurant-meta">
                 <div class="meta-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z"/>
-                    </svg>
+                    <div class="meta-icon">
+                        <i class="fas fa-location-dot"></i>
+                    </div>
                     <span>{{ restaurant.address }}</span>
                 </div>
                 <div class="meta-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
-                    </svg>
+                    <div class="meta-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
                     <span>{{ restaurant.phone_number }}</span>
                 </div>
             </div>
@@ -54,8 +61,13 @@
     <!-- Main Reservation Content -->
     <div class="reservation-main">
         <!-- Table Selection Section -->
-        <section class="table-section">
-            <h2>Select Your Table</h2>
+        <section class="table-section animate-fade-in-up delay-2">
+            <div class="section-header-inline">
+                <div class="section-icon">
+                    <i class="fas fa-map"></i>
+                </div>
+                <h2>Select Your Table</h2>
+            </div>
             <div class="table-map-container">
                 <div class="floor-legend">
                     <div class="legend-item">
@@ -65,6 +77,10 @@
                     <div class="legend-item">
                         <div class="legend-color reserved"></div>
                         <span>Reserved</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color selected"></div>
+                        <span>Selected</span>
                     </div>
                 </div>
                 
@@ -80,8 +96,13 @@
         </section>
 
         <!-- Reservation Form -->
-        <section class="reservation-form-section">
-            <h2>Reservation Details</h2>
+        <section class="reservation-form-section animate-fade-in-up delay-3">
+            <div class="section-header-inline">
+                <div class="section-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h2>Reservation Details</h2>
+            </div>
             <form id="reservation-form" class="reservation-form" method="post">
                 {% csrf_token %}
                 <input type="hidden" id="restaurant-id" value="{{ restaurant.id }}">
@@ -140,49 +161,6 @@
                 </button>
             </form>
         </section>
-
-        <!-- Reservation Policies -->
-        <section class="policies-section">
-            <h2>Reservation Policies</h2>
-            <div class="policies-list">
-                <div class="policy-item">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9,20.42L2.79,14.21L4.21,12.79L9,17.58L19.79,6.79L21.21,8.21L9,20.42Z"/>
-                    </svg>
-                    <div>
-                        <h4>Free Cancellation</h4>
-                        <p>Cancel for free up to 24 hours before your reservation</p>
-                    </div>
-                </div>
-                <div class="policy-item">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
-                    </svg>
-                    <div>
-                        <h4>Email Confirmation</h4>
-                        <p>You'll receive a confirmation email shortly after booking</p>
-                    </div>
-                </div>
-                <div class="policy-item">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/>
-                    </svg>
-                    <div>
-                        <h4>Late Arrival Policy</h4>
-                        <p>Late arrivals may forfeit your table after 15 minutes</p>
-                    </div>
-                </div>
-                <div class="policy-item">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12,1L15.09,8.26H23L17.45,12.79L19.54,20.05L12,15.5L4.46,20.05L6.55,12.79L1,8.26H8.91L12,1Z"/>
-                    </svg>
-                    <div>
-                        <h4>Special Requirements</h4>
-                        <p>Let us know about dietary restrictions or special occasions</p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
 </div>
 {% endblock %}
@@ -190,6 +168,10 @@
 {% block rr_base_js %}
 <script src="{% static 'common/js/Notifications.js' %}"></script>
 <script src="{% static 'common/js/floor-plan-common.js' %}"></script>
+<script>
+    // Make restaurant data available to JavaScript
+    window.restaurantData = {{ restaurant_json|safe }};
+</script>
 <script src="{% static 'reservations/js/reservation.js' %}"></script>
 <script src="{% static 'home/js/stars.js' %}"></script>
 {% endblock %}

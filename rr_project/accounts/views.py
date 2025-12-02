@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
@@ -8,9 +9,13 @@ import json
 from .forms import (
     CustomUserCreationForm,
     CustomAuthenticationForm,
+    DeleteAccountForm,
 )
 from .models import *
+from restaurants.models import Bookmark, Review
 from email_service.views import send_verification_email, send_password_reset_code_email
+from owner_verification.supabase_utils import upload_to_supabase
+import uuid
 
 
 # ------------------------------
@@ -225,7 +230,7 @@ def verify_email_view(request, token):
         user.email_verified = True
         user.verification_token_expires = None
         user.save()
-
+        
         Customer.objects.create(user=user)
 
         messages.success(request, "Email verified!")
@@ -305,3 +310,129 @@ def resend_verification_email_view(request, user_id):
             )
 
     return JsonResponse({"success": False, "message": "Invalid request method."})
+
+
+# ------------------------------
+# USER PROFILE
+# ------------------------------
+@login_required
+def profile_view(request):
+    """Display user profile with bookmarked restaurants and reviews"""
+    customer, _ = Customer.objects.get_or_create(user=request.user)
+    
+    # Handle profile image upload
+    if request.method == 'POST' and 'update_profile_image' in request.POST:
+        profile_image_file = request.FILES.get('profile_image')
+        
+        if profile_image_file:
+            try:
+                # Upload to Supabase
+                file_path = f"profile_images/{uuid.uuid4()}_{profile_image_file.name}"
+                image_url = upload_to_supabase(profile_image_file, "files", file_path)
+                
+                if image_url:
+                    request.user.profile_image = image_url
+                    request.user.save()
+                    messages.success(request, 'Profile image updated successfully!')
+                else:
+                    messages.error(request, 'Failed to upload profile image. Please try again.')
+            except Exception as e:
+                messages.error(request, f'Error uploading image: {str(e)}')
+        else:
+            messages.error(request, 'Please select an image file.')
+        
+        return redirect('accounts:profile')
+    
+    # Get bookmarked restaurants
+    bookmarks = Bookmark.objects.filter(customer=customer).select_related('restaurant').order_by('-created_at')
+    bookmarked_restaurants = [bookmark.restaurant for bookmark in bookmarks]
+    
+    # Get user reviews
+    reviews = Review.objects.filter(customer=customer).select_related('restaurant').order_by('-created_at')
+    
+    # Annotate restaurants with ratings
+    from django.db.models import Avg, Count
+    for restaurant in bookmarked_restaurants:
+        restaurant_reviews = Review.objects.filter(restaurant=restaurant)
+        restaurant.avg_rating = restaurant_reviews.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
+        restaurant.review_count = restaurant_reviews.count()
+    
+    # Determine which template to use based on referrer or query parameter
+    referer = request.META.get('HTTP_REFERER', '')
+    from_param = request.GET.get('from', '')
+    
+    # Select template based on context
+    template_name = 'accounts/profile.html'  # default
+    if from_param == 'admin' or '/admin-panel/' in referer:
+        template_name = 'accounts/profile_admin.html'
+    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+        template_name = 'accounts/profile_manage.html'
+    
+    context = {
+        'user': request.user,
+        'customer': customer,
+        'bookmarked_restaurants': bookmarked_restaurants,
+        'reviews': reviews,
+        'bookmark_count': bookmarks.count(),
+        'review_count': reviews.count(),
+    }
+    
+    return render(request, template_name, context)
+
+
+# ------------------------------
+# DELETE ACCOUNT
+# ------------------------------
+@login_required
+def delete_account_view(request):
+    """Handle account deletion with confirmation"""
+    # Determine which template to use based on referrer or query parameter
+    referer = request.META.get('HTTP_REFERER', '')
+    from_param = request.GET.get('from', '')
+    
+    # Select template based on context
+    template_name = 'accounts/delete_account.html'  # default
+    if from_param == 'admin' or '/admin-panel/' in referer:
+        template_name = 'accounts/delete_account_admin.html'
+    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+        template_name = 'accounts/delete_account_manage.html'
+    
+    if request.method == 'POST':
+        form = DeleteAccountForm(request.user, request.POST)
+        
+        if form.is_valid():
+            # Store user email for confirmation message
+            user_email = request.user.email
+            
+            # Delete the user (CASCADE will handle related objects)
+            request.user.delete()
+            
+            # Logout the user
+            logout(request)
+            
+            messages.success(
+                request,
+                f"Your account ({user_email}) has been permanently deleted. We're sorry to see you go!"
+            )
+            return redirect('accounts:login')
+        else:
+            # Form validation failed
+            first_error = None
+            if form.non_field_errors():
+                first_error = form.non_field_errors()[0]
+            elif form.errors:
+                first_error_list = next(iter(form.errors.values()))
+                if first_error_list:
+                    first_error = first_error_list[0]
+            
+            context = {'form': form, 'first_error': first_error}
+            if from_param:
+                context['from_param'] = from_param
+            return render(request, template_name, context)
+    else:
+        form = DeleteAccountForm(request.user)
+    
+    context = {'form': form}
+    if from_param:
+        context['from_param'] = from_param
+    return render(request, template_name, context)

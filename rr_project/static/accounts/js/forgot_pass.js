@@ -161,7 +161,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Send email request using APIClient
             (async () => {
                 try {
-                    const data = await APIClient.post('/accounts/api/forgot-password/', 
+                    const apiUrl = window.apiUrls?.forgotPassword || '/accounts/api/forgot-password/';
+                    const data = await APIClient.post(apiUrl, 
                         { email: email },
                         { loadingText: 'Sending verification code...' }
                     );
@@ -195,7 +196,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Verify code using APIClient
             (async () => {
                 try {
-                    const data = await APIClient.post('/accounts/api/verify-reset-code/', 
+                    const apiUrl = window.apiUrls?.verifyResetCode || '/accounts/api/verify-reset-code/';
+                    const data = await APIClient.post(apiUrl, 
                         { user_id: userId, code: code },
                         { loadingText: 'Verifying code...' }
                     );
@@ -244,7 +246,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Reset password using APIClient
             (async () => {
                 try {
-                    const data = await APIClient.post('/accounts/api/reset-password/', 
+                    const apiUrl = window.apiUrls?.resetPassword || '/accounts/api/reset-password/';
+                    const data = await APIClient.post(apiUrl, 
                         { 
                             user_id: userId, 
                             code: verifiedCode, 
@@ -259,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         showSuccess(data.message);
                         // Redirect after 2 seconds
                         setTimeout(() => {
-                            window.location.href = data.redirect_url || '/rr/auth/login/';
+                            window.location.href = data.redirect_url || window.loginUrl || '/accounts/auth/login/';
                         }, 2000);
                     } else {
                         showError(data.message);
@@ -284,7 +287,8 @@ document.addEventListener('DOMContentLoaded', function() {
         resendLink.textContent = 'Sending...';
         
         try {
-            const data = await APIClient.post('/accounts/api/resend-reset-code/', 
+            const apiUrl = window.apiUrls?.resendResetCode || '/accounts/api/resend-reset-code/';
+            const data = await APIClient.post(apiUrl, 
                 { user_id: userId },
                 { loadingText: 'Resending verification code...' }
             );

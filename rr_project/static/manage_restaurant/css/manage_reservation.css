@@ -125,6 +125,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: var(--space-6) var(--space-8);
   background: linear-gradient(
     135deg,
@@ -951,4 +954,271 @@ body {
   color: #aaa;
   cursor: default;
   border-color: var(--color-gray-200);
+}
+
+/* ============ CSV EXPORT BUTTON ============ */
+
+.card-header .btn-primary {
+  background: var(--color-orange, #ff6b00);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.card-header .btn-primary:hover {
+  background: var(--color-orange-hover, #ff8000);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-orange, 0 4px 12px rgba(255, 107, 0, 0.3));
+}
+
+.card-header .btn-primary i {
+  font-size: 0.9rem;
+}
+
+/* ============ RESPONSIVE DESIGN ============ */
+
+@media (max-width: 1024px) {
+  .manage-restaurant-container {
+    padding: var(--space-4);
+  }
+  
+  .filters-container {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .reservation-table {
+    font-size: 0.9rem;
+  }
+  
+  .reservation-table th,
+  .reservation-table td {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 768px) {
+  .manage-header {
+    padding: var(--space-4);
+  }
+  
+  .manage-header h1 {
+    font-size: var(--font-2xl);
+  }
+  
+  .manage-restaurant-container {
+    padding: var(--space-3);
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  
+  .card-header .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .floor-plan-wrapper {
+    margin-bottom: var(--space-4);
+  }
+  
+  .floor-plan-container {
+    height: 300px;
+  }
+  
+  .filters-section {
+    margin-bottom: var(--space-4);
+  }
+  
+  .filters-container {
+    padding: var(--space-3);
+  }
+  
+  .filter-group {
+    flex-direction: column;
+  }
+  
+  .filter-item {
+    width: 100%;
+  }
+  
+  .reservation-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.85rem;
+  }
+  
+  .reservation-table thead {
+    display: none;
+  }
+  
+  .reservation-table tbody {
+    display: block;
+  }
+  
+  .reservation-table tr {
+    display: block;
+    margin-bottom: var(--space-4);
+    border: var(--border-1) solid var(--color-gray-200);
+    border-radius: var(--radius-base);
+    padding: var(--space-3);
+    background: var(--color-white);
+  }
+  
+  .reservation-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border: none;
+    text-align: right;
+  }
+  
+  .reservation-table td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    text-align: left;
+    color: var(--color-gray-600);
+    margin-right: var(--space-3);
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .action-buttons button {
+    width: 100%;
+  }
+  
+  .info-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    width: 95%;
+    max-width: none;
+    margin: var(--space-4);
+  }
+  
+  .reservation-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .manage-header {
+    padding: var(--space-3);
+  }
+  
+  .manage-header h1 {
+    font-size: var(--font-xl);
+  }
+  
+  .manage-header .subtitle {
+    font-size: var(--font-sm);
+  }
+  
+  .manage-restaurant-container {
+    padding: var(--space-2);
+  }
+  
+  .content-card {
+    padding: var(--space-3);
+  }
+  
+  .card-header h2 {
+    font-size: var(--font-lg);
+  }
+  
+  .floor-plan-header h3 {
+    font-size: var(--font-lg);
+  }
+  
+  .floor-plan-container {
+    height: 250px;
+  }
+  
+  .filters-container {
+    padding: var(--space-2);
+  }
+  
+  .filter-label {
+    font-size: var(--font-sm);
+  }
+  
+  .filter-input,
+  .filter-select {
+    font-size: var(--font-sm);
+    padding: var(--space-2);
+  }
+  
+  .reservation-table td {
+    font-size: var(--font-sm);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+  
+  .reservation-table td::before {
+    margin-right: 0;
+    margin-bottom: var(--space-1);
+  }
+  
+  .status-badge {
+    font-size: var(--font-xs);
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  .action-buttons button {
+    font-size: var(--font-sm);
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .modal-content {
+    width: 100%;
+    margin: var(--space-2);
+    max-height: 90vh;
+  }
+  
+  .modal-header {
+    padding: var(--space-3);
+  }
+  
+  .modal-header h2 {
+    font-size: var(--font-lg);
+  }
+  
+  .modal-body {
+    padding: var(--space-3);
+  }
+  
+  .info-item {
+    padding: var(--space-2);
+  }
+  
+  .info-item label {
+    font-size: var(--font-sm);
+  }
+  
+  .info-item p {
+    font-size: var(--font-sm);
+  }
 }

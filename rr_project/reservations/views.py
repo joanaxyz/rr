@@ -13,9 +13,8 @@ from email_service.views import send_reservation_updated_email
 from django.contrib import messages
 import json
 
-@login_required
 def reservation(request, restaurant_id):
-    """Reservation page for a specific restaurant"""
+    """Reservation page for a specific restaurant - supports both logged-in users and guests"""
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     reserve_form = None
     floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
@@ -25,24 +24,43 @@ def reservation(request, restaurant_id):
         reserve_form = ReservationForm(request.POST, restaurant=restaurant)
         if reserve_form.is_valid():
             try:
-                customer = get_object_or_404(Customer,user=request.user)
                 reservation = reserve_form.save(commit=False)
-                reservation.customer = customer
                 reservation.restaurant = restaurant
+                
+                # If user is logged in, try to associate with customer
+                if request.user.is_authenticated:
+                    try:
+                        customer = Customer.objects.get(user=request.user)
+                        reservation.customer = customer
+                    except Customer.DoesNotExist:
+                        # User exists but no customer profile - allow guest reservation
+                        reservation.customer = None
+                
                 reservation.save()
                 
                 messages.success(request, f'Reservation created! You will receive an email once a staff has confirmed your reservation.')
-                return redirect('restaurants:restaurant_detail', restaurant_id=restaurant.id)
+                return redirect('restaurants:detail', restaurant_id=restaurant.id)
             except Exception as e:
                 messages.error(request, f'An error occured during reservation: {str(e)}')
     else:
-        reserve_form = ReservationForm(initial={
-            'name': f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username,
-            'email': request.user.email
-        }, restaurant=restaurant)
+        # Set initial values based on whether user is logged in
+        initial_data = {}
+        if request.user.is_authenticated:
+            initial_data = {
+                'name': f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username,
+                'email': request.user.email
+            }
+        
+        reserve_form = ReservationForm(initial=initial_data, restaurant=restaurant)
 
+    restaurant_dict = restaurant.to_dict()
     context = {
-        'restaurant': restaurant.to_dict(),
+        'restaurant': restaurant_dict,
+        'restaurant_json': json.dumps({
+            'opening_time': restaurant_dict.get('opening_time'),
+            'closing_time': restaurant_dict.get('closing_time'),
+            'operating_days': restaurant_dict.get('operating_days')
+        }),
         'floorplan': json.dumps(floorplan.to_dict()),
         'tables': json.dumps([t.to_dict() for t in tables]),
         'elements': json.dumps([e.to_dict() for e in elements]),
@@ -80,7 +98,7 @@ def reservation_management_view(request):
                 messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
             except Exception:
                 messages.error(request, "Failed to cancel reservation. Please try again.")
-            return redirect(f'{reverse("reservations:reservation_management")}?page={current_page}')
+            return redirect(f'{reverse("reservations:list")}?page={current_page}')
 
         # Restore reservation
         elif 'restore_reservation' in request.POST:
@@ -96,7 +114,7 @@ def reservation_management_view(request):
                     messages.warning(request, "Only cancelled reservations can be restored.")
             except Exception:
                 messages.error(request, "Failed to restore reservation. Please try again.")
-            return redirect(f'{reverse("reservations:reservation_management")}?page={current_page}')
+            return redirect(f'{reverse("reservations:list")}?page={current_page}')
 
     context = {
         'reservations': page_obj,
@@ -120,7 +138,7 @@ def edit_reservation(request, reservation_id):
             send_reservation_updated_email(updated_reservation)
             
             messages.success(request, 'Your reservation has been updated successfully. A confirmation email has been sent.')
-            return redirect('reservations:reservation_management')
+            return redirect('reservations:list')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:

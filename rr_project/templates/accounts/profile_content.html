@@ -1,0 +1,183 @@
+{% load static %}
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-header-content">
+            <div class="profile-avatar-section">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image }}" alt="Profile" class="profile-avatar">
+                {% else %}
+                    <div class="profile-avatar-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                {% endif %}
+                <button class="edit-profile-btn" id="editProfileBtn">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ user.get_full_name|default:user.username }}</h1>
+                <p class="profile-email">{{ user.email }}</p>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ bookmark_count }}</span>
+                        <span class="stat-label">Bookmarks</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ review_count }}</span>
+                        <span class="stat-label">Reviews</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+        <!-- Bookmarked Restaurants Section -->
+        <section class="profile-section">
+            <div class="section-header">
+                <h2>
+                    <i class="fas fa-bookmark"></i>
+                    Bookmarked Restaurants
+                </h2>
+                <span class="section-count">{{ bookmark_count }}</span>
+            </div>
+            
+            {% if bookmarked_restaurants %}
+                <div class="restaurants-grid">
+                    {% for restaurant in bookmarked_restaurants %}
+                        <div class="restaurant-card">
+                            {% if restaurant.image %}
+                                <div class="restaurant-card-image" style="background-image: url('{{ restaurant.image }}')"></div>
+                            {% else %}
+                                <div class="restaurant-card-image restaurant-card-placeholder">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                            {% endif %}
+                            <div class="restaurant-card-content">
+                                <h3 class="restaurant-card-name">
+                                    <a href="{% url 'restaurants:detail' restaurant.id %}">{{ restaurant.name }}</a>
+                                </h3>
+                                <div class="restaurant-card-rating">
+                                    <div class="stars" data-rating="{{ restaurant.avg_rating|default:0 }}"></div>
+                                    <span class="rating-text">{{ restaurant.avg_rating|floatformat:1|default:'0.0' }} ({{ restaurant.review_count|default:0 }} reviews)</span>
+                                </div>
+                                <div class="restaurant-card-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ restaurant.full_address }}</span>
+                                </div>
+                                <div class="restaurant-card-actions">
+                                    <a href="{% url 'restaurants:detail' restaurant.id %}" class="view-btn">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-bookmark"></i>
+                    <h3>No bookmarked restaurants</h3>
+                    <p>Start exploring restaurants and bookmark your favorites!</p>
+                    <a href="{% url 'restaurants:list' %}" class="explore-btn">Explore Restaurants</a>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="profile-section">
+            <div class="section-header">
+                <h2>
+                    <i class="fas fa-star"></i>
+                    My Reviews
+                </h2>
+                <span class="section-count">{{ review_count }}</span>
+            </div>
+            
+            {% if reviews %}
+                <div class="reviews-list">
+                    {% for review in reviews %}
+                        <div class="review-item">
+                            <div class="review-restaurant">
+                                <h3>
+                                    <a href="{% url 'restaurants:detail' review.restaurant.id %}">
+                                        {{ review.restaurant.name }}
+                                    </a>
+                                </h3>
+                                <div class="review-stars" data-rating="{{ review.rating }}"></div>
+                            </div>
+                            <p class="review-comment">{{ review.comment }}</p>
+                            <div class="review-meta">
+                                <span class="review-date">{{ review.created_at|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-star"></i>
+                    <h3>No reviews yet</h3>
+                    <p>Share your dining experiences by leaving reviews!</p>
+                    <a href="{% url 'restaurants:list' %}" class="explore-btn">Explore Restaurants</a>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+
+<!-- Profile Image Upload Modal -->
+<div id="profileImageModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Update Profile Image</h2>
+            <button type="button" class="modal-close-btn" onclick="closeProfileImageModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="profileImageForm" method="post" action="{% url 'accounts:profile' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="update_profile_image" value="1">
+                <div class="form-group">
+                    <label for="profile_image">Select Image</label>
+                    <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProfileImageModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'common/js/Notifications.js' %}"></script>
+<script src="{% static 'home/js/stars.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const profileImageModal = document.getElementById('profileImageModal');
+    
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', function() {
+            profileImageModal.style.display = 'flex';
+        });
+    }
+});
+
+function closeProfileImageModal() {
+    document.getElementById('profileImageModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('profileImageModal');
+    if (e.target === modal) {
+        closeProfileImageModal();
+    }
+});
+</script>
+
+

@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from .models import User
-from owner_verification.models import OwnerVerificationRequest  # Correct model
+from owner_verification.models import BusinessApplication
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(
@@ -53,22 +53,32 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    username = forms.EmailField(
-        widget=forms.EmailInput(attrs={'placeholder': 'Email address'})
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Email address or Username'})
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
     )
 
     def clean(self):
-        email = self.cleaned_data.get('username')
+        username_or_email = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
 
-        if email and password:
-            user = authenticate(username=email, password=password)
+        if username_or_email and password:
+            # Try to authenticate with username first
+            user = authenticate(username=username_or_email, password=password)
+            
+            # If that fails, try with email
+            if user is None:
+                try:
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(username=user_obj.username, password=password)
+                except User.DoesNotExist:
+                    user = None
+            
             if user is None:
                 raise forms.ValidationError(
-                    _("The email or password you entered is incorrect. Please try again."),
+                    _("The email/username or password you entered is incorrect. Please try again."),
                     code='invalid_login'
                 )
             else:
@@ -77,9 +87,9 @@ class CustomAuthenticationForm(AuthenticationForm):
         return self.cleaned_data
 
 
-class OwnerForm(forms.ModelForm):
+class BusinessForm(forms.ModelForm):
     class Meta:
-        model = OwnerVerificationRequest  # Use the correct model
+        model = BusinessApplication
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -93,9 +103,9 @@ class OwnerForm(forms.ModelForm):
                 self.fields[field_name].required = False
 
 
-class OwnerVerificationForm(forms.ModelForm):
+class BusinessApplicationForm(forms.ModelForm):
     class Meta:
-        model = OwnerVerificationRequest
+        model = BusinessApplication
         fields = [
             "govt_full_name",
             "government_id_type",
@@ -108,3 +118,30 @@ class OwnerVerificationForm(forms.ModelForm):
             "proof_of_ownership",
             # 'state' is optional because it defaults to PENDING
         ]
+
+
+class DeleteAccountForm(forms.Form):
+    """Form for confirming account deletion"""
+    confirm_delete = forms.BooleanField(
+        required=True,
+        label="I understand that deleting my account is permanent and cannot be undone",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    password = forms.CharField(
+        required=True,
+        label="Enter your password to confirm",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter your password', 'class': 'form-control'})
+    )
+    
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+    
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not self.user.check_password(password):
+            raise forms.ValidationError(
+                _("The password you entered is incorrect."),
+                code='invalid_password'
+            )
+        return password

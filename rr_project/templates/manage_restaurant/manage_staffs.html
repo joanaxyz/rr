@@ -1,14 +1,13 @@
-{% extends "common/rr_base.html" %}
+{% extends "manage_restaurant/manage_base.html" %}
 {% load static %}
 
-{% block rr_base_css %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_staff.css' %}">
 {% endblock %}
 
-{% block rr_base_content %}
+{% block page_title %}Manage Staff{% endblock %}
+
+{% block manage_content %}
 <div class="manage-header">
   <div class="header-content">
     <h1>Manage Staff</h1>
@@ -124,6 +123,6 @@
 </div>
 {% endblock %}
 
-{% block rr_base_js %}
+{% block extra_js %}
 <script src="{% static 'manage_restaurant/js/manage_staffs.js' %}"></script>
 {% endblock %}

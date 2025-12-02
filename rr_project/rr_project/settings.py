@@ -44,6 +44,14 @@ SUPABASE_SERVICE_ROLE_KEY = config('SUPABASE_SERVICE_ROLE_KEY')
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be set in environment variables")
 
+# Resend Email Configuration
+# Get your API key from https://resend.com/api-keys
+# For testing: Resend provides a default onboarding domain (e.g., onboarding@resend.dev)
+# You can use this for testing without domain verification
+# For production: Verify your own domain in Resend dashboard
+RESEND_API_KEY = config('RESEND_API_KEY', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='onboarding@resend.dev')
+
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
@@ -68,6 +76,7 @@ INSTALLED_APPS = [
     'owner_verification',
     'manage_restaurant',
     'email_service',
+    'admin_panel',
 ]
 
 MIDDLEWARE = [
@@ -158,7 +167,3 @@ WHITENOISE_MIMETYPES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Email Configuration
-DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'
-RESEND_API_KEY = config('RESEND_API_KEY')

@@ -1,11 +1,11 @@
 /* ================================ */
 /* BASE STYLES & RESETS */
+/* Foundation for all pages        */
 /* ================================ */
 
-/* Import design tokens first */
 @import 'design-tokens.css';
 
-/* ============ RESET & NORMALIZE ============ */
+/* ============ RESET ============ */
 
 *,
 *::before,
@@ -20,17 +20,17 @@ html {
   -webkit-text-size-adjust: 100%;
   -moz-tab-size: 4;
   tab-size: 4;
-  font-feature-settings: normal;
-  font-variation-settings: normal;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  line-height: inherit;
   font-family: var(--font-primary);
   font-weight: var(--font-weight-normal);
-  color: var(--color-gray-900);
-  background-color: var(--color-white);
+  color: var(--gray-900);
+  background-color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============ TYPOGRAPHY ============ */
@@ -39,6 +39,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-bold);
   line-height: var(--leading-tight);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 h1 { font-size: var(--font-4xl); }
@@ -55,7 +56,12 @@ p {
 
 a {
   color: inherit;
-  text-decoration: inherit;
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--orange-500);
 }
 
 /* ============ FORM ELEMENTS ============ */
@@ -80,9 +86,18 @@ input[type="submit"] {
   -webkit-appearance: button;
 }
 
+/* ============ MEDIA ============ */
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 /* ============ UTILITIES ============ */
 
-/* Screen reader only */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -95,9 +110,8 @@ input[type="submit"] {
   border: 0;
 }
 
-/* Focus styles */
 *:focus {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--orange-500);
   outline-offset: 2px;
 }
 
@@ -105,7 +119,6 @@ input[type="submit"] {
   outline: none;
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -117,7 +130,7 @@ input[type="submit"] {
   }
 }
 
-/* ============ LAYOUT CONTAINERS ============ */
+/* ============ LAYOUT ============ */
 
 .container {
   width: 100%;
@@ -138,25 +151,34 @@ input[type="submit"] {
   }
 }
 
-/* ============ BACKGROUND UTILITIES ============ */
+/* ============ SCROLLBAR ============ */
 
-.bg-pattern-overlay {
-  position: relative;
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.bg-pattern-overlay::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-surface-dark);
-  pointer-events: none;
-  z-index: var(--z-0);
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
 }
 
-/* ============ ANIMATION KEYFRAMES ============ */
+::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
+
+/* ============ SELECTION ============ */
+
+::selection {
+  background: var(--orange-100);
+  color: var(--gray-900);
+}
+
+/* ============ ANIMATIONS ============ */
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -181,11 +203,6 @@ input[type="submit"] {
 @keyframes scaleIn {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
-}
-
-@keyframes scaleOut {
-  from { transform: scale(1); opacity: 1; }
-  to { transform: scale(0.95); opacity: 0; }
 }
 
 @keyframes spin {

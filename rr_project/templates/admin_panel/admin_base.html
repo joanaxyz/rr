@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Admin Panel{% endblock %} | Restaurant Reservation Admin</title>
+  
+  <!-- Fonts - Outfit: Modern, clean, premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Design System -->
+  <link rel="stylesheet" href="{% static 'common/css/design-tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'admin_panel/css/admin.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <i class="fas fa-shield-alt"></i>
+      <span>Admin Panel</span>
+    </div>
+    
+    <nav class="admin-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="{% url 'admin_panel:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <i class="fas fa-home"></i>
+          <span>Dashboard</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Management</div>
+        <a href="{% url 'admin_panel:users' %}" class="nav-link {% if request.resolver_match.url_name == 'users' or request.resolver_match.url_name == 'user_detail' or request.resolver_match.url_name == 'user_create' or request.resolver_match.url_name == 'user_edit' %}active{% endif %}">
+          <i class="fas fa-users"></i>
+          <span>Users</span>
+        </a>
+        <a href="{% url 'admin_panel:restaurants' %}" class="nav-link {% if request.resolver_match.url_name == 'restaurants' or request.resolver_match.url_name == 'restaurant_detail' or request.resolver_match.url_name == 'restaurant_create' or request.resolver_match.url_name == 'restaurant_edit' %}active{% endif %}">
+          <i class="fas fa-utensils"></i>
+          <span>Restaurants</span>
+        </a>
+        <a href="{% url 'admin_panel:reservations' %}" class="nav-link {% if request.resolver_match.url_name == 'reservations' or request.resolver_match.url_name == 'reservation_detail' or request.resolver_match.url_name == 'reservation_create' or request.resolver_match.url_name == 'reservation_edit' %}active{% endif %}">
+          <i class="fas fa-calendar-check"></i>
+          <span>Reservations</span>
+        </a>
+        <a href="{% url 'admin_panel:reviews' %}" class="nav-link {% if request.resolver_match.url_name == 'reviews' or request.resolver_match.url_name == 'review_detail' or request.resolver_match.url_name == 'review_create' or request.resolver_match.url_name == 'review_edit' %}active{% endif %}">
+          <i class="fas fa-star"></i>
+          <span>Reviews</span>
+        </a>
+        <a href="{% url 'admin_panel:cuisines' %}" class="nav-link {% if request.resolver_match.url_name == 'cuisines' or request.resolver_match.url_name == 'cuisine_create' or request.resolver_match.url_name == 'cuisine_edit' %}active{% endif %}">
+          <i class="fas fa-bowl-food"></i>
+          <span>Cuisines</span>
+        </a>
+        <a href="{% url 'admin_panel:tags' %}" class="nav-link {% if request.resolver_match.url_name == 'tags' or request.resolver_match.url_name == 'tag_create' or request.resolver_match.url_name == 'tag_edit' %}active{% endif %}">
+          <i class="fas fa-tags"></i>
+          <span>Tags</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Requests</div>
+        <a href="{% url 'admin_panel:business_applications' %}" class="nav-link {% if request.resolver_match.url_name == 'business_applications' %}active{% endif %}">
+          <i class="fas fa-user-check"></i>
+          <span>Business Applications</span>
+        </a>
+        <a href="{% url 'admin_panel:restaurant_creation_requests' %}" class="nav-link {% if request.resolver_match.url_name == 'restaurant_creation_requests' %}active{% endif %}">
+          <i class="fas fa-store"></i>
+          <span>Restaurant Requests</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Settings</div>
+        <a href="{% url 'admin_panel:manage_admins' %}" class="nav-link {% if request.resolver_match.url_name == 'manage_admins' %}active{% endif %}">
+          <i class="fas fa-users-cog"></i>
+          <span>Manage Admins</span>
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Top Bar -->
+  <header class="admin-topbar">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+    <div class="topbar-actions">
+      <div id="adminProfile" class="admin-profile">
+        <div class="profile-icon">
+          {% if user.profile_image %}
+            <img src="{{ user.profile_image }}" alt="Profile" class="profile-image">
+          {% else %}
+            <div class="user-avatar">{{ user.email|first|upper }}</div>
+          {% endif %}
+        </div>
+        <div class="profile-dropdown" id="adminProfileDropdown">
+          <div class="dropdown-header">
+            <div class="user-name">{{ user.email }}</div>
+            <div class="user-role">Administrator</div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'home:home' %}" class="dropdown-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </a>
+          <a href="{% url 'restaurants:list' %}" class="dropdown-item">
+            <i class="fas fa-utensils"></i>
+            <span>Restaurants</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'accounts:profile' %}?from=admin" class="dropdown-item">
+            <i class="fas fa-user"></i>
+            <span>My Profile</span>
+          </a>
+          <a href="{% url 'settings:settings' %}?from=admin" class="dropdown-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'admin_panel:logout' %}" class="dropdown-item logout-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sign Out</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+            <div>{{ message }}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block admin_content %}{% endblock %}
+    </div>
+  </main>
+
+  {% block extra_js %}{% endblock %}
+  <script>
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.querySelector('.admin-sidebar');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+          const icon = this.querySelector('i');
+          if (sidebar.classList.contains('mobile-open')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+          } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+          }
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!sidebar.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+            sidebar.classList.remove('mobile-open');
+            const icon = mobileMenuToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+          }
+        });
+      }
+      
+      // Admin profile dropdown
+      const adminProfile = document.getElementById('adminProfile');
+      const adminProfileDropdown = document.getElementById('adminProfileDropdown');
+      
+      if (adminProfile && adminProfileDropdown) {
+        adminProfile.addEventListener('click', function(event) {
+          event.stopPropagation();
+          adminProfileDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!adminProfile.contains(event.target)) {
+            adminProfileDropdown.classList.remove('show');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

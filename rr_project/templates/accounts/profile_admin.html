@@ -1,0 +1,21 @@
+{% extends "admin_panel/admin_base.html" %}
+{% load static %}
+
+{% block title %}My Profile - Restaurant Reservations{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'accounts/css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block admin_content %}
+{% include 'accounts/profile_content.html' %}
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}
+
+
