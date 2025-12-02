@@ -1,13 +1,13 @@
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from django.urls import reverse
+import resend
 
 
 def send_email(subject, template_name, context, recipient_email, plain_text_fallback=None):
     """
-    Generic email sender function for any type of email
+    Generic email sender function using Resend API
     
     Args:
         subject: Email subject line
@@ -20,6 +20,14 @@ def send_email(subject, template_name, context, recipient_email, plain_text_fall
         bool: True if email sent successfully, False otherwise
     """
     try:
+        # Check if Resend API key is configured
+        if not settings.RESEND_API_KEY:
+            print("Warning: RESEND_API_KEY not configured. Email not sent.")
+            return False
+        
+        # Set Resend API key
+        resend.api_key = settings.RESEND_API_KEY
+        
         # Render HTML message
         html_message = render_to_string(template_name, context)
         
@@ -29,15 +37,16 @@ def send_email(subject, template_name, context, recipient_email, plain_text_fall
         else:
             plain_message = strip_tags(html_message)
         
-        # Send email
-        send_mail(
-            subject=subject,
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[recipient_email],
-            html_message=html_message,
-            fail_silently=False,
-        )
+        # Send email via Resend
+        params = {
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": recipient_email,
+            "subject": subject,
+            "html": html_message,
+            "text": plain_message,
+        }
+        
+        resend.Emails.send(params)
         return True
     except Exception as e:
         print(f"Failed to send email: {e}")

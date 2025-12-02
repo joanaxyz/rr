@@ -44,14 +44,13 @@ SUPABASE_SERVICE_ROLE_KEY = config('SUPABASE_SERVICE_ROLE_KEY')
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be set in environment variables")
 
-# Email Configuration for password reset
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT')
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+# Resend Email Configuration
+# Get your API key from https://resend.com/api-keys
+# For testing: Resend provides a default onboarding domain (e.g., onboarding@resend.dev)
+# You can use this for testing without domain verification
+# For production: Verify your own domain in Resend dashboard
+RESEND_API_KEY = config('RESEND_API_KEY', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='onboarding@resend.dev')
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
