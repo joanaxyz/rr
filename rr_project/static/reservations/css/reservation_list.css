@@ -1,210 +1,247 @@
+/* ================================ */
+/* RESERVATIONS LIST - MODERN DESIGN */
+/* Light Cards • Dark Background     */
+/* ================================ */
+
 @import '../../common/css/components.css';
 
-/* ===== Base Layout ===== */
 body {
-  background-color: var(--color-gray-50);
-  font-family: var(--font-brand);
+  background: var(--gray-100);
+  color: var(--gray-900);
+  font-family: var(--font-primary);
   margin: 0;
   padding: 0;
 }
 
-/* ===== Container ===== */
+/* ============ CONTAINER ============ */
+
 .reservation-container {
-  max-width: 900px;
-  margin: 60px auto;
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  padding: var(--space-8) var(--space-10);
-  box-shadow: var(--shadow-md);
+  max-width: 1100px;
+  margin: var(--space-10) auto;
+  padding: var(--space-8);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
 }
 
-/* ===== Header ===== */
+/* ============ HEADER ============ */
+
 .header h1 {
-  font-size: var(--font-2xl);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-5);
-  color: var(--color-gray-800);
+  font-size: var(--font-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-8);
+  color: var(--gray-900);
   text-align: center;
+  letter-spacing: -0.02em;
 }
 
-/* ===== Messages (like "No customer" alert) ===== */
+.header h1::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--gradient-primary);
+  margin: var(--space-4) auto 0;
+  border-radius: var(--radius-full);
+}
+
+/* ============ MESSAGES ============ */
+
 .messages {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .message {
-  padding: var(--space-3);
-  border-radius: var(--radius-base);
-  margin-bottom: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
   font-weight: var(--font-weight-medium);
   text-align: center;
+  border: 1px solid;
 }
 
 .message.error {
-  background: var(--color-error-bg);
-  color: var(--color-error-text);
+  background: var(--orange-50);
+  color: var(--orange-700);
+  border-color: var(--orange-200);
 }
 
 .message.success {
-  background: var(--color-success-bg);
-  color: var(--color-success-text);
+  background: var(--orange-50);
+  color: var(--orange-700);
+  border-color: var(--orange-200);
 }
 
 .message.info {
-  background: var(--color-info-bg);
-  color: var(--color-info-text);
+  background: var(--gray-50);
+  color: var(--gray-700);
+  border-color: var(--gray-200);
 }
 
-/* ===== Table Styling ===== */
+/* ============ TABLE STYLING ============ */
+
 .table-container {
   overflow-x: auto;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--gray-200);
 }
 
 .reservation-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
 }
 
 .reservation-table th,
 .reservation-table td {
   text-align: left;
-  padding: var(--space-4) var(--space-4);
-  border-bottom: var(--border-1) solid var(--color-gray-200);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--gray-200);
 }
 
 .reservation-table th {
-  background-color: var(--color-gray-100);
-  color: var(--color-gray-600);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-sm);
+  background: var(--orange-50);
+  color: var(--orange-700);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
 }
 
 .reservation-table td {
   font-size: var(--font-sm);
-  color: var(--color-gray-700);
+  color: var(--gray-700);
 }
 
-/* ===== Restaurant Name Link ===== */
+.reservation-table tbody tr {
+  transition: all var(--transition-base);
+}
+
+.reservation-table tbody tr:hover {
+  background: var(--gray-50);
+}
+
+/* ============ LINKS ============ */
+
 .reservation-table a {
-  color: var(--color-orange);
-  text-decoration: underline;
+  color: var(--orange-600);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
   transition: color var(--transition-base);
 }
 
 .reservation-table a:hover {
-  color: var(--color-orange-hover);
+  color: var(--orange-700);
 }
 
-/* ===== Status Badges ===== */
+/* ============ STATUS BADGES ============ */
+
 .status-badge {
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-full);
-  font-size: var(--font-sm);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-bold);
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
 }
 
 .status-badge.pending {
-  background-color: var(--color-warning-bg);
-  color: var(--color-warning-text);
+  background: var(--orange-100);
+  color: var(--orange-700);
+  border: 1px solid var(--orange-200);
 }
 
 .status-badge.confirmed {
-  background-color: var(--color-success-bg);
-  color: var(--color-success-text);
+  background: var(--orange-100);
+  color: var(--orange-700);
+  border: 1px solid var(--orange-300);
 }
 
 .status-badge.cancelled {
-  background-color: var(--color-error-bg);
-  color: var(--color-error-text);
+  background: var(--gray-100);
+  color: var(--gray-500);
+  border: 1px solid var(--gray-200);
 }
 
-/* ===== Buttons ===== */
-.cancel-btn {
-  background-color: var(--color-orange);
-  color: var(--color-white);
+/* ============ BUTTONS ============ */
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cancel-btn,
+.edit-btn,
+.restore-btn {
   border: none;
-  border-radius: var(--radius-base);
+  border-radius: var(--radius-lg);
   padding: var(--space-2) var(--space-4);
   cursor: pointer;
-  transition: background-color var(--transition-base);
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-primary);
+  transition: all var(--transition-base);
+}
+
+.cancel-btn {
+  background: var(--orange-100);
+  color: var(--orange-700);
+  border: 1px solid var(--orange-200);
 }
 
 .cancel-btn:hover {
-  background-color: var(--color-orange-hover);
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-color: var(--orange-500);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary);
 }
 
 .edit-btn {
-  background-color: var(--color-gray-600);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--radius-base);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: background-color var(--transition-base);
-  font-size: var(--font-sm);
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-200);
 }
 
 .edit-btn:hover {
-  background-color: var(--color-gray-400);
-}
-
-.delete-btn {
-  background-color: var(--color-error);
-  color: var(--color-white);
-  border: none;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  font-size: var(--font-sm);
-  transition: background-color var(--transition-base);
-}
-
-.delete-btn:hover {
-  background-color: var(--color-error);
+  background: var(--gray-200);
+  color: var(--gray-900);
+  transform: translateY(-2px);
 }
 
 .restore-btn {
-  background-color: var(--color-success);
-  color: var(--color-white);
-  border: none;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  font-size: var(--font-sm);
-  transition: background-color var(--transition-base);
+  background: var(--orange-50);
+  color: var(--orange-600);
+  border: 1px solid var(--orange-200);
 }
 
 .restore-btn:hover {
-  background-color: var(--color-success-hover);
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-color: var(--orange-500);
+  transform: translateY(-2px);
 }
 
-.cancelled-text {
-  color: var(--color-gray-500);
-  font-weight: var(--font-weight-medium);
-  font-style: italic;
-}
+/* ============ NO RESERVATIONS ============ */
 
-/* ===== No Reservations Section ===== */
 .no-reservations {
   text-align: center;
-  color: var(--color-gray-500);
-  background: var(--color-white);
-  padding: var(--space-10);
-  border-radius: var(--radius-lg);
-  margin-top: var(--space-5);
-  font-size: var(--font-base);
+  color: var(--gray-500);
+  padding: var(--space-16);
+  font-size: var(--font-lg);
 }
 
-/* ===== Custom Popup (Reason Box) ===== */
+/* ============ POPUP MODAL ============ */
+
 .custom-popup {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -212,6 +249,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition-slow);
+  backdrop-filter: blur(8px);
 }
 
 .custom-popup.show {
@@ -220,151 +258,160 @@ body {
 }
 
 .popup-content {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  width: 400px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  width: 420px;
   max-width: 90%;
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-2xl);
   text-align: center;
-  animation: fadeIn var(--duration-200) ease;
 }
 
 .popup-content h3 {
   margin-bottom: var(--space-3);
-  color: var(--color-gray-800);
-  font-weight: var(--font-weight-semibold);
+  color: var(--gray-900);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-xl);
 }
 
 .popup-content p {
-  color: var(--color-gray-600);
+  color: var(--gray-600);
   font-size: var(--font-sm);
 }
 
 .popup-content textarea {
   width: 100%;
-  height: 90px;
-  border: var(--border-1) solid var(--color-gray-300);
-  border-radius: var(--radius-base);
-  padding: var(--space-3);
-  font-family: inherit;
+  height: 100px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  font-family: var(--font-primary);
   font-size: var(--font-sm);
-  margin: var(--space-4) 0;
+  color: var(--gray-900);
+  margin: var(--space-5) 0;
   resize: none;
+  transition: all var(--transition-base);
+}
+
+.popup-content textarea:focus {
+  outline: none;
+  border-color: var(--orange-500);
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+}
+
+.popup-content textarea::placeholder {
+  color: var(--gray-400);
 }
 
 .popup-actions {
   display: flex;
   justify-content: center;
   gap: var(--space-3);
-  margin-top: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.confirm-cancel-btn,
+.close-btn {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-6);
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-primary);
+  transition: all var(--transition-base);
 }
 
 .confirm-cancel-btn {
-  background-color: var(--color-orange);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--radius-base);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: background-color var(--transition-base);
-  font-weight: var(--font-weight-medium);
+  background: var(--gradient-primary);
+  color: var(--white);
+  box-shadow: var(--shadow-primary);
 }
 
 .confirm-cancel-btn:hover {
-  background-color: var(--color-orange-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary-lg);
 }
 
 .close-btn {
-  background-color: var(--color-gray-300);
-  color: var(--color-gray-800);
-  border: none;
-  border-radius: var(--radius-base);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: background-color var(--transition-base);
-  font-weight: var(--font-weight-medium);
+  background: var(--gray-100);
+  color: var(--gray-700);
 }
 
 .close-btn:hover {
-  background-color: var(--color-gray-400);
+  background: var(--gray-200);
+  color: var(--gray-900);
 }
 
-/* ===== Animation ===== */
-@keyframes fadeIn {
-  from {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
+/* ============ PAGINATION ============ */
 
-/* ===== Pagination ===== */
 .pagination-container {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: var(--space-8);
 }
 
 .pagination {
   display: flex;
-  gap: 8px;
-  font-size: 0.875rem;
+  gap: var(--space-2);
   list-style: none;
   padding: 0;
 }
 
 .pagination a,
 .pagination span {
-  display: inline-block;
-  min-width: 32px;
-  padding: 6px 12px;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 var(--space-3);
   text-decoration: none;
-  border-radius: var(--radius-md);
-  border: 1px solid #ddd;
-  color: #333333;
-  transition: all 0.2s ease-in-out;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-base);
+}
+
+.pagination a {
+  background: var(--white);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-300);
 }
 
 .pagination a:hover {
-  background-color: #f3f3f3;
-  border-color: #bbb;
+  background: var(--orange-500);
+  color: var(--white);
+  border-color: var(--orange-500);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary);
 }
 
 .pagination .current {
-  font-weight: bold;
-  color: #fff;
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background: var(--gradient-primary);
+  color: var(--white);
+  border: 1px solid var(--orange-500);
+  box-shadow: var(--shadow-primary);
 }
 
 .pagination .disabled {
-  color: #aaa;
-  cursor: default;
-  border-color: #eee;
-  background-color: #f9f9f9;
+  color: var(--gray-400);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  cursor: not-allowed;
 }
 
-/* ============ RESPONSIVE DESIGN ============ */
+/* ============ RESPONSIVE ============ */
 
 @media (max-width: 768px) {
   .reservation-container {
-    margin: var(--space-4) var(--space-2);
-    padding: var(--space-4);
+    margin: var(--space-4);
+    padding: var(--space-5);
   }
   
   .header h1 {
-    font-size: var(--font-xl);
-  }
-  
-  .reservation-table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    font-size: var(--font-2xl);
   }
   
   .reservation-table thead {
@@ -378,10 +425,10 @@ body {
   .reservation-table tr {
     display: block;
     margin-bottom: var(--space-4);
-    border: var(--border-1) solid var(--color-gray-200);
-    border-radius: var(--radius-base);
-    padding: var(--space-3);
-    background: var(--color-white);
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
   }
   
   .reservation-table td {
@@ -395,48 +442,41 @@ body {
   
   .reservation-table td::before {
     content: attr(data-label);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-bold);
     text-align: left;
-    color: var(--color-gray-600);
-    margin-right: var(--space-3);
+    color: var(--orange-600);
+    font-size: var(--font-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
   }
   
   .action-buttons {
-    flex-direction: column;
-    gap: var(--space-2);
     width: 100%;
-  }
-  
-  .action-buttons button {
-    width: 100%;
+    justify-content: flex-end;
   }
   
   .popup-content {
     width: 90%;
-    padding: var(--space-4);
+    padding: var(--space-6);
   }
 }
 
 @media (max-width: 480px) {
   .reservation-container {
-    margin: var(--space-3) var(--space-2);
-    padding: var(--space-3);
+    margin: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
   }
   
   .header h1 {
-    font-size: var(--font-lg);
+    font-size: var(--font-xl);
   }
   
   .reservation-table td {
-    font-size: var(--font-sm);
+    font-size: var(--font-xs);
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-1);
-  }
-  
-  .reservation-table td::before {
-    margin-right: 0;
-    margin-bottom: var(--space-1);
   }
   
   .status-badge {
@@ -445,17 +485,8 @@ body {
   }
   
   .action-buttons button {
-    font-size: var(--font-sm);
+    font-size: var(--font-xs);
     padding: var(--space-2) var(--space-3);
-  }
-  
-  .popup-content {
-    width: 95%;
-    padding: var(--space-3);
-  }
-  
-  .popup-content h3 {
-    font-size: var(--font-lg);
   }
   
   .popup-actions {
@@ -466,15 +497,10 @@ body {
     width: 100%;
   }
   
-  .pagination {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
   .pagination a,
   .pagination span {
-    min-width: 28px;
-    padding: 4px 8px;
+    min-width: 32px;
+    height: 32px;
     font-size: var(--font-xs);
   }
 }

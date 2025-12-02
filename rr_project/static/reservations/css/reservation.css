@@ -1,4 +1,7 @@
-/* Reservation Page Styles */
+/* ================================ */
+/* RESERVATION PAGE - MODERN DESIGN */
+/* Light Cards • Dark Background    */
+/* ================================ */
 
 @import '../../common/css/components.css';
 @import '../../common/css/floor-plan-common.css';
@@ -11,162 +14,196 @@
 
 body {
   font-family: var(--font-primary);
-  background: var(--gradient-surface-dark);
-  color: var(--text-primary);
+  background: var(--gray-100);
+  color: var(--gray-900);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Header Styles */
+/* ============ HEADER ============ */
+
 .reservation-header {
-  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
-  border-bottom: 1px solid var(--gray-200);
-  padding: 2rem;
-  margin-bottom: 3rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  background: linear-gradient(135deg, #000 0%, #0a0a0a 50%, #111 100%);
+  padding: var(--space-8);
+  position: relative;
+  overflow: hidden;
+}
+
+.reservation-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(255, 107, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(255, 107, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .back-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--white);
-  background: var(--primary-red);
+  gap: var(--space-2);
+  color: var(--gray-400);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-  margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-sm);
+  transition: all var(--transition-base);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  position: relative;
+  z-index: 1;
 }
 
 .back-button:hover {
   transform: translateX(-4px);
-  background: var(--primary-red-dark);
-  box-shadow: var(--shadow-lg);
+  background: rgba(255, 107, 0, 0.1);
+  border-color: rgba(255, 107, 0, 0.2);
+  color: var(--orange-400);
 }
 
 .back-button i {
-  width: 20px;
-  flex-shrink: 0;
+  font-size: 14px;
 }
 
 .reservation-header .header-content {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .reservation-header h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  font-family: var(--font-accent);
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  line-height: 1.1;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--white);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+  font-size: var(--font-lg);
+  color: var(--gray-400);
+  font-weight: var(--font-weight-medium);
 }
 
 .subtitle .restaurant-name {
-  color: var(--primary-red);
-  font-weight: 700;
+  background: linear-gradient(135deg, var(--orange-400) 0%, var(--orange-500) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: var(--font-weight-bold);
 }
 
-/* Main Wrapper */
+/* ============ WRAPPER ============ */
+
 .reservation-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem 4rem;
+  padding: var(--space-8);
 }
 
-/* Restaurant Info Card */
+/* ============ RESTAURANT INFO CARD ============ */
+
 .restaurant-info-card {
   background: var(--white);
-  border-radius: var(--border-radius-xl);
-  box-shadow: var(--shadow-md);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
   border: 1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-lg);
 }
 
 .restaurant-header-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
 }
 
 .restaurant-header-info h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
+  font-size: var(--font-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-900);
+  margin-bottom: var(--space-3);
 }
 
 .restaurant-meta {
   display: flex;
-  gap: 2rem;
+  gap: var(--space-6);
   flex-wrap: wrap;
 }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+  gap: var(--space-2);
+  color: var(--gray-600);
+  font-weight: var(--font-weight-medium);
 }
 
 .meta-item svg {
-  color: var(--primary-red);
+  fill: var(--orange-500);
   flex-shrink: 0;
 }
 
-/* Main Reservation Content */
+/* ============ MAIN CONTENT ============ */
+
 .reservation-main {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--space-8);
 }
 
+/* ============ SECTION CARDS ============ */
 
-
-/* Table Section */
-.table-section {
+.table-section,
+.reservation-form-section {
   background: var(--white);
-  padding: 2rem;
-  border-radius: var(--border-radius-xl);
-  box-shadow: var(--shadow-md);
   border: 1px solid var(--gray-200);
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
 }
 
-.table-section h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
+.table-section h2,
+.reservation-form-section h2 {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-900);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
+
+.table-section h2::before,
+.reservation-form-section h2::before {
+  content: '';
+  width: 4px;
+  height: 28px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+}
+
+/* ============ TABLE MAP ============ */
 
 .table-map-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-5);
   align-items: center;
 }
 
 .floor-legend {
   display: flex;
-  gap: 2rem;
-  padding: 1rem;
+  gap: var(--space-6);
+  padding: var(--space-4);
   background: var(--gray-50);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-xl);
   border: 1px solid var(--gray-200);
   flex-wrap: wrap;
   width: 100%;
@@ -176,32 +213,33 @@ body {
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .legend-color {
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.3);
 }
 
-.legend-color.available { background: var(--table-available); }
-.legend-color.reserved { background: var(--table-reserved); }
-.legend-color.selected { background: var(--table-selected); }
+.legend-color.available { background: var(--orange-500); }
+.legend-color.reserved { background: var(--gray-400); }
+.legend-color.selected { background: var(--orange-400); box-shadow: 0 0 12px rgba(255, 107, 0, 0.5); }
 
 .legend-item span {
-  font-weight: 500;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-600);
+  font-size: var(--font-sm);
 }
 
 .table-map-container > .floor-plan {
   height: 500px;
   max-height: 500px;
   min-height: 500px;
-  border: 2px solid var(--gray-200);
-  border-radius: var(--border-radius-lg);
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
   overflow: auto;
 }
 
@@ -210,14 +248,24 @@ body {
   width: 800px;
   height: 500px;
   background-image: 
-    linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent),
-    linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent);
+    linear-gradient(0deg, transparent 24%, rgba(255, 107, 0, 0.03) 25%, rgba(255, 107, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(255, 107, 0, 0.03) 75%, rgba(255, 107, 0, 0.03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(255, 107, 0, 0.03) 25%, rgba(255, 107, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(255, 107, 0, 0.03) 75%, rgba(255, 107, 0, 0.03) 76%, transparent 77%, transparent);
   background-size: 40px 40px;
   flex-shrink: 0;
   margin: 0;
 }
 
 /* Floor Elements */
+.entrance,
+.bar-area,
+.kitchen,
+.restroom,
+.window {
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-xs);
+}
+
 .entrance {
   position: absolute;
   bottom: 20px;
@@ -225,42 +273,22 @@ body {
   transform: translateX(-50%);
   width: 120px;
   height: 40px;
-  background: var(--gray-600);
-  color: var(--white);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--gray-400);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .window {
   position: absolute;
-  background: rgba(232, 93, 4, 0.1);
-  border: 2px solid var(--color-primary);
-  color: var(--color-primary);
+  background: rgba(255, 107, 0, 0.1);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  color: var(--orange-400);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border-radius: var(--border-radius);
-}
-
-.window-top {
-  top: 20px;
-  left: 50px;
-  width: 200px;
-  height: 30px;
-}
-
-.window-right {
-  top: 100px;
-  right: 20px;
-  width: 30px;
-  height: 150px;
-  writing-mode: vertical-rl;
 }
 
 .bar-area {
@@ -269,15 +297,13 @@ body {
   left: 20px;
   width: 60px;
   height: 100px;
-  background: var(--gray-800);
-  color: var(--white);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--gray-400);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 0.875rem;
   writing-mode: vertical-rl;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .kitchen {
@@ -286,14 +312,12 @@ body {
   right: 80px;
   width: 80px;
   height: 60px;
-  background: var(--gray-400);
-  color: var(--white);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--gray-500);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .restroom {
@@ -302,98 +326,67 @@ body {
   right: 20px;
   width: 80px;
   height: 40px;
-  background: var(--gray-500);
-  color: var(--white);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--gray-500);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-
-
 .table-selection-info {
-  padding: 1rem;
-  background: var(--cream);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--gray-200);
+  padding: var(--space-4);
+  background: var(--orange-50);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--orange-200);
   text-align: center;
   width: 100%;
 }
 
 .table-selection-info p {
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--gray-600);
+  font-weight: var(--font-weight-medium);
 }
 
-/* Reservation Form Section */
-.reservation-form-section {
-  background: var(--white);
-  padding: 2.5rem;
-  border-radius: var(--border-radius-xl);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--gray-200);
-}
-
-.reservation-form-section h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.reservation-form-section h2::before {
-  content: '';
-  width: 4px;
-  height: 32px;
-  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-hover));
-  border-radius: 2px;
-}
+/* ============ RESERVATION FORM ============ */
 
 .reservation-form {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: var(--space-5);
 }
 
 .reservation-form .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .reservation-form .form-group label {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-700);
+  font-size: var(--font-sm);
 }
 
 .reservation-form .form-group input,
 .reservation-form .form-group select,
 .reservation-form .form-group textarea {
-  padding: 0.875rem 1rem;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  padding: var(--space-4);
   background: var(--white);
-  font-family: inherit;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-base);
+  color: var(--gray-900);
+  font-family: var(--font-primary);
+  transition: all var(--transition-base);
 }
 
 .reservation-form .form-group input:focus,
 .reservation-form .form-group select:focus,
 .reservation-form .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(212, 83, 10, 0.1);
+  border-color: var(--orange-500);
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
 }
 
 .reservation-form .form-group input::placeholder,
@@ -401,137 +394,79 @@ body {
   color: var(--gray-400);
 }
 
+.reservation-form .form-group select option {
+  background: var(--white);
+  color: var(--gray-900);
+}
+
 .reservation-form .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: var(--space-5);
 }
 
 .selected-table-display {
-  padding: 1.25rem;
-  background: linear-gradient(135deg, var(--color-orange-50) 0%, var(--color-orange-100) 100%);
-  border-radius: var(--border-radius);
-  border: 2px solid var(--color-orange-200);
+  padding: var(--space-4);
+  background: var(--orange-50);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--orange-200);
 }
 
 .table-selection-status {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  color: var(--text-primary);
-  font-weight: 600;
+  gap: var(--space-3);
+  color: var(--gray-700);
+  font-weight: var(--font-weight-medium);
 }
 
 .table-selection-status svg {
-  color: var(--color-primary);
+  fill: var(--orange-500);
   flex-shrink: 0;
 }
 
 .table-selection-status #table-status {
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--gray-600);
 }
 
 .reserve-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 1.125rem 2rem;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-8);
+  background: var(--gradient-primary);
   color: var(--white);
   border: none;
-  border-radius: var(--border-radius);
-  font-size: 1.0625rem;
-  font-weight: 700;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-base);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-  box-shadow: 0 4px 12px rgba(212, 83, 10, 0.3);
-  letter-spacing: 0.3px;
+  transition: all var(--transition-base);
+  margin-top: var(--space-4);
+  box-shadow: var(--shadow-primary);
+  font-family: var(--font-primary);
+}
+
+.reserve-btn svg {
+  fill: var(--white);
 }
 
 .reserve-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 83, 10, 0.4);
-}
-
-.reserve-btn:active:not(:disabled) {
-  transform: translateY(0);
+  box-shadow: var(--shadow-primary-lg);
 }
 
 .reserve-btn:disabled {
-  background: var(--gray-400);
+  background: var(--gray-300);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
   opacity: 0.6;
 }
 
-/* Policies Section */
-.policies-section {
-  background: var(--white);
-  padding: 2rem;
-  border-radius: var(--border-radius-xl);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--gray-200);
-}
+/* ============ RESPONSIVE ============ */
 
-.policies-section h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
-}
-
-.policies-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.policy-item {
-  display: flex;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: var(--gray-50);
-  border-radius: var(--border-radius-lg);
-  border: 1px solid var(--gray-200);
-  transition: all 0.3s ease;
-}
-
-.policy-item:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.policy-item svg {
-  color: var(--success);
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  margin-top: 0.125rem;
-}
-
-.policy-item div {
-  flex: 1;
-}
-
-.policy-item h4 {
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-
-.policy-item p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* Responsive Design */
 @media (max-width: 1024px) {
   .restaurant-header-info {
     flex-direction: column;
@@ -539,11 +474,7 @@ body {
   }
 
   .reservation-main {
-    gap: 1.5rem;
-  }
-
-  .floor-plan {
-    height: 400px;
+    gap: var(--space-6);
   }
 
   .form-row {
@@ -553,39 +484,33 @@ body {
 
 @media (max-width: 768px) {
   .reservation-header {
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: var(--space-5);
   }
 
   .reservation-header h1 {
-    font-size: 1.875rem;
+    font-size: 1.75rem;
   }
 
   .reservation-wrapper {
-    padding: 0 1rem 2rem;
+    padding: var(--space-4);
   }
 
   .table-section,
-  .reservation-form-section,
-  .policies-section {
-    padding: 1.5rem;
+  .reservation-form-section {
+    padding: var(--space-5);
   }
 
   .floor-legend {
-    gap: 1rem;
-  }
-
-  .floor-plan {
-    height: 300px;
-  }
-
-  .policies-list {
-    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 
   .restaurant-meta {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--space-2);
+  }
+
+  .reservation-form .form-row {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -595,28 +520,27 @@ body {
   }
 
   .subtitle {
-    font-size: 1rem;
+    font-size: var(--font-base);
   }
 
   .restaurant-info-card {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
   }
 
   .table-section h2,
-  .reservation-form-section h2,
-  .policies-section h2 {
-    font-size: 1.5rem;
+  .reservation-form-section h2 {
+    font-size: var(--font-xl);
   }
 
   .table-section,
-  .reservation-form-section,
-  .policies-section {
-    padding: 1rem;
+  .reservation-form-section {
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
   }
 
   .reservation-form {
-    gap: 1rem;
+    gap: var(--space-4);
   }
 
   .reserve-btn {

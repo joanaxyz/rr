@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shouldApplyFilters = true;
     }
 
-    if (address && address !== 'Address') {
+    if (address && address !== 'Select Location') {
         shouldApplyFilters = true;
     }
 
@@ -237,7 +237,7 @@ function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay
         }
 
         let matchesAddress = true;
-        if(address && address !== 'Address') {
+        if(address && address !== 'Select Location') {
             const restaurantAddress = restaurant.address.toLowerCase();
             matchesAddress = restaurantAddress.includes(address.toLowerCase());
         }

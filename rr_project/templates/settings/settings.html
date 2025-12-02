@@ -54,7 +54,7 @@
                             type="text" 
                             id="first-name" 
                             name="first_name" 
-                            value="{{ user.first_name }}" 
+                            value="{{ user_data.first_name }}" 
                             required
                         >
                     </div>
@@ -64,7 +64,7 @@
                             type="text" 
                             id="last-name" 
                             name="last_name" 
-                            value="{{ user.last_name }}" 
+                            value="{{ user_data.last_name }}" 
                             required
                         >
                     </div>
@@ -74,7 +74,7 @@
                             type="email" 
                             id="email" 
                             name="email" 
-                            value="{{ user.email }}" 
+                            value="{{ user_data.email }}" 
                             required
                         >
                     </div>
@@ -84,7 +84,7 @@
                             type="tel" 
                             id="phone" 
                             name="phone" 
-                            value="{{ user.phone_number|default:'' }}"
+                            value="{{ user_data.phone_number|default:'' }}"
                         >
                     </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -184,9 +184,9 @@
             <div class="settings-content">
                 <div class="user-status-badge">
                     <span class="status-label">Current Role:</span>
-                    <span class="status-badge role-{{ user.role|lower }}">
+                    <span class="status-badge role-{{ user_data.role|lower }}">
                         <i class="fas fa-circle"></i>
-                        {{ user.role }}
+                        {{ user_data.role }}
                     </span>
                 </div>
                 <hr class="divider">
@@ -309,7 +309,7 @@
                             <div class="assignment-header">
                                 <div class="restaurant-info">
                                     <h5>{{ assignment.restaurant_name }}</h5>
-                                    <p class="role-label">{{ user.role }}</p>
+                                    <p class="role-label">{{ user_data.role }}</p>
                                 </div>
                                 <span class="status-badge role-active"><i class="fas fa-check-circle"></i> Active</span>
                             </div>
@@ -346,7 +346,7 @@
                     <div class="customer-status-info">
                         <div class="intro-card">
                             <i class="fas fa-utensils"></i>
-                            <h4>Welcome, {{ user.role }}!</h4>
+                            <h4>Welcome, {{ user_data.role }}!</h4>
                             <p>Explore restaurants, make reservations, and enjoy great dining experiences.</p>
                         </div>
                     </div>

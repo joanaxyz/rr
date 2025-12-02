@@ -67,7 +67,7 @@ def settings_view(request):
             pass
     
     context = {
-        'user': user_dict,
+        'user_data': user_dict,
         'verification_request': verification_request,
         'staff_assignments': staff_assignments,
         'owned_restaurants': owned_restaurants
