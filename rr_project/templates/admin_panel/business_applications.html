@@ -32,57 +32,73 @@
         </thead>
         <tbody>
           {% for request in pending_requests %}
-          <tr>
+          <tr class="compact-row">
+            <!-- User Info -->
             <td>
               <strong>{{ request.user.email }}</strong><br>
               <small>{{ request.user.username }}</small>
             </td>
+
+            <!-- Government Info -->
             <td>{{ request.govt_full_name }}</td>
             <td>{{ request.government_id_type }}</td>
             <td>{{ request.government_id_number }}</td>
+
+            <!-- Business Info -->
             <td>{{ request.business_address }}</td>
             <td>{{ request.business_email|default:"N/A" }}</td>
             <td>{{ request.tax_id|default:"N/A" }}</td>
+
+            <!-- Documents -->
             <td>
-              {% if request.business_license %}
+              <div class="action-buttons compact-buttons">
+                {% if request.business_license %}
                 <a href="{{ request.business_license }}" target="_blank" class="btn btn-small btn-primary">
                   <i class="fas fa-file"></i> License
                 </a>
-              {% endif %}
-              {% if request.government_id_front %}
+                {% endif %}
+                {% if request.government_id_front %}
                 <a href="{{ request.government_id_front }}" target="_blank" class="btn btn-small btn-primary">
                   <i class="fas fa-id-card"></i> ID Front
                 </a>
-              {% endif %}
-              {% if request.government_id_back %}
+                {% endif %}
+                {% if request.government_id_back %}
                 <a href="{{ request.government_id_back }}" target="_blank" class="btn btn-small btn-primary">
                   <i class="fas fa-id-card"></i> ID Back
                 </a>
-              {% endif %}
-              {% if request.proof_of_ownership %}
+                {% endif %}
+                {% if request.proof_of_ownership %}
                 <a href="{{ request.proof_of_ownership }}" target="_blank" class="btn btn-small btn-primary">
                   <i class="fas fa-file-contract"></i> Proof
                 </a>
-              {% endif %}
+                {% endif %}
+              </div>
             </td>
-            <td>{{ request.created_at|date:"M d, Y H:i" }}</td>
+
+            <!-- Request Date -->
+            <td>{{ request.created_at|date:"M d, Y H:i:s" }}</td>
+
+            <!-- Actions -->
             <td>
-              <form method="POST" style="display: inline;" onsubmit="return confirm('Accept this business application?');">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="accept">
-                <input type="hidden" name="request_id" value="{{ request.id }}">
-                <button type="submit" class="btn btn-success btn-small">
-                  <i class="fas fa-check"></i> Accept
-                </button>
-              </form>
-              <form method="POST" style="display: inline; margin-left: 0.5rem;" onsubmit="return confirm('Reject this business application?');">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="reject">
-                <input type="hidden" name="request_id" value="{{ request.id }}">
-                <button type="submit" class="btn btn-danger btn-small">
-                  <i class="fas fa-times"></i> Reject
-                </button>
-              </form>
+              <div class="action-buttons compact-buttons">
+                <form method="POST" onsubmit="return confirm('Accept this business application?');">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="accept">
+                  <input type="hidden" name="request_id" value="{{ request.id }}">
+                  <button type="submit" class="btn btn-success btn-small">
+                    <i class="fas fa-check"></i>
+                  </button>
+                </form>
+
+                <form method="POST" onsubmit="return confirm('Reject this business application?');">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="reject">
+                  <input type="hidden" name="request_id" value="{{ request.id }}">
+                  <button type="submit" class="btn btn-danger btn-small">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </form>
+              </div>
             </td>
           </tr>
           {% endfor %}
