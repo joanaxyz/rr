@@ -1,5 +1,5 @@
 {% extends "common/rr_base.html" %}
-{% load static %}
+{% load static %}  <!-- <-- MUST be here, before any block -->
 
 {% block rr_base_css %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7,22 +7,58 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'manage_restaurant/css/list.css' %}">
 <link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+
+<style>
+/* ===== Create Restaurant Button ===== */
+.header-action .create-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    background: linear-gradient(135deg, #ff7f32, #e56300);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 0.6rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.header-action .create-btn:hover {
+    background: linear-gradient(135deg, #e56300, #b94700);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.header-action .create-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: #ffffff;
+}
+</style>
 {% endblock %}
 
 {% block rr_base_content %}
 <!-- Management Header -->
-<div class="manage-header">
+<div class="manage-header" style="position: relative;">
     <div class="header-content">
         <h1>My Restaurants</h1>
         <p class="subtitle">Manage and organize your restaurant properties</p>
     </div>
+
+    <!-- CREATE RESTAURANT BUTTON -->
+    <div class="header-action" style="position: absolute; top: 2rem; right: 2rem;">
+        <a href="{% url 'manage_restaurant:create_restaurant' %}" class="create-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create Restaurant
+        </a>
+    </div>
 </div>
 
-<!-- Main Management Container -->
 <div class="manage-restaurants-container">
-
-  <!-- <div class="action">
-  </div> -->
   {% if restaurants %}
     <div class="restaurants-list">
       {% for restaurant in restaurants %}
@@ -30,6 +66,7 @@
           <div class="restaurant-name-section">
             <h2>{{ restaurant.name }}</h2>
           </div>
+
           <a href="{% url 'manage_restaurant:dashboard' restaurant.id %}" class="manage-btn">Manage</a>
         </div>
       {% endfor %}
@@ -40,7 +77,4 @@
     </div>
   {% endif %}
 </div>
-{% endblock %}
-
-{% block rr_base_js %}
 {% endblock %}

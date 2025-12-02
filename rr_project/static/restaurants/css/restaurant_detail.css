@@ -919,3 +919,50 @@ body {
   color: var(--text-secondary);
   font-weight: 500;
 }
+/* ===========================
+   FIX STARS AND RATING TEXT
+   =========================== */
+
+/* Make full and half stars gold, empty stars gray */
+.stars svg path,
+.review-stars svg path,
+.rating-stars svg path {
+    fill: #FFD700 !important; /* Gold color for visible stars */
+    stroke: none;
+}
+
+/* Optional: Override empty stars if needed */
+.stars svg.empty path,
+.review-stars svg.empty path,
+.rating-stars svg.empty path {
+    fill: #CCCCCC !important; /* Gray for empty stars */
+}
+
+/* Ensure rating text is always black */
+.rating-text,
+.stars-container,
+.review-comment {
+    color: #000000 !important;
+}
+/* ===== Star Rating Override ===== */
+.stars svg path,
+.review-stars svg path,
+.rating-stars svg path {
+    fill: currentColor; /* uses CSS color instead of JS hardcoded fill */
+}
+
+.stars,
+.review-stars,
+.rating-stars {
+    color: #FFD700; /* full stars color */
+}
+
+.stars svg.empty,
+.review-stars svg.empty,
+.rating-stars svg.empty {
+    color: #CCCCCC; /* empty stars color */
+}
+
+.rating-text {
+    color: #000000; /* rating text color */
+}
