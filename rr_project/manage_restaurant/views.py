@@ -196,7 +196,7 @@ def manage_reservations(request, restaurant_id):
         restaurant = get_object_or_404(Restaurant, id=restaurant_id, managers=manager)
 
     reservations = Reservation.objects.filter(restaurant=restaurant)
-    floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
+    floorplan, _ = Floorplan.objects.get_or_create(restaurant=restaurant, defaults={'width': 800, 'height': 500})
     tables = Table.objects.filter(floorplan=floorplan)
     elements = Element.objects.filter(floorplan=floorplan)
     if request.method == 'POST':
@@ -303,7 +303,7 @@ def manage_tables(request, restaurant_id):
         manager = get_object_or_404(Manager, user=request.user)
         restaurant = get_object_or_404(Restaurant, id=restaurant_id, managers=manager)
 
-    floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
+    floorplan, _ = Floorplan.objects.get_or_create(restaurant=restaurant, defaults={'width': 800, 'height': 500})
     tables = Table.objects.filter(floorplan=floorplan)
     elements = Element.objects.filter(floorplan=floorplan)
     context = {

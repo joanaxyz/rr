@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from accounts.models import Customer, Owner, Manager, Host, User
 
 class Floorplan(models.Model):
@@ -378,3 +380,13 @@ class RestaurantCreationRequest(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.status} by {self.user.username}"
+
+
+@receiver(post_save, sender=Restaurant)
+def create_floorplan_on_restaurant_creation(sender, instance, created, **kwargs):
+    """Automatically create a default floorplan when a restaurant is created"""
+    if created:
+        Floorplan.objects.get_or_create(
+            restaurant=instance,
+            defaults={'width': 800, 'height': 500}
+        )

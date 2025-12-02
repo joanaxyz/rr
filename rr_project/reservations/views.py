@@ -17,7 +17,7 @@ def reservation(request, restaurant_id):
     """Reservation page for a specific restaurant - supports both logged-in users and guests"""
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     reserve_form = None
-    floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
+    floorplan, _ = Floorplan.objects.get_or_create(restaurant=restaurant, defaults={'width': 800, 'height': 500})
     tables = Table.objects.filter(floorplan=floorplan)
     elements = Element.objects.filter(floorplan=floorplan)
     if request.method == 'POST':
@@ -144,7 +144,7 @@ def edit_reservation(request, reservation_id):
     else:
         form = ReservationForm(instance=reservation, restaurant=reservation.restaurant)
     
-    floorplan = get_object_or_404(Floorplan, restaurant=reservation.restaurant)
+    floorplan, _ = Floorplan.objects.get_or_create(restaurant=reservation.restaurant, defaults={'width': 800, 'height': 500})
     tables = Table.objects.filter(floorplan=floorplan)
     elements = Element.objects.filter(floorplan=floorplan)
     context = {
