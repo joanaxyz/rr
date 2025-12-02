@@ -1,10 +1,10 @@
 {% extends 'accounts/auth.html' %}
 {% load static %}
 
-{% block title %}Sign In - RR{% endblock %}
+{% block title %}Admin Sign In - RR{% endblock %}
 
 {% block page_title %}
-  <p class="content_title">Customer Sign In</p>
+  <p class="content_title">Admin Sign In</p>
 {% endblock %}
 
 {% block form_fields %}
@@ -16,15 +16,11 @@
     {{ form.password }}
     <i class="fa-regular fa-eye toggle-password" id="togglePassword"></i>
   </div>
-
-  <a class="fpass" href="{% url 'accounts:forgot_password' %}">Forgot Password?</a>
 {% endblock %}
 
 {% block form_footer %}
-  <p class="auth_link">
-    Don't have an account? <a href="{% url 'accounts:register' %}">Sign up</a>
-  </p>
 {% endblock %}
 
 {% block auth_js %}
 {% endblock %}
+

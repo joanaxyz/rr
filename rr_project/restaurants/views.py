@@ -36,7 +36,7 @@ def restaurant_detail_view(request, restaurant_id):
     if request.method == 'POST' and 'submit_review' in request.POST:
         if not request.user.is_authenticated:
             messages.warning(request, 'Please log in to leave a review.')
-            return redirect('restaurants:restaurant_detail', restaurant_id=restaurant_id)
+            return redirect('restaurants:detail', restaurant_id=restaurant_id)
         
         try:
             customer = Customer.objects.get(user=request.user)
@@ -47,7 +47,7 @@ def restaurant_detail_view(request, restaurant_id):
                 review.restaurant = restaurant
                 review.save()
                 messages.success(request, 'Thank you for your review!')
-                return redirect('restaurants:restaurant_detail', restaurant_id=restaurant_id)
+                return redirect('restaurants:detail', restaurant_id=restaurant_id)
             else:
                 messages.error(request, 'Please correct the errors in your review.')
         except Customer.DoesNotExist:

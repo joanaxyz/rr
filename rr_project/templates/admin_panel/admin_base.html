@@ -6,10 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Admin Panel{% endblock %} | Restaurant Reservation Admin</title>
   
+  <!-- Fonts - Outfit: Modern, clean, premium -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Design System -->
+  <link rel="stylesheet" href="{% static 'common/css/design-tokens.css' %}">
   <link rel="stylesheet" href="{% static 'admin_panel/css/admin.css' %}">
   
   {% block extra_css %}{% endblock %}
@@ -102,13 +106,10 @@
             <div class="user-role">Administrator</div>
           </div>
           <div class="dropdown-divider"></div>
-          <form method="POST" action="{% url 'accounts:logout' %}" style="width: 100%;">
-            {% csrf_token %}
-            <button type="submit" class="dropdown-item logout-item">
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Sign Out</span>
-            </button>
-          </form>
+          <a href="{% url 'admin_panel:logout' %}" class="dropdown-item logout-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sign Out</span>
+          </a>
         </div>
       </div>
     </div>

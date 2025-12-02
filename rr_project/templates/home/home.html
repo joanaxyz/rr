@@ -6,31 +6,67 @@
 {% endblock %}
 
 {% block rr_base_content %}
-<!-- Background -->
-<div class="background"></div>
-
 <!-- Hero Section -->
-<section class="hero-section">
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-gradient"></div>
+    <div class="hero-pattern"></div>
+    <div class="hero-glow"></div>
+  </div>
+  
   <div class="hero-content">
-    <h1 class="hero-title">Discover Amazing Restaurants</h1>
-    <p class="hero-subtitle">Find and book the perfect dining experience from thousands of restaurants in your city</p>
-
-    <div class="search-card">
+    <div class="hero-badge animate-fade-in">
+      <span class="badge-dot"></span>
+      <span>Your Perfect Table Awaits</span>
+    </div>
+    
+    <h1 class="hero-title animate-fade-in-up">
+      <span class="title-line">Reserve Your</span>
+      <span class="title-highlight">Perfect Dining</span>
+      <span class="title-line">Experience</span>
+    </h1>
+    
+    <p class="hero-description animate-fade-in-up delay-1">
+      Discover exceptional restaurants, book instantly, and create unforgettable moments. 
+      From intimate dinners to grand celebrations.
+    </p>
+    
+    <!-- Search Card -->
+    <div class="search-card animate-fade-in-up delay-2">
       <form method="post" class="search-form" id="searchForm">
         {% csrf_token %}
-        <div class="search-field">
-          <select class="city-select" name="city" id="citySelect">
-            <option value="">Any City</option>
-            {% for city in cities %}
-            <option value="{{ city }}">{{ city }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="search-field">
-          <input type="date" class="date-input" name="date" id="dateInput" required>
-        </div>
-        <div class="search-field">
-          <select class="guests-select" name="guests" id="guestsSelect">
+        <div class="search-fields">
+          <div class="search-field">
+            <label for="citySelect">
+              <i class="fas fa-location-dot"></i>
+              <span>Location</span>
+            </label>
+            <select name="city" id="citySelect">
+              <option value="">Any City</option>
+              {% for city in cities %}
+              <option value="{{ city }}">{{ city }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="search-divider"></div>
+          
+          <div class="search-field">
+            <label for="dateInput">
+              <i class="fas fa-calendar"></i>
+              <span>Date</span>
+            </label>
+            <input type="date" name="date" id="dateInput" required>
+          </div>
+          
+          <div class="search-divider"></div>
+          
+          <div class="search-field">
+            <label for="guestsSelect">
+              <i class="fas fa-users"></i>
+              <span>Party Size</span>
+            </label>
+            <select name="guests" id="guestsSelect">
               <option value="">Any</option>
               <option value="1">1 Guest</option>
               <option value="2">2 Guests</option>
@@ -39,147 +75,418 @@
               <option value="7-10">7-10 Guests</option>
               <option value="11-20">11-20 Guests</option>
               <option value="20+">20+ Guests</option>
-          </select>
+            </select>
+          </div>
+          
+          <button type="submit" class="search-btn">
+            <i class="fas fa-search"></i>
+            <span>Find Tables</span>
+          </button>
         </div>
-        <button type="submit" class="search-button">FIND RESTAURANTS</button>
+      </form>
     </div>
-    </form>
+    
+    <!-- Stats -->
+    <div class="hero-stats animate-fade-in-up delay-3">
+      <div class="stat">
+        <span class="stat-number">500+</span>
+        <span class="stat-label">Restaurants</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number">10K+</span>
+        <span class="stat-label">Happy Diners</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number">4.9</span>
+        <span class="stat-label">Average Rating</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator animate-bounce">
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="section-container">
+    <div class="section-header">
+      <span class="section-label">How It Works</span>
+      <h2 class="section-title">Book in 3 Simple Steps</h2>
+      <p class="section-subtitle">From discovery to dining, we've made every step effortless</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card animate-on-scroll">
+        <div class="feature-icon">
+          <div class="icon-bg"></div>
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="feature-step">01</div>
+        <h3>Discover</h3>
+        <p>Browse hundreds of restaurants with detailed menus, photos, and authentic reviews from real diners.</p>
+      </div>
+      
+      <div class="feature-card animate-on-scroll" style="--delay: 0.1s">
+        <div class="feature-icon">
+          <div class="icon-bg"></div>
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="feature-step">02</div>
+        <h3>Reserve</h3>
+        <p>Pick your perfect date, time, and table. Get instant confirmation with no waiting or phone calls.</p>
+      </div>
+      
+      <div class="feature-card animate-on-scroll" style="--delay: 0.2s">
+        <div class="feature-icon">
+          <div class="icon-bg"></div>
+          <i class="fas fa-utensils"></i>
+        </div>
+        <div class="feature-step">03</div>
+        <h3>Enjoy</h3>
+        <p>Arrive, dine, and savor. Share your experience with a review to help fellow food lovers.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Featured Restaurants Section -->
-<section class="featured-restaurants-section">
-  <div class="featured-restaurants-content">
-    <h2 class="section-title">Featured Restaurants</h2>
-    <p class="section-subtitle">Discover our handpicked selection of exceptional dining experiences</p>
-
-    <div class="restaurant-swiper-container">
-      <div class="restaurant-swiper" id="restaurantSwiper">
+<section class="restaurants-section">
+  <div class="section-container">
+    <div class="section-header">
+      <span class="section-label">Featured Picks</span>
+      <h2 class="section-title">Trending Restaurants</h2>
+      <p class="section-subtitle">Hand-picked dining destinations loved by our community</p>
+    </div>
+    
+    {% if restaurants %}
+    <div class="restaurants-showcase">
+      <div class="restaurant-slider" id="restaurantSlider">
         {% for restaurant in restaurants %}
-        <div class="restaurant-card{% if forloop.first %} active{% endif %}">
-          {% if restaurant.image %}
-          <div class="restaurant-card-left"
-            style= "background-image: url('{{ restaurant.image }}')">
-          {% else %}
-          <div class="restaurant-card-left"
-            style= "background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))">
-           {% endif %}
-            <div class="restaurant-card-overlay">
-              <h3 class="restaurant-name">{{ restaurant.name }}</h3>
-              <div class="restaurant-actions">
-                <button class="book-button" onclick="bookRestaurant('{{ restaurant.id }}')">BOOK NOW</button>
+        <div class="restaurant-card {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
+          <div class="card-image" style="background-image: url('{% if restaurant.image %}{{ restaurant.image }}{% else %}https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800{% endif %}')">
+            <div class="card-overlay">
+              <div class="card-rating">
+                <i class="fas fa-star"></i>
+                <span>{{ restaurant.avg_rating|floatformat:1|default:"New" }}</span>
               </div>
             </div>
           </div>
-          <div class="restaurant-card-right">
-            <div class="restaurant-info">
+          
+          <div class="card-content">
+            <div class="card-header">
               <h3>{{ restaurant.name }}</h3>
-
-              <div class="restaurant-rating">
-                <div class="stars" data-rating="{{ restaurant.avg_rating|default:0 }}"></div>
-                <span class="rating-text">{{ restaurant.avg_rating|floatformat:1 }} ({{ restaurant.review_count }} reviews)</span>
-              </div>
-
-              <div class="restaurant-details">
-                <div class="detail-item">
-                  <i class="fas fa-location-dot"></i>
-                  {{ restaurant.address }}
-                </div>
-                <div class="detail-item">
-                  <i class="fas fa-calendar"></i>
-                  <span class="operating-days">{{ restaurant.operating_days }}</span>
-                </div>
-                <div class="detail-item">
-                  <i class="fas fa-clock"></i>
-                  <div class="cuisine-list">
-                    {% for cuisine in restaurant.cuisines %}
-                    <span class="cuisine-tag">{{ cuisine.name }}</span>
-                    {% endfor %}
-                  </div>
-                </div>
-                <div class="detail-item price-item">
-                  <i class="fas fa-dollar-sign"></i>
-                  <span class="price-range-text">{{ restaurant.price_range_display }}</span>
-                </div>
-                <div class="detail-item">
-                  <i class="fas fa-hourglass-end"></i>
-                  <span class="{% if restaurant.is_open_now %}status-open{% else %}status-closed{% endif %}">
-                    {% if restaurant.is_open_now %}
-                      Open until {{ restaurant.closing_time}}
-                    {% else %}
-                      {% if restaurant.opening_time %}
-                        Opens at {{ restaurant.opening_time}}
-                      {% else %}
-                        Hours not available
-                      {% endif %}
-                    {% endif %}
-                  </span>
-                </div>
-              </div>
-
-              <p class="restaurant-description">{{ restaurant.description }}</p>
-
-              <div class="restaurant-tags">
-                {% for tag in restaurant.tags.all %}
-                <span class="tag">{{ tag.tag }}</span>
-                {% endfor %}
-              </div>
+              <span class="card-price">{{ restaurant.price_range_display|default:"$$" }}</span>
+            </div>
+            
+            <div class="card-cuisines">
+              {% for cuisine in restaurant.cuisines|slice:":3" %}
+              <span class="cuisine-tag">{{ cuisine.name }}</span>
+              {% endfor %}
+            </div>
+            
+            <div class="card-info">
+              <span class="info-item">
+                <i class="fas fa-location-dot"></i>
+                {{ restaurant.city|default:restaurant.address|truncatechars:20 }}
+              </span>
+              <span class="info-item {% if restaurant.is_open_now %}open{% else %}closed{% endif %}">
+                <i class="fas fa-clock"></i>
+                {% if restaurant.is_open_now %}Open Now{% else %}Closed{% endif %}
+              </span>
+            </div>
+            
+            <div class="card-actions">
+              <button class="btn-book" onclick="bookRestaurant('{{ restaurant.id }}')">
+                Book Now
+                <i class="fas fa-arrow-right"></i>
+              </button>
             </div>
           </div>
         </div>
         {% endfor %}
       </div>
+      
+      <!-- Navigation -->
+      <div class="slider-nav">
+        <button class="nav-btn prev" id="prevBtn" aria-label="Previous">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="nav-dots" id="navDots">
+          {% for restaurant in restaurants %}
+          <button class="nav-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"></button>
+          {% endfor %}
+        </div>
+        <button class="nav-btn next" id="nextBtn" aria-label="Next">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-utensils"></i>
+      <h3>No Restaurants Yet</h3>
+      <p>Check back soon for featured dining options</p>
+    </div>
+    {% endif %}
+    
+    <div class="section-cta">
+      <a href="{% url 'restaurants:list' %}" class="btn-explore">
+        <span>Explore All Restaurants</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
 
-      <div class="swiper-pagination" id="swiperPagination">
-        {% for restaurant in restaurants %}
-        <div class="pagination-dot{% if forloop.first %} active{% endif %}"
-            onclick="goToSlide('{{ forloop.counter0 }}')"></div>
-        {% endfor %}
+<!-- App Preview Section -->
+<section class="preview-section">
+  <div class="section-container">
+    <div class="preview-grid">
+      <div class="preview-content">
+        <span class="section-label">Platform Features</span>
+        <h2 class="section-title">Everything You Need</h2>
+        <p class="section-subtitle">A complete reservation platform designed for both diners and restaurant owners</p>
+        
+        <div class="preview-features">
+          <div class="preview-feature">
+            <div class="pf-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <div class="pf-text">
+              <h4>Instant Booking</h4>
+              <p>Real-time table availability with immediate confirmation</p>
+            </div>
+          </div>
+          
+          <div class="preview-feature">
+            <div class="pf-icon">
+              <i class="fas fa-filter"></i>
+            </div>
+            <div class="pf-text">
+              <h4>Smart Filters</h4>
+              <p>Find restaurants by cuisine, price, location, and more</p>
+            </div>
+          </div>
+          
+          <div class="preview-feature">
+            <div class="pf-icon">
+              <i class="fas fa-star"></i>
+            </div>
+            <div class="pf-text">
+              <h4>Verified Reviews</h4>
+              <p>Honest ratings from real diners who've experienced it</p>
+            </div>
+          </div>
+          
+          <div class="preview-feature">
+            <div class="pf-icon">
+              <i class="fas fa-bell"></i>
+            </div>
+            <div class="pf-text">
+              <h4>Reminders</h4>
+              <p>Never miss a reservation with email notifications</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="preview-visual">
+        <div class="preview-mockup">
+          <div class="mockup-screen">
+            <div class="mockup-header">
+              <span class="mockup-dot"></span>
+              <span class="mockup-dot"></span>
+              <span class="mockup-dot"></span>
+            </div>
+            <div class="mockup-content">
+              <div class="mock-search">
+                <i class="fas fa-search"></i>
+                <span>Search restaurants...</span>
+              </div>
+              <div class="mock-cards">
+                <div class="mock-card">
+                  <div class="mock-img"></div>
+                  <div class="mock-info">
+                    <div class="mock-title"></div>
+                    <div class="mock-meta"></div>
+                  </div>
+                </div>
+                <div class="mock-card">
+                  <div class="mock-img"></div>
+                  <div class="mock-info">
+                    <div class="mock-title"></div>
+                    <div class="mock-meta"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mockup-glow"></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- How It Works Section -->
-<section class="how-it-works-section">
-  <div class="how-it-works-content">
-    <h2 class="section-title">How It Works</h2>
-    <p class="section-subtitle">Book your dining experience in just three simple steps</p>
-
-    <div class="steps-container">
-      <div class="step-card">
-        <div class="step-number">1</div>
-        <h3 class="step-title">Search & Discover</h3>
-        <p class="step-description">Browse thousands of restaurants in your city. Use filters to find exactly what
-          you're looking for.</p>
+<!-- Restaurant Owners CTA -->
+<section class="owners-section">
+  <div class="section-container">
+    <div class="owners-card">
+      <div class="owners-content">
+        <span class="section-label">For Restaurant Owners</span>
+        <h2>Grow Your Business</h2>
+        <p>Join our platform and reach thousands of potential diners. Manage reservations, track analytics, and boost your visibility.</p>
+        <a href="{% url 'owner_verification:owner_verification' %}" class="btn-owner">
+          <span>Become a Partner</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
-
-      <div class="step-card">
-        <div class="step-number">2</div>
-        <h3 class="step-title">Book Your Table</h3>
-        <p class="step-description">Select your preferred date and time. Our system will confirm your reservation
-          instantly.</p>
-      </div>
-
-      <div class="step-card">
-        <div class="step-number">3</div>
-        <h3 class="step-title">Enjoy Your Meal</h3>
-        <p class="step-description">Show up and enjoy your dining experience. Rate and review to help others.</p>
+      <div class="owners-visual">
+        <div class="owners-stats">
+          <div class="owner-stat">
+            <i class="fas fa-chart-line"></i>
+            <span class="os-number">40%</span>
+            <span class="os-label">More Bookings</span>
+          </div>
+          <div class="owner-stat">
+            <i class="fas fa-users"></i>
+            <span class="os-number">10K+</span>
+            <span class="os-label">Active Users</span>
+          </div>
+          <div class="owner-stat">
+            <i class="fas fa-clock"></i>
+            <span class="os-number">24/7</span>
+            <span class="os-label">Availability</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
+        <span>Restaurant Reservation</span>
+      </div>
+      <p>Making dining experiences seamless since 2024. Book your next unforgettable meal with us.</p>
+    </div>
+    
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="{% url 'home:home' %}">Home</a>
+        <a href="{% url 'restaurants:list' %}">Restaurants</a>
+        <a href="{% url 'accounts:login' %}">Sign In</a>
+      </div>
+      <div class="footer-col">
+        <h4>For Owners</h4>
+        <a href="{% url 'owner_verification:owner_verification' %}">Partner With Us</a>
+        <a href="{% url 'manage_restaurant:login' %}">Owner Login</a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer-bottom">
+    <p>&copy; 2024 Restaurant Reservation. All rights reserved.</p>
+  </div>
+</footer>
 {% endblock %}
 
 {% block rr_base_js %}
-   {% if restaurants %}
-  <script id="context" type="application/json">
-    {
-      "count": {{ restaurants|length }}
-    }
-  </script>
-  {% endif %}
+{% if restaurants %}
+<script id="context" type="application/json">
+  {"count": {{ restaurants|length }}}
+</script>
+{% endif %}
 <script src="{% static 'home/js/slider.js' %}"></script>
 <script src="{% static 'home/js/stars.js' %}"></script>
 <script src="{% static 'home/js/book.js' %}"></script>
+<script>
+// Date validation
+document.addEventListener('DOMContentLoaded', function() {
+  const dateInput = document.getElementById('dateInput');
+  if (dateInput) {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 90);
+    const maxDateStr = maxDate.toISOString().split('T')[0];
+    
+    dateInput.setAttribute('min', todayStr);
+    dateInput.setAttribute('max', maxDateStr);
+    dateInput.value = todayStr;
+  }
+  
+  // Intersection Observer for animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in');
+      }
+    });
+  }, observerOptions);
+  
+  document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+  
+  // Restaurant Slider
+  const slider = document.getElementById('restaurantSlider');
+  if (slider) {
+    const cards = slider.querySelectorAll('.restaurant-card');
+    const dots = document.querySelectorAll('.nav-dot');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentIndex = 0;
+    
+    function showCard(index) {
+      cards.forEach((card, i) => {
+        card.classList.toggle('active', i === index);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+      currentIndex = index;
+    }
+    
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        const newIndex = currentIndex > 0 ? currentIndex - 1 : cards.length - 1;
+        showCard(newIndex);
+      });
+    }
+    
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const newIndex = currentIndex < cards.length - 1 ? currentIndex + 1 : 0;
+        showCard(newIndex);
+      });
+    }
+    
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => showCard(i));
+    });
+    
+    // Auto-advance
+    setInterval(() => {
+      const newIndex = currentIndex < cards.length - 1 ? currentIndex + 1 : 0;
+      showCard(newIndex);
+    }, 5000);
+  }
+});
+</script>
 {% endblock %}

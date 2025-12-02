@@ -39,7 +39,7 @@ def reservation(request, restaurant_id):
                 reservation.save()
                 
                 messages.success(request, f'Reservation created! You will receive an email once a staff has confirmed your reservation.')
-                return redirect('restaurants:restaurant_detail', restaurant_id=restaurant.id)
+                return redirect('restaurants:detail', restaurant_id=restaurant.id)
             except Exception as e:
                 messages.error(request, f'An error occured during reservation: {str(e)}')
     else:
@@ -92,7 +92,7 @@ def reservation_management_view(request):
                 messages.success(request, f"Reservation at {restaurant_name} has been cancelled.")
             except Exception:
                 messages.error(request, "Failed to cancel reservation. Please try again.")
-            return redirect(f'{reverse("reservations:reservation_management")}?page={current_page}')
+            return redirect(f'{reverse("reservations:list")}?page={current_page}')
 
         # Restore reservation
         elif 'restore_reservation' in request.POST:
@@ -108,7 +108,7 @@ def reservation_management_view(request):
                     messages.warning(request, "Only cancelled reservations can be restored.")
             except Exception:
                 messages.error(request, "Failed to restore reservation. Please try again.")
-            return redirect(f'{reverse("reservations:reservation_management")}?page={current_page}')
+            return redirect(f'{reverse("reservations:list")}?page={current_page}')
 
     context = {
         'reservations': page_obj,
@@ -132,7 +132,7 @@ def edit_reservation(request, reservation_id):
             send_reservation_updated_email(updated_reservation)
             
             messages.success(request, 'Your reservation has been updated successfully. A confirmation email has been sent.')
-            return redirect('reservations:reservation_management')
+            return redirect('reservations:list')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:

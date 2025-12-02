@@ -37,7 +37,7 @@ def home_view(request):
             'guest_count': guest_count,
             'date': date,
         })
-        return redirect(f"{reverse('restaurants:restaurants')}?{query_params}")
+        return redirect(f"{reverse('restaurants:list')}?{query_params}")
     context = {
         'user': request.user if request.user.is_authenticated else None,
         'restaurants': restaurant_list,

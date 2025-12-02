@@ -1,174 +1,188 @@
 /* ================================ */
 /* NOTIFICATION SYSTEM */
+/* Uses Design Tokens for consistency */
 /* ================================ */
 
 /* Notification Container */
 .notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    max-width: 400px;
-    z-index: 1000;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    animation: slideIn 0.3s ease;
+  position: fixed;
+  top: var(--space-5);
+  right: var(--space-5);
+  max-width: 400px;
+  z-index: var(--z-overlay);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  animation: slideIn var(--duration-300) var(--ease-in-out);
 }
 
 .notification-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    background: var(--white);
-    border-left: 4px solid;
-    border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-white);
+  border-left: 4px solid;
+  border-radius: var(--radius-lg);
 }
 
-/* Notification Type Styles */
+/* Notification Type Styles - Orange-based monochrome */
 .notification-success .notification-content { 
-    border-color: var(--success); 
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
 }
 
 .notification-error .notification-content { 
-    border-color: var(--error); 
+  border-color: var(--color-error);
+  background: var(--color-error-bg);
 }
 
 .notification-warning .notification-content { 
-    border-color: var(--warning); 
+  border-color: var(--color-warning);
+  background: var(--color-warning-bg);
 }
 
 .notification-info .notification-content { 
-    border-color: var(--info); 
+  border-color: var(--color-info);
+  background: var(--color-info-bg);
 }
 
 /* Notification Icon */
 .notification-icon { 
-    flex-shrink: 0; 
+  flex-shrink: 0;
+  font-size: var(--font-xl);
 }
 
 .notification-success .notification-icon { 
-    color: var(--success); 
+  color: var(--color-success); 
 }
 
 .notification-error .notification-icon { 
-    color: var(--error); 
+  color: var(--color-error); 
 }
 
 .notification-warning .notification-icon { 
-    color: var(--warning); 
+  color: var(--color-warning); 
 }
 
 .notification-info .notification-icon { 
-    color: var(--info); 
+  color: var(--color-info); 
 }
 
 /* Notification Message */
 .notification-message {
-    flex: 1;
-    color: var(--text-primary);
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.5;
+  flex: 1;
+  color: var(--color-light-text);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-sm);
+  line-height: var(--leading-normal);
+  font-family: var(--font-primary);
 }
 
 /* Close Button */
 .notification-close {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
 }
 
 .notification-close:hover {
-    background: var(--gray-100);
-    color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-light-text);
 }
 
 .notification-close:focus {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Animations */
 @keyframes slideIn {
-    from { 
-        transform: translateX(100%); 
-        opacity: 0; 
-    }
-    to { 
-        transform: translateX(0); 
-        opacity: 1; 
-    }
+  from { 
+    transform: translateX(100%); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
 }
 
 @keyframes slideOut {
-    from { 
-        transform: translateX(0); 
-        opacity: 1; 
-    }
-    to { 
-        transform: translateX(100%); 
-        opacity: 0; 
-    }
+  from { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+  to { 
+    transform: translateX(100%); 
+    opacity: 0; 
+  }
+}
+
+.notification.closing {
+  animation: slideOut var(--duration-300) var(--ease-in-out) forwards;
 }
 
 /* Dark Theme Support */
-@media (prefers-color-scheme: dark) {
-    .notification-content {
-        background: var(--dark-bg, #1f2937);
-        color: var(--dark-text, #f9fafb);
-    }
-    
-    .notification-message {
-        color: var(--dark-text, #f9fafb);
-    }
-    
-    .notification-close {
-        color: var(--dark-text-muted, #9ca3af);
-    }
-    
-    .notification-close:hover {
-        background: var(--dark-hover, #374151);
-        color: var(--dark-text, #f9fafb);
-    }
+.notification.dark .notification-content {
+  background: var(--color-dark-surface);
+  border-radius: var(--radius-lg);
+}
+
+.notification.dark .notification-message {
+  color: var(--color-dark-text);
+}
+
+.notification.dark .notification-close {
+  color: var(--color-dark-text-tertiary);
+}
+
+.notification.dark .notification-close:hover {
+  background: var(--color-dark-surface-hover);
+  color: var(--color-dark-text);
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
-    .notification {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        max-width: none;
-    }
-    
-    .notification-content {
-        padding: 12px;
-    }
-    
-    .notification-message {
-        font-size: 13px;
-    }
+  .notification {
+    top: var(--space-3);
+    right: var(--space-3);
+    left: var(--space-3);
+    max-width: none;
+  }
+  
+  .notification-content {
+    padding: var(--space-3);
+  }
+  
+  .notification-message {
+    font-size: var(--font-xs);
+  }
 }
 
 /* Multiple Notifications Stacking */
 .notification:nth-of-type(2) {
-    top: 90px;
+  top: calc(var(--space-5) + 80px);
 }
 
 .notification:nth-of-type(3) {
-    top: 160px;
+  top: calc(var(--space-5) + 160px);
 }
 
 .notification:nth-of-type(4) {
-    top: 230px;
+  top: calc(var(--space-5) + 240px);
 }
 
 /* Ensure notifications don't stack too high */
 .notification:nth-of-type(n+5) {
-    display: none;
+  display: none;
 }

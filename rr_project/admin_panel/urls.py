@@ -1,9 +1,12 @@
 from django.urls import path
-from . import views
+from . import views, auth_views
 
 app_name = 'admin_panel'
 
 urlpatterns = [
+    path('auth/login/', auth_views.admin_login_view, name='login'),
+    path('auth/logout/', auth_views.admin_logout_view, name='logout'),
+    
     path('', views.dashboard, name='dashboard'),
     path('admins/', views.manage_admins, name='manage_admins'),
     path('owner-requests/', views.owner_verification_requests, name='owner_verification_requests'),

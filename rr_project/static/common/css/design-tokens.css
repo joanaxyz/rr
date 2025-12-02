@@ -1,114 +1,156 @@
 /* ================================ */
-/* DESIGN TOKENS - CORE VARIABLES */
+/* DESIGN TOKENS - REFINED SYSTEM */
+/* Orange, Black & White Palette   */
+/* Modern • Minimal • Striking     */
 /* ================================ */
 
 :root {
-  /* ============ COLORS ============ */
+  /* ============ CORE BRAND COLORS ============ */
   
-  /* Primary Orange Colors */
-  --color-primary: #D45310;
-  --color-primary-hover: #B34700;
-  --color-primary-light: #E65C00;
-  --color-primary-lighter: #FF6B00;
-  --color-primary-dark: #A03D00;
-  --color-primary-darker: #8A3400;
+  /* Primary Orange - Warm, inviting, appetizing */
+  --color-primary: #FF6B00;
+  --color-primary-hover: #E85D00;
+  --color-primary-light: #FF8533;
+  --color-primary-lighter: #FFA366;
+  --color-primary-dark: #CC5500;
+  --color-primary-darker: #993F00;
   
-  /* Orange Palette */
-  --color-orange-50: #FFF7ED;
-  --color-orange-100: #FFEDD5;
-  --color-orange-200: #FED7AA;
-  --color-orange-300: #FDBA74;
-  --color-orange-400: #FB923C;
-  --color-orange-500: #D45310;
-  --color-orange-600: #B34700;
-  --color-orange-700: #A03D00;
-  --color-orange-800: #8A3400;
-  --color-orange-900: #702B00;
+  /* Orange Spectrum - Refined shades */
+  --orange-50: #FFF8F2;
+  --orange-100: #FFEDD9;
+  --orange-200: #FFD9B3;
+  --orange-300: #FFC080;
+  --orange-400: #FF9933;
+  --orange-500: #FF6B00;
+  --orange-600: #E85D00;
+  --orange-700: #CC5500;
+  --orange-800: #993F00;
+  --orange-900: #662A00;
   
-  /* Neutral Colors - Black & White */
+  /* Pure Neutrals - Black to White */
+  --white: #FFFFFF;
+  --black: #000000;
+  --gray-50: #FAFAFA;
+  --gray-100: #F5F5F5;
+  --gray-200: #E5E5E5;
+  --gray-300: #D4D4D4;
+  --gray-400: #A3A3A3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --gray-950: #0A0A0A;
+  
+  /* Semantic Aliases */
   --color-white: #FFFFFF;
   --color-black: #000000;
-  --color-gray-50: #FAFAFA;
-  --color-gray-100: #F5F5F5;
-  --color-gray-200: #E5E5E5;
-  --color-gray-300: #D4D4D4;
-  --color-gray-400: #A3A3A3;
-  --color-gray-500: #737373;
-  --color-gray-600: #525252;
-  --color-gray-700: #404040;
-  --color-gray-800: #262626;
-  --color-gray-900: #171717;
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
   
-  /* Dark Theme Colors */
-  --color-dark-bg: #0A0A0A;
-  --color-dark-surface: #1A1A1A;
-  --color-dark-surface-hover: #262626;
-  --color-dark-border: rgba(212, 83, 16, 0.2);
+  /* Orange Palette Aliases (for backward compat) */
+  --color-orange-50: var(--orange-50);
+  --color-orange-100: var(--orange-100);
+  --color-orange-200: var(--orange-200);
+  --color-orange-300: var(--orange-300);
+  --color-orange-400: var(--orange-400);
+  --color-orange-500: var(--orange-500);
+  --color-orange-600: var(--orange-600);
+  --color-orange-700: var(--orange-700);
+  --color-orange-800: var(--orange-800);
+  --color-orange-900: var(--orange-900);
+  
+  /* ============ SURFACE COLORS ============ */
+  
+  /* Dark Mode Surfaces */
+  --color-dark-bg: #000000;
+  --color-dark-surface: #0A0A0A;
+  --color-dark-surface-hover: #171717;
+  --color-dark-surface-elevated: #1F1F1F;
+  --color-dark-border: rgba(255, 107, 0, 0.12);
+  --color-dark-border-strong: rgba(255, 107, 0, 0.25);
   --color-dark-text: rgba(255, 255, 255, 0.95);
   --color-dark-text-secondary: rgba(255, 255, 255, 0.7);
   --color-dark-text-tertiary: rgba(255, 255, 255, 0.5);
   
-  /* Light Theme Colors */
+  /* Light Mode Surfaces */
   --color-light-bg: #FFFFFF;
   --color-light-surface: #FAFAFA;
-  --color-light-border: rgba(0, 0, 0, 0.1);
-  --color-light-text: rgba(0, 0, 0, 0.9);
-  --color-light-text-secondary: rgba(0, 0, 0, 0.65);
-  --color-light-text-tertiary: rgba(0, 0, 0, 0.45);
+  --color-light-surface-elevated: #F5F5F5;
+  --color-light-border: rgba(0, 0, 0, 0.06);
+  --color-light-border-strong: rgba(0, 0, 0, 0.12);
+  --color-light-text: #171717;
+  --color-light-text-secondary: #525252;
+  --color-light-text-tertiary: #737373;
   
-  /* Status Colors - Orange variants */
-  --color-success: #E65C00;
-  --color-success-bg: #FFF7ED;
-  --color-success-text: #A03D00;
+  /* ============ STATUS COLORS ============ */
   
-  --color-error: #D45310;
-  --color-error-bg: #FFF7ED;
-  --color-error-text: #A03D00;
-  --color-error-border: #FED7AA;
+  /* Using orange spectrum for status */
+  --color-success: #FF6B00;
+  --color-success-bg: #FFF8F2;
+  --color-success-text: #993F00;
+  --color-success-border: #FFD9B3;
   
-  --color-warning: #FF6B00;
-  --color-warning-bg: #FFF7ED;
-  --color-warning-text: #A03D00;
+  --color-error: #CC5500;
+  --color-error-bg: #FFF8F2;
+  --color-error-text: #662A00;
+  --color-error-border: #FFC080;
   
-  --color-info: #D45310;
-  --color-info-bg: #FFF7ED;
-  --color-info-text: #A03D00;
+  --color-warning: #FF8533;
+  --color-warning-bg: #FFF8F2;
+  --color-warning-text: #993F00;
+  --color-warning-border: #FFEDD9;
   
-  /* Table States */
-  --table-available: #E65C00;
-  --table-reserved: #A03D00;
-  --table-selected: #D45310;
-  --table-hover: #FF6B00;
+  --color-info: #FF9933;
+  --color-info-bg: #FFF8F2;
+  --color-info-text: #993F00;
+  --color-info-border: #FFD9B3;
   
-  /* Semantic Color Aliases */
-  --primary-red: #D45310;
-  --primary-red-dark: #B34700;
-  --text-primary: rgba(0, 0, 0, 0.9);
-  --text-secondary: rgba(0, 0, 0, 0.65);
-  --text-tertiary: rgba(0, 0, 0, 0.45);
-  --cream: #FFF7ED;
-  --success: #E65C00;
-  --info: #D45310;
-  --white: #FFFFFF;
+  /* Table/Reservation States */
+  --table-available: #FF6B00;
+  --table-reserved: #CC5500;
+  --table-selected: #FF8533;
+  --table-hover: #FFA366;
+  
+  /* Legacy Aliases */
+  --primary-red: var(--color-primary);
+  --primary-red-dark: var(--color-primary-hover);
+  --text-primary: #171717;
+  --text-secondary: #525252;
+  --text-tertiary: #737373;
+  --cream: #FFF8F2;
+  --success: var(--color-success);
+  --info: var(--color-info);
   
   /* ============ TYPOGRAPHY ============ */
   
-  /* Font Families */
-  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  --font-brand: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-accent: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Font Families - Using Outfit for modern feel */
+  --font-primary: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-brand: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-accent: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
   /* Font Sizes */
-  --font-xs: 0.75rem;    /* 12px */
-  --font-sm: 0.875rem;   /* 14px */
-  --font-base: 1rem;     /* 16px */
-  --font-lg: 1.125rem;   /* 18px */
-  --font-xl: 1.25rem;    /* 20px */
-  --font-2xl: 1.5rem;    /* 24px */
-  --font-3xl: 1.875rem;  /* 30px */
-  --font-4xl: 2.25rem;   /* 36px */
-  --font-5xl: 3rem;      /* 48px */
-  --font-6xl: 4rem;      /* 64px */
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+  --font-4xl: 2.25rem;
+  --font-5xl: 3rem;
+  --font-6xl: 3.75rem;
+  --font-7xl: 4.5rem;
+  --font-8xl: 6rem;
   
   /* Font Weights */
   --font-weight-light: 300;
@@ -137,55 +179,68 @@
   
   /* ============ SPACING ============ */
   
-  --space-1: 0.25rem;   /* 4px */
-  --space-2: 0.5rem;    /* 8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-7: 1.75rem;   /* 28px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-14: 3.5rem;   /* 56px */
-  --space-16: 4rem;     /* 64px */
-  --space-20: 5rem;     /* 80px */
-  --space-24: 6rem;     /* 96px */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-28: 7rem;
+  --space-32: 8rem;
+  --space-40: 10rem;
   
   /* ============ BORDERS & RADIUS ============ */
   
-  /* Border Radius */
-  --radius-sm: 0.25rem;    /* 4px */
-  --radius-base: 0.5rem;   /* 8px */
-  --radius-md: 0.75rem;    /* 12px */
-  --radius-lg: 1rem;       /* 16px */
-  --radius-xl: 1.5rem;     /* 24px */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;
+  --radius-base: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
   --radius-full: 9999px;
   
-  /* Border Radius Aliases (backward compatibility) */
+  /* Legacy Aliases */
   --border-radius: var(--radius-base);
   --border-radius-lg: var(--radius-lg);
   --border-radius-xl: var(--radius-xl);
   
-  /* Border Widths */
   --border-1: 1px;
   --border-2: 2px;
   --border-4: 4px;
   
   /* ============ SHADOWS ============ */
   
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+  /* Subtle shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-base: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12), 0 12px 24px rgba(0, 0, 0, 0.06);
+  --shadow-2xl: 0 32px 64px rgba(0, 0, 0, 0.15), 0 16px 32px rgba(0, 0, 0, 0.08);
   
-  /* Brand Specific Shadows */
-  --shadow-primary: 0 4px 20px rgba(212, 83, 16, 0.25);
-  --shadow-primary-lg: 0 10px 40px rgba(212, 83, 16, 0.35);
-  --shadow-orange: 0 4px 16px rgba(179, 71, 0, 0.3);
-  --shadow-orange-lg: 0 8px 30px rgba(179, 71, 0, 0.4);
+  /* Orange Glow Shadows */
+  --shadow-primary: 0 4px 14px rgba(255, 107, 0, 0.25);
+  --shadow-primary-lg: 0 8px 28px rgba(255, 107, 0, 0.35);
+  --shadow-primary-glow: 0 0 40px rgba(255, 107, 0, 0.2);
+  --shadow-orange: 0 4px 20px rgba(255, 107, 0, 0.3);
+  --shadow-orange-lg: 0 8px 40px rgba(255, 107, 0, 0.4);
+  
+  /* Card shadows */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.06);
+  --shadow-card-dark: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 107, 0, 0.08);
   
   /* ============ TRANSITIONS ============ */
   
@@ -193,10 +248,13 @@
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
   --transition-slower: 0.4s ease;
+  --transition-smooth: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* Easing Functions */
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
   /* ============ Z-INDEX ============ */
   
@@ -214,30 +272,43 @@
   /* ============ GRADIENTS ============ */
   
   /* Primary Gradients */
-  --gradient-primary: linear-gradient(135deg, #D45310 0%, #B34700 50%, #A03D00 100%);
-  --gradient-primary-reverse: linear-gradient(135deg, #A03D00 0%, #B34700 50%, #D45310 100%);
-  --gradient-primary-subtle: linear-gradient(135deg, #FF6B00 0%, #E65C00 100%);
+  --gradient-primary: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+  --gradient-primary-reverse: linear-gradient(135deg, #FF8533 0%, #FF6B00 100%);
+  --gradient-primary-vivid: linear-gradient(135deg, #FF8533 0%, #FF6B00 50%, #E85D00 100%);
+  --gradient-primary-dark: linear-gradient(135deg, #E85D00 0%, #CC5500 100%);
   
   /* Surface Gradients */
-  --gradient-surface-light: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
-  --gradient-surface-dark: linear-gradient(135deg, #000000 0%, #171717 100%);
-  --gradient-surface-orange: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+  --gradient-surface-light: linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%);
+  --gradient-surface-dark: linear-gradient(180deg, #000000 0%, #0A0A0A 100%);
+  --gradient-surface-warm: linear-gradient(135deg, #FFF8F2 0%, #FFEDD9 100%);
+  
+  /* Dark Mode Gradients */
+  --gradient-dark-surface: linear-gradient(180deg, #000000 0%, #0A0A0A 100%);
+  --gradient-dark-card: linear-gradient(145deg, #0A0A0A 0%, #171717 100%);
+  --gradient-dark-elevated: linear-gradient(145deg, #171717 0%, #1F1F1F 100%);
   
   /* Text Gradients */
-  --gradient-text-light: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
-  --gradient-text-primary: linear-gradient(135deg, #D45310 0%, #E65C00 100%);
-  --gradient-text-dark: linear-gradient(135deg, #000000 0%, #404040 100%);
+  --gradient-text-light: linear-gradient(135deg, #FFFFFF 0%, rgba(255, 255, 255, 0.9) 100%);
+  --gradient-text-primary: linear-gradient(135deg, #FF6B00 0%, #FF9933 100%);
+  --gradient-text-dark: linear-gradient(135deg, #171717 0%, #404040 100%);
+  
+  /* Hero/Background Gradients */
+  --gradient-hero: linear-gradient(135deg, #000000 0%, #0A0A0A 50%, #171717 100%);
+  --gradient-hero-overlay: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%);
+  --gradient-mesh: radial-gradient(at 40% 20%, rgba(255, 107, 0, 0.15) 0px, transparent 50%),
+                   radial-gradient(at 80% 0%, rgba(255, 133, 51, 0.1) 0px, transparent 50%),
+                   radial-gradient(at 0% 50%, rgba(255, 107, 0, 0.08) 0px, transparent 50%);
   
   /* ============ BACKDROP FILTERS ============ */
   
   --backdrop-blur-sm: blur(4px);
   --backdrop-blur-base: blur(8px);
   --backdrop-blur-md: blur(12px);
-  --backdrop-blur-lg: blur(16px);
+  --backdrop-blur-lg: blur(20px);
+  --backdrop-blur-xl: blur(40px);
   
-  /* ============ ANIMATIONS ============ */
+  /* ============ ANIMATION DURATIONS ============ */
   
-  /* Animation Durations */
   --duration-75: 75ms;
   --duration-100: 100ms;
   --duration-150: 150ms;
@@ -249,11 +320,10 @@
 }
 
 /* ============ RESPONSIVE BREAKPOINTS ============ */
-/* These are referenced in media queries throughout the system */
-
 /* 
 Mobile: 0-480px
 Tablet: 481-768px  
 Desktop Small: 769-1024px
-Desktop: 1025px+
+Desktop: 1025-1280px
+Desktop Large: 1281px+
 */

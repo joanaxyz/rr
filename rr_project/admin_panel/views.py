@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Count, Q, Avg
 from django.core.paginator import Paginator
@@ -8,12 +7,10 @@ from owner_verification.models import OwnerVerificationRequest
 from restaurants.models import RestaurantCreationRequest, Restaurant, Cuisine, Tags, Review
 from reservations.models import Reservation
 from django.contrib.auth.hashers import make_password
+from .decorators import admin_login_required
 
-def is_staff(user):
-    return user.is_staff
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def dashboard(request):
     pending_owner_requests = OwnerVerificationRequest.objects.filter(state='PENDING').count()
     pending_restaurant_requests = RestaurantCreationRequest.objects.filter(status='PENDING').count()
@@ -40,8 +37,7 @@ def dashboard(request):
     }
     return render(request, 'admin_panel/dashboard.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def manage_admins(request):
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -82,8 +78,7 @@ def manage_admins(request):
     }
     return render(request, 'admin_panel/manage_admins.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def owner_verification_requests(request):
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -122,8 +117,7 @@ def owner_verification_requests(request):
     }
     return render(request, 'admin_panel/owner_verification_requests.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def restaurant_creation_requests(request):
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -183,8 +177,7 @@ def restaurant_creation_requests(request):
     return render(request, 'admin_panel/restaurant_creation_requests.html', context)
 
 # User Management CRUD
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def users(request):
     search = request.GET.get('search', '')
     role = request.GET.get('role', '')
@@ -214,8 +207,7 @@ def users(request):
     }
     return render(request, 'admin_panel/users.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def user_detail(request, user_id):
     user = get_object_or_404(User, id=user_id)
     context = {
@@ -225,8 +217,7 @@ def user_detail(request, user_id):
     }
     return render(request, 'admin_panel/user_detail.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def user_create(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -262,8 +253,7 @@ def user_create(request):
     }
     return render(request, 'admin_panel/user_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def user_edit(request, user_id):
     user = get_object_or_404(User, id=user_id)
     
@@ -292,8 +282,7 @@ def user_edit(request, user_id):
     }
     return render(request, 'admin_panel/user_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def user_delete(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -304,8 +293,7 @@ def user_delete(request, user_id):
     return redirect('admin_panel:user_detail', user_id=user_id)
 
 # Restaurant Management CRUD
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def restaurants(request):
     search = request.GET.get('search', '')
     restaurants_list = Restaurant.objects.all()
@@ -329,8 +317,7 @@ def restaurants(request):
     }
     return render(request, 'admin_panel/restaurants.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def restaurant_detail(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     context = {
@@ -340,8 +327,7 @@ def restaurant_detail(request, restaurant_id):
     }
     return render(request, 'admin_panel/restaurant_detail.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def restaurant_create(request):
     owners = Owner.objects.all()
     
@@ -381,8 +367,7 @@ def restaurant_create(request):
     }
     return render(request, 'admin_panel/restaurant_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def restaurant_edit(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     owners = Owner.objects.all()
@@ -422,8 +407,7 @@ def restaurant_edit(request, restaurant_id):
     }
     return render(request, 'admin_panel/restaurant_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def restaurant_delete(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     if request.method == 'POST':
@@ -434,8 +418,7 @@ def restaurant_delete(request, restaurant_id):
     return redirect('admin_panel:restaurant_detail', restaurant_id=restaurant_id)
 
 # Reservation Management CRUD
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def reservations(request):
     search = request.GET.get('search', '')
     status = request.GET.get('status', '')
@@ -464,8 +447,7 @@ def reservations(request):
     }
     return render(request, 'admin_panel/reservations.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def reservation_detail(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
     context = {
@@ -475,8 +457,7 @@ def reservation_detail(request, reservation_id):
     }
     return render(request, 'admin_panel/reservation_detail.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def reservation_create(request):
     restaurants = Restaurant.objects.all()
     customers = Customer.objects.all()
@@ -512,8 +493,7 @@ def reservation_create(request):
     }
     return render(request, 'admin_panel/reservation_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def reservation_edit(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
     restaurants = Restaurant.objects.all()
@@ -547,8 +527,7 @@ def reservation_edit(request, reservation_id):
     }
     return render(request, 'admin_panel/reservation_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def reservation_delete(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
     if request.method == 'POST':
@@ -558,8 +537,7 @@ def reservation_delete(request, reservation_id):
     return redirect('admin_panel:reservation_detail', reservation_id=reservation_id)
 
 # Review Management CRUD
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def reviews(request):
     search = request.GET.get('search', '')
     reviews_list = Review.objects.all()
@@ -583,8 +561,7 @@ def reviews(request):
     }
     return render(request, 'admin_panel/reviews.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def review_detail(request, review_id):
     review = get_object_or_404(Review, id=review_id)
     context = {
@@ -594,8 +571,7 @@ def review_detail(request, review_id):
     }
     return render(request, 'admin_panel/review_detail.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def review_create(request):
     restaurants = Restaurant.objects.all()
     customers = Customer.objects.all()
@@ -626,8 +602,7 @@ def review_create(request):
     }
     return render(request, 'admin_panel/review_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def review_edit(request, review_id):
     review = get_object_or_404(Review, id=review_id)
     restaurants = Restaurant.objects.all()
@@ -656,8 +631,7 @@ def review_edit(request, review_id):
     }
     return render(request, 'admin_panel/review_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def review_delete(request, review_id):
     review = get_object_or_404(Review, id=review_id)
     if request.method == 'POST':
@@ -667,8 +641,7 @@ def review_delete(request, review_id):
     return redirect('admin_panel:review_detail', review_id=review_id)
 
 # Cuisine Management CRUD
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def cuisines(request):
     search = request.GET.get('search', '')
     cuisines_list = Cuisine.objects.all()
@@ -688,8 +661,7 @@ def cuisines(request):
     }
     return render(request, 'admin_panel/cuisines.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def cuisine_create(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -706,8 +678,7 @@ def cuisine_create(request):
     }
     return render(request, 'admin_panel/cuisine_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def cuisine_edit(request, cuisine_id):
     cuisine = get_object_or_404(Cuisine, id=cuisine_id)
     
@@ -724,8 +695,7 @@ def cuisine_edit(request, cuisine_id):
     }
     return render(request, 'admin_panel/cuisine_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def cuisine_delete(request, cuisine_id):
     cuisine = get_object_or_404(Cuisine, id=cuisine_id)
     if request.method == 'POST':
@@ -736,8 +706,7 @@ def cuisine_delete(request, cuisine_id):
     return redirect('admin_panel:cuisines')
 
 # Tag Management CRUD
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def tags(request):
     search = request.GET.get('search', '')
     tags_list = Tags.objects.all()
@@ -757,8 +726,7 @@ def tags(request):
     }
     return render(request, 'admin_panel/tags.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def tag_create(request):
     if request.method == 'POST':
         tag = request.POST.get('tag')
@@ -775,8 +743,7 @@ def tag_create(request):
     }
     return render(request, 'admin_panel/tag_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def tag_edit(request, tag_id):
     tag = get_object_or_404(Tags, id=tag_id)
     
@@ -793,8 +760,7 @@ def tag_edit(request, tag_id):
     }
     return render(request, 'admin_panel/tag_form.html', context)
 
-@login_required
-@user_passes_test(is_staff)
+@admin_login_required
 def tag_delete(request, tag_id):
     tag = get_object_or_404(Tags, id=tag_id)
     if request.method == 'POST':

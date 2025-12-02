@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Restaurant Management{% endblock %} | Restaurant Reservation</title>
+  
+  <!-- Fonts - Outfit: Modern, clean, premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Design System -->
+  <link rel="stylesheet" href="{% static 'common/css/design-tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/components.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/messagebox.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/spinner.css' %}">
+  <link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_base.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="manage-sidebar" id="manageSidebar">
+    <div class="manage-brand">
+      <img src="{% static 'common/images/cloche.png' %}" alt="Logo" class="brand-logo">
+      <div class="brand-text">
+        <span class="brand-title">RESTAURANT</span>
+        <span class="brand-subtitle">MANAGEMENT</span>
+      </div>
+    </div>
+    
+    <nav class="manage-nav">
+      <!-- Restaurants Section -->
+      <div class="nav-section">
+        <div class="nav-section-title">Restaurants</div>
+        <a href="{% url 'manage_restaurant:list' %}" class="nav-link {% if request.resolver_match.url_name == 'list' %}active{% endif %}">
+          <i class="fas fa-store"></i>
+          <span>My Restaurants</span>
+        </a>
+        {% if user.role == 'OWNER' %}
+        <a href="{% url 'manage_restaurant:create' %}" class="nav-link {% if request.resolver_match.url_name == 'create' %}active{% endif %}">
+          <i class="fas fa-plus-circle"></i>
+          <span>Create Restaurant</span>
+        </a>
+        {% endif %}
+      </div>
+
+      {% with restaurant_id=request.resolver_match.kwargs.restaurant_id|default:'' %}
+      {% if restaurant_id %}
+      <!-- Current Restaurant Management -->
+      <div class="nav-section">
+        <div class="nav-section-title">Current Restaurant</div>
+        <a href="{% url 'manage_restaurant:dashboard' restaurant_id %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="{% url 'manage_restaurant:reservations' restaurant_id %}" class="nav-link {% if request.resolver_match.url_name == 'reservations' %}active{% endif %}">
+          <i class="fas fa-calendar-check"></i>
+          <span>Reservations</span>
+        </a>
+        {% if user.role == 'OWNER' or user.role == 'MANAGER' %}
+        <a href="{% url 'manage_restaurant:tables' restaurant_id %}" class="nav-link {% if request.resolver_match.url_name == 'tables' %}active{% endif %}">
+          <i class="fas fa-table"></i>
+          <span>Tables & Floor Plan</span>
+        </a>
+        <a href="{% url 'manage_restaurant:staffs' restaurant_id %}" class="nav-link {% if request.resolver_match.url_name == 'staffs' %}active{% endif %}">
+          <i class="fas fa-users"></i>
+          <span>Staff Members</span>
+        </a>
+        {% endif %}
+        {% if user.role == 'OWNER' %}
+        <a href="{% url 'manage_restaurant:details' restaurant_id %}" class="nav-link {% if request.resolver_match.url_name == 'details' %}active{% endif %}">
+          <i class="fas fa-info-circle"></i>
+          <span>Restaurant Details</span>
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Top Bar -->
+  <header class="manage-topbar">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="topbar-title">{% block page_title %}Restaurant Management{% endblock %}</div>
+    <div class="topbar-actions">
+      {% if user.is_authenticated %}
+      <div id="userProfile" class="user-profile">
+        <div class="profile-icon">
+          {% if user.profile_image %}
+            <img src="{{ user.profile_image }}" alt="Profile" class="profile-image">
+          {% else %}
+            <div class="user-avatar">{{ user.email|first|upper }}</div>
+          {% endif %}
+        </div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="dropdown-header">
+            <div class="user-name">{{ user.get_full_name|default:user.email }}</div>
+            <div class="user-role">{{ user.role|title }}</div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'accounts:profile' %}" class="dropdown-item">
+            <i class="fas fa-user"></i>
+            <span>My Profile</span>
+          </a>
+          <button type="button" class="dropdown-item" id="btnLogout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="manage-main">
+    <div class="manage-container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+            <div>{{ message }}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block manage_content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p class="loading-text" id="loadingText">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Message Box -->
+  <div class="messagebox-overlay">
+    <div class="messagebox">
+      <div class="messagebox-title" id="msgbx_title">Title Here</div>
+      <div class="messagebox-message" id="msgbx_body">Your message goes here.</div>
+      <div class="messagebox-buttons">
+        <button class="messagebox-btn" id="msgbx_btn">Cancel</button>
+        <button class="messagebox-btn messagebox-btn-primary" id="msgbx_btn_primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  {% if messages %}
+  <script id="djangoMessages" type="application/json">
+    [
+      {% for message in messages %}
+      {
+        "level": {{ message.level }},
+        "text": "{{ message|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  </script>
+  {% endif %}
+  <script src="{% static 'common/js/MessageBox.js' %}"></script>
+  <script src="{% static 'common/js/LoadingOverlay.js' %}"></script>
+  <script src="{% static 'common/js/APIClient.js' %}"></script>
+  <script src="{% static 'common/js/MessageNotification.js' %}"></script>
+  <script src="{% static 'common/js/SubmitStyling.js' %}"></script>
+  <script>
+    // Logout functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const btnLogout = document.getElementById('btnLogout');
+      if (btnLogout) {
+        btnLogout.addEventListener('click', function() {
+          window.location.href = "{% url 'manage_restaurant:logout' %}";
+        });
+      }
+      
+      // Mobile menu toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('manageSidebar');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+          const icon = this.querySelector('i');
+          if (sidebar.classList.contains('mobile-open')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+          } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+          }
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!sidebar.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+            sidebar.classList.remove('mobile-open');
+            const icon = mobileMenuToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+          }
+        });
+      }
+      
+      // Profile dropdown
+      const userProfile = document.getElementById('userProfile');
+      const profileDropdown = document.getElementById('profileDropdown');
+      
+      if (userProfile && profileDropdown) {
+        userProfile.addEventListener('click', function(event) {
+          event.stopPropagation();
+          profileDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!userProfile.contains(event.target)) {
+            profileDropdown.classList.remove('show');
+          }
+        });
+      }
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+

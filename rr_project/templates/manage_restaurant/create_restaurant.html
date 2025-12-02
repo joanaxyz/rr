@@ -1,15 +1,14 @@
-{% extends "common/rr_base.html" %}
+{% extends "manage_restaurant/manage_base.html" %}
 {% load static %}
 
-{% block rr_base_css %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_details.css' %}">
 <link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
 {% endblock %}
 
-{% block rr_base_content %}
+{% block page_title %}Request New Restaurant{% endblock %}
+
+{% block manage_content %}
 <!-- Management Header -->
 <div class="manage-header">
     <div class="header-content">
@@ -249,7 +248,7 @@
 </div>
 {% endblock %}
 
-{% block rr_base_js %}
+{% block extra_js %}
 <script src="{% static 'common/js/Notifications.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

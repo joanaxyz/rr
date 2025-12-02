@@ -237,9 +237,9 @@ body {
 
 .window {
   position: absolute;
-  background: rgba(59, 130, 246, 0.1);
-  border: 2px solid var(--info);
-  color: var(--info);
+  background: rgba(232, 93, 4, 0.1);
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -409,9 +409,9 @@ body {
 
 .selected-table-display {
   padding: 1.25rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(135deg, var(--color-orange-50) 0%, var(--color-orange-100) 100%);
   border-radius: var(--border-radius);
-  border: 2px solid #bae6fd;
+  border: 2px solid var(--color-orange-200);
 }
 
 .table-selection-status {

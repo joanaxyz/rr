@@ -41,7 +41,7 @@
           <td data-label="#">{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
           <td data-label="Restaurant">
             {% if reservation.restaurant %}
-              <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
+              <a href="{% url 'restaurants:detail' reservation.restaurant.id %}">
                 {{ reservation.restaurant.name }}
               </a>
             {% else %}

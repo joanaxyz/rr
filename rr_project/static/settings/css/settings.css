@@ -263,7 +263,7 @@
 }
 
 .file-preview-remove {
-    color: var(--color-danger);
+    color: var(--color-orange-800);
     cursor: pointer;
     transition: all var(--transition-base);
 }
@@ -501,8 +501,8 @@
 }
 
 .verification-status.rejected {
-    background: rgba(239, 68, 68, 0.1);
-    border-left: 4px solid #ef4444;
+    background: var(--color-error-bg);
+    border-left: 4px solid var(--color-orange-800);
 }
 
 .status-icon {
@@ -521,7 +521,7 @@
 }
 
 .verification-status.rejected .status-icon {
-    color: #ef4444;
+    color: var(--color-orange-800);
 }
 
 @keyframes pulse {
@@ -1080,19 +1080,19 @@
 }
 
 .alert-error {
-    background: rgba(239, 71, 111, 0.1);
-    color: var(--color-danger);
-    border: 1px solid rgba(239, 71, 111, 0.3);
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
+    border: 1px solid var(--color-error-border);
 }
 
 .alert-error i {
-    color: var(--color-danger);
+    color: var(--color-error);
 }
 
 .alert-success {
-    background: rgba(6, 214, 160, 0.1);
-    color: var(--color-success);
-    border: 1px solid rgba(6, 214, 160, 0.3);
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+    border: 1px solid var(--color-success-border);
 }
 
 .alert-success i {
@@ -1105,8 +1105,8 @@
 
 /* Form-level error container */
 .form-errors {
-    background: rgba(239, 71, 111, 0.1);
-    border: 1px solid rgba(239, 71, 111, 0.3);
+    background: var(--color-error-bg);
+    border: 1px solid var(--color-error-border);
     border-radius: var(--radius-md);
     padding: var(--space-4);
     margin-bottom: var(--space-4);
@@ -1127,7 +1127,7 @@
 }
 
 .form-errors-list li {
-    color: var(--color-danger);
+    color: var(--color-error-text);
     font-size: var(--font-sm);
     display: flex;
     align-items: center;
@@ -1143,7 +1143,7 @@
 /* Field-level error styling */
 .field-error {
     display: block;
-    color: var(--color-danger);
+    color: var(--color-error-text);
     font-size: var(--font-sm);
     margin-top: 0.25rem;
     min-height: 1.2rem;
@@ -1168,16 +1168,16 @@
 input.error,
 textarea.error,
 select.error {
-    border-color: var(--color-danger) !important;
-    background-color: rgba(239, 71, 111, 0.05);
+    border-color: var(--color-error) !important;
+    background-color: var(--color-error-bg);
 }
 
 input.error:focus,
 textarea.error:focus,
 select.error:focus {
     outline: none;
-    border-color: var(--color-danger);
-    box-shadow: 0 0 0 3px rgba(239, 71, 111, 0.1);
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px rgba(232, 93, 4, 0.15);
 }
 
 /* ============================================================================
@@ -1217,34 +1217,34 @@ select.error:focus {
 
 /* Role-based status badges */
 .status-badge.role-customer {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
+    background: var(--color-orange-100);
+    color: var(--color-orange-600);
 }
 
 .status-badge.role-owner {
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
+    background: var(--color-orange-200);
+    color: var(--color-orange-700);
 }
 
 .status-badge.role-admin {
-    background: rgba(168, 85, 247, 0.1);
-    color: #a855f7;
+    background: var(--color-orange-50);
+    color: var(--color-orange-800);
 }
 
 .status-badge.role-verified {
-    background: rgba(6, 214, 160, 0.15);
-    color: var(--color-success);
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
 }
 
 .status-badge.role-pending {
-    background: rgba(255, 165, 0, 0.15);
-    color: var(--color-warning);
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
     animation: pulse 2s infinite;
 }
 
 .status-badge.role-rejected {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
 }
 
 /* User Status Badge */
@@ -1265,18 +1265,18 @@ select.error:focus {
 }
 
 .status-badge.role-host {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
+    background: var(--color-orange-100);
+    color: var(--color-orange-600);
 }
 
 .status-badge.role-manager {
-    background: rgba(8, 145, 178, 0.1);
-    color: #0891b2;
+    background: var(--color-orange-200);
+    color: var(--color-orange-700);
 }
 
 .status-badge.role-active {
-    background: rgba(6, 214, 160, 0.15);
-    color: var(--color-success);
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
 }
 
 /* ============================================================================

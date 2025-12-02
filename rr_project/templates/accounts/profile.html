@@ -70,7 +70,7 @@
                             {% endif %}
                             <div class="restaurant-card-content">
                                 <h3 class="restaurant-card-name">
-                                    <a href="{% url 'restaurants:restaurant_detail' restaurant.id %}">{{ restaurant.name }}</a>
+                                    <a href="{% url 'restaurants:detail' restaurant.id %}">{{ restaurant.name }}</a>
                                 </h3>
                                 <div class="restaurant-card-rating">
                                     <div class="stars" data-rating="{{ restaurant.avg_rating|default:0 }}"></div>
@@ -81,7 +81,7 @@
                                     <span>{{ restaurant.full_address }}</span>
                                 </div>
                                 <div class="restaurant-card-actions">
-                                    <a href="{% url 'restaurants:restaurant_detail' restaurant.id %}" class="view-btn">
+                                    <a href="{% url 'restaurants:detail' restaurant.id %}" class="view-btn">
                                         View Details
                                     </a>
                                 </div>
@@ -94,7 +94,7 @@
                     <i class="fas fa-bookmark"></i>
                     <h3>No bookmarked restaurants</h3>
                     <p>Start exploring restaurants and bookmark your favorites!</p>
-                    <a href="{% url 'restaurants:restaurants' %}" class="explore-btn">Explore Restaurants</a>
+                    <a href="{% url 'restaurants:list' %}" class="explore-btn">Explore Restaurants</a>
                 </div>
             {% endif %}
         </section>
@@ -115,7 +115,7 @@
                         <div class="review-item">
                             <div class="review-restaurant">
                                 <h3>
-                                    <a href="{% url 'restaurants:restaurant_detail' review.restaurant.id %}">
+                                    <a href="{% url 'restaurants:detail' review.restaurant.id %}">
                                         {{ review.restaurant.name }}
                                     </a>
                                 </h3>
@@ -133,7 +133,7 @@
                     <i class="fas fa-star"></i>
                     <h3>No reviews yet</h3>
                     <p>Share your dining experiences by leaving reviews!</p>
-                    <a href="{% url 'restaurants:restaurants' %}" class="explore-btn">Explore Restaurants</a>
+                    <a href="{% url 'restaurants:list' %}" class="explore-btn">Explore Restaurants</a>
                 </div>
             {% endif %}
         </section>

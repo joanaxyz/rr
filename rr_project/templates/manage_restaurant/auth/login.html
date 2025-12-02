@@ -25,9 +25,6 @@
   <p class="auth_link">
     Don't have an account? <a href="{% url 'manage_restaurant:register' %}">Register as Owner</a>
   </p>
-  <p class="auth_link_secondary">
-    <a href="{% url 'accounts:login' %}">Customer Sign In</a> | <a href="{% url 'admin_panel:dashboard' %}">Admin Portal</a>
-  </p>
 {% endblock %}
 
 {% block auth_js %}
