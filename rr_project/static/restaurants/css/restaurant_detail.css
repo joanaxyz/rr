@@ -19,23 +19,10 @@ body {
 
 /* Restaurant Header */
 .restaurant-header {
-  background: var(--color-gray-300);
-  background-size: cover;
-  filter: brightness(1.3) saturate(1.4) contrast(1.2);
+  background: linear-gradient(135deg, var(--color-white) 0%, var(--color-gray-50) 100%);
   box-shadow: var(--shadow-sm);
   margin-bottom: 2rem;
   position: relative;
-}
-
-.restaurant-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(1px);
 }
 
 .header-content {
@@ -796,13 +783,51 @@ body {
 }
 
 @media (max-width: 768px) {
-  .reservation-container,
-  .header-content {
+  .reservation-container {
+    flex-direction: column;
     padding: 0 1rem;
   }
   
+  .header-content {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+  
+  .restaurant-hero {
+    margin-bottom: 1rem;
+  }
+  
+  .restaurant-info {
+    padding: 0;
+  }
+  
   .restaurant-name {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+  
+  .info-container {
+    flex-direction: column;
+  }
+  
+  .bookmark-button-detail {
+    width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .reservation-main {
+    width: 100%;
+  }
+  
+  .reservation-sidebar {
+    width: 100%;
+    position: static;
+    margin-top: 2rem;
+  }
+  
+  .reservation-button-card {
+    position: static;
   }
   
   .form-row {
@@ -820,23 +845,96 @@ body {
   .table {
     transform: scale(0.8);
   }
+  
+  .review-form-container {
+    padding: 1rem;
+  }
+  
+  .star-rating-widget {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .stars-input {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
   .restaurant-section,
-  .table-section,
-  .reviews-section,
-  .reservation-form-card {
-    padding: 1.5rem;
+  .reviews-section {
+    padding: 1rem;
   }
   
   .restaurant-name {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  
+  .header-content {
+    padding: 1rem;
+  }
+  
+  .restaurant-details {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .cuisine-info {
+    flex-wrap: wrap;
+  }
+  
+  .reservation-container {
+    padding: 0 0.5rem;
+  }
+  
+  .reservation-main,
+  .reservation-sidebar {
+    padding: 1rem;
+  }
+  
+  .review-form-container {
+    padding: 0.75rem;
+  }
+  
+  .review-form-container h3 {
+    font-size: 1rem;
+  }
+  
+  .stars-input {
+    font-size: 1.25rem;
+    gap: 1px;
+  }
+  
+  .stars-input .star {
+    font-size: 1.25rem;
+  }
+  
+  .rating-text {
+    font-size: 0.85rem;
+    min-width: auto;
+  }
+  
+  .review-form-container button[type="submit"] {
+    width: 100%;
+    padding: 0.625rem 1rem;
+  }
+  
+  .review-card {
+    padding: 1rem;
   }
   
   .floor-legend {
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.75rem;
+  }
+  
+  .bookmark-button-detail {
+    width: 36px;
+    height: 36px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -904,7 +1002,7 @@ body {
 .review-stars svg {
   width: 20px;
   height: 20px;
-  color: var(--color-black);
+  color: var(--color-orange, #ff6b00);
   flex-shrink: 0;
 }
 
@@ -918,4 +1016,134 @@ body {
 .operating-days {
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+/* ============ BOOKMARK BUTTON STYLES ============ */
+
+.bookmark-button-detail {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-orange, #ff6b00);
+  padding: 0.75rem;
+  border: 2px solid var(--color-orange, #ff6b00);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1.2rem;
+}
+
+.bookmark-button-detail.bookmarked {
+  color: var(--color-orange, #ff6b00);
+  border-color: var(--color-orange, #ff6b00);
+}
+
+.bookmark-button-detail:hover {
+  background: var(--color-orange, #ff6b00);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-orange, 0 4px 12px rgba(255, 107, 0, 0.4));
+}
+
+.bookmark-button-detail i {
+  pointer-events: none;
+}
+
+/* ============ STAR RATING WIDGET STYLES ============ */
+
+.star-rating-widget {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.stars-input {
+  display: flex;
+  gap: 2px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.stars-input .star {
+  color: #ddd;
+  opacity: 0.3;
+  transition: all 0.2s ease;
+  user-select: none;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.stars-input .star:hover {
+  transform: scale(1.15);
+}
+
+.stars-input .star:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.rating-text {
+  font-size: 0.95rem;
+  color: var(--color-orange, #ff6b00);
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.review-form-container {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 0, 0.2);
+}
+
+.review-form-container h3 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: var(--color-orange, #ff6b00);
+}
+
+.review-form-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.review-form-container label[for="id_rating"],
+.review-form-container > form > div:first-child label {
+  color: var(--color-orange, #ff6b00);
+}
+
+.review-form-container > form > div {
+  margin-bottom: 1rem;
+}
+
+.review-form-container button[type="submit"] {
+  background: var(--color-orange, #ff6b00);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.review-form-container button[type="submit"]:hover {
+  background: var(--color-orange-hover, #ff8000) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-orange, 0 4px 12px rgba(255, 107, 0, 0.3));
 }

@@ -30,7 +30,7 @@ body {
 .left-container {
   flex: 0 0 300px;
   background: var(--color-white);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: var(--space-6);
   height: calc(100vh - var(--space-8) * 2);
@@ -724,6 +724,7 @@ body {
     order: 2;
     height: auto;
     max-height: none;
+    border-radius: var(--radius-lg);
   }
   
   .right-container {

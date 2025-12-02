@@ -1,0 +1,106 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}User Details{% endblock %}
+{% block page_title %}User Details{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>User Details</h1>
+  <p>View and manage user information</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-user"></i> User Information</h2>
+    <div class="action-buttons">
+      <a href="{% url 'admin_panel:user_edit' user_obj.id %}" class="btn btn-secondary">
+        <i class="fas fa-edit"></i> Edit
+      </a>
+      <a href="{% url 'admin_panel:users' %}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back to Users
+      </a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div>
+      <div class="form-group">
+        <label>Email</label>
+        <div class="form-control" style="background: var(--bg);">{{ user_obj.email }}</div>
+      </div>
+      <div class="form-group">
+        <label>Username</label>
+        <div class="form-control" style="background: var(--bg);">{{ user_obj.username }}</div>
+      </div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <div class="form-control" style="background: var(--bg);">{{ user_obj.get_full_name|default:"N/A" }}</div>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <div class="form-control" style="background: var(--bg);">{{ user_obj.phone_number|default:"N/A" }}</div>
+      </div>
+    </div>
+    <div>
+      <div class="form-group">
+        <label>Role</label>
+        <div class="form-control" style="background: var(--bg);">
+          <span class="badge badge-pending">{{ user_obj.get_role_display }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <div class="form-control" style="background: var(--bg);">
+          {% if user_obj.banned %}
+          <span class="badge badge-danger">Banned</span>
+          {% elif user_obj.is_active %}
+          <span class="badge badge-accepted">Active</span>
+          {% else %}
+          <span class="badge badge-pending">Inactive</span>
+          {% endif %}
+          {% if user_obj.is_staff %}
+          <span class="badge badge-accepted" style="margin-left: 0.5rem;">Admin</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Verified</label>
+        <div class="form-control" style="background: var(--bg);">
+          {% if user_obj.email_verified %}
+          <span class="badge badge-accepted">Verified</span>
+          {% else %}
+          <span class="badge badge-pending">Not Verified</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Date Joined</label>
+        <div class="form-control" style="background: var(--bg);">{{ user_obj.date_joined|date:"F d, Y H:i" }}</div>
+      </div>
+      <div class="form-group">
+        <label>Last Login</label>
+        <div class="form-control" style="background: var(--bg);">{{ user_obj.last_login|date:"F d, Y H:i"|default:"Never" }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if user_obj.owner_profile %}
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-store"></i> Owner Profile</h2>
+  </div>
+  <p>This user is an owner. They can manage restaurants.</p>
+</div>
+{% endif %}
+
+{% if user_obj.customer_profile %}
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-shopping-bag"></i> Customer Profile</h2>
+  </div>
+  <p>This user is a customer. They can make reservations and reviews.</p>
+</div>
+{% endif %}
+{% endblock %}
+

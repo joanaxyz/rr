@@ -24,11 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         elements.logoutBtn.addEventListener('click', handleLogout);
         elements.settings.addEventListener('click', handleSettings);
+        
+        // Handle My Profile link
+        const profileLink = elements.dropdown.querySelector('a[href*="profile"]');
+        if (profileLink) {
+            profileLink.addEventListener('click', function(e) {
+                // Let the link navigate naturally
+                elements.dropdown.classList.remove('show');
+            });
+        }
     };
 
     const handleLogout = () => {
         window.MessageBox.showConfirm('Are you sure you want to logout?', () => {
-            window.location.href='/accounts/auth/logout/';
+            window.location.href = window.logoutUrl || '/accounts/auth/logout/';
         });
     };
 

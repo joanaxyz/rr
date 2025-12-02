@@ -104,7 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchValue = searchInput.value;
     console.log('searchvalue:', searchValue);
     if (searchValue == ''){
-        searchInput.value = localStorage.getItem("searchTerm");
+        const savedSearchTerm = localStorage.getItem("searchTerm");
+        if (savedSearchTerm) {
+            searchInput.value = savedSearchTerm;
+            localStorage.removeItem("searchTerm");
+        }
     }
 
     searchTerm = searchInput.value;
@@ -159,14 +163,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchbar = document.querySelector('.navbar-searchbar');
     const searchBtn = searchbar.querySelector('button');
     searchBtn.addEventListener('click',()=>{
-        searchTerm = searchInput.value;
+        searchTerm = searchInput.value.trim();
         applyFiltersAndSort();
     });
     
     
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            searchTerm = searchInput.value;
+            e.preventDefault();
+            searchTerm = searchInput.value.trim();
             applyFiltersAndSort();
         }
     });
@@ -174,9 +179,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const addressForm = document.getElementById('addressForm');
     if (addressForm) {
         addressForm.addEventListener('submit', () => {
-            address = document.getElementById('address').textContent;
-            applyFiltersAndSort();
-            window.LoadingOverlay.hide();
+            setTimeout(() => {
+                address = document.getElementById('address').textContent;
+                applyFiltersAndSort();
+                if (window.LoadingOverlay) {
+                    window.LoadingOverlay.hide();
+                }
+            }, 100);
         });
     }
     

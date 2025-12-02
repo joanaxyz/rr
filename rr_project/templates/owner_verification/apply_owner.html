@@ -1,0 +1,173 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/apply_owner.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="owner-form-container">
+    <h2>Owner Verification Form</h2>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" id="ownerForm" action="{% url 'owner_verification:owner_verification' %}">
+        {% csrf_token %}
+
+        <!-- Full Name -->
+        <div class="form-group">
+            <label for="govt_full_name">Full Name (as on Government ID)</label>
+            <input type="text" id="govt_full_name" name="govt_full_name" required 
+                   placeholder="Enter your full name as it appears on your government ID">
+        </div>
+
+        <!-- Government ID Type -->
+        <div class="form-group">
+            <label for="government_id_type">Government ID Type</label>
+            <select id="government_id_type" name="government_id_type" required>
+                <option value="">Select ID Type</option>
+                <option value="Passport">Passport</option>
+                <option value="Driver's License">Driver's License</option>
+                <option value="National ID">National ID</option>
+                <option value="SSS ID">SSS ID</option>
+                <option value="TIN ID">TIN ID</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <!-- Government ID Number -->
+        <div class="form-group">
+            <label for="government_id_number">Government ID Number</label>
+            <input type="text" id="government_id_number" name="government_id_number" required 
+                   placeholder="Enter your government ID number">
+        </div>
+
+        <!-- Business Address -->
+        <div class="form-group">
+            <label for="business_address">Business Address</label>
+            <input type="text" id="business_address" name="business_address" required 
+                   placeholder="Enter your business address">
+        </div>
+
+        <!-- Business Email -->
+        <div class="form-group">
+            <label for="business_email">Business Email (optional)</label>
+            <input type="email" id="business_email" name="business_email" 
+                   placeholder="business@example.com"
+                   value="{{ user.email }}">
+            <small>Defaults to your account email if left blank</small>
+        </div>
+
+        <!-- Tax ID -->
+        <div class="form-group">
+            <label for="tax_id">Tax ID</label>
+            <input type="text" id="tax_id" name="tax_id" required 
+                   placeholder="Enter your tax identification number">
+        </div>
+
+        <!-- Business License -->
+        <div class="form-group">
+            <label for="business_license">Business License</label>
+            <input type="file" id="business_license" name="business_license" accept="image/*,.pdf" required>
+            <small>Upload a clear image or PDF of your business license</small>
+            <img id="preview_business_license" class="preview-img" />
+        </div>
+
+        <!-- Government ID Front -->
+        <div class="form-group">
+            <label for="government_id_front">Government ID (Front)</label>
+            <input type="file" id="government_id_front" name="government_id_front" accept="image/*,.pdf" required>
+            <small>Upload a clear image of the front of your government ID</small>
+            <img id="preview_govt_front" class="preview-img" />
+        </div>
+
+        <!-- Government ID Back -->
+        <div class="form-group">
+            <label for="government_id_back">Government ID (Back)</label>
+            <input type="file" id="government_id_back" name="government_id_back" accept="image/*,.pdf" required>
+            <small>Upload a clear image of the back of your government ID</small>
+            <img id="preview_govt_back" class="preview-img" />
+        </div>
+
+        <!-- Proof of Ownership -->
+        <div class="form-group">
+            <label for="proof_ownership">Proof of Business Ownership</label>
+            <input type="file" id="proof_ownership" name="proof_ownership" accept="image/*,.pdf" required>
+            <small>Upload documents proving ownership (e.g., business registration, deed, etc.)</small>
+            <img id="preview_proof" class="preview-img" />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit Verification Request</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+<script>
+function previewFile(input, previewId) {
+    const preview = document.getElementById(previewId);
+    const file = input.files[0];
+    if (file) {
+        // Only show preview for image files
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+                preview.style.maxWidth = '300px';
+                preview.style.borderRadius = '8px';
+                preview.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            // For PDFs, just hide the preview
+            preview.style.display = 'none';
+        }
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+}
+
+// Attach preview listeners when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const businessLicense = document.getElementById('business_license');
+    const govtFront = document.getElementById('government_id_front');
+    const govtBack = document.getElementById('government_id_back');
+    const proofOwnership = document.getElementById('proof_ownership');
+    
+    if (businessLicense) {
+        businessLicense.addEventListener('change', function() {
+            previewFile(this, 'preview_business_license');
+        });
+    }
+    if (govtFront) {
+        govtFront.addEventListener('change', function() {
+            previewFile(this, 'preview_govt_front');
+        });
+    }
+    if (govtBack) {
+        govtBack.addEventListener('change', function() {
+            previewFile(this, 'preview_govt_back');
+        });
+    }
+    if (proofOwnership) {
+        proofOwnership.addEventListener('change', function() {
+            previewFile(this, 'preview_proof');
+        });
+    }
+});
+</script>
+{% endblock %}
+

@@ -3,6 +3,21 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'accounts/css/auth.css' %}">
+  <style>
+    .auth_link_secondary {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 1rem;
+      color: #888;
+    }
+    .auth_link_secondary a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .auth_link_secondary a:hover {
+      text-decoration: underline;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}

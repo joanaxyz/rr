@@ -348,3 +348,133 @@ body {
   border-color: #eee;
   background-color: #f9f9f9;
 }
+
+/* ============ RESPONSIVE DESIGN ============ */
+
+@media (max-width: 768px) {
+  .reservation-container {
+    margin: var(--space-4) var(--space-2);
+    padding: var(--space-4);
+  }
+  
+  .header h1 {
+    font-size: var(--font-xl);
+  }
+  
+  .reservation-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .reservation-table thead {
+    display: none;
+  }
+  
+  .reservation-table tbody {
+    display: block;
+  }
+  
+  .reservation-table tr {
+    display: block;
+    margin-bottom: var(--space-4);
+    border: var(--border-1) solid var(--color-gray-200);
+    border-radius: var(--radius-base);
+    padding: var(--space-3);
+    background: var(--color-white);
+  }
+  
+  .reservation-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border: none;
+    text-align: right;
+  }
+  
+  .reservation-table td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    text-align: left;
+    color: var(--color-gray-600);
+    margin-right: var(--space-3);
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+  }
+  
+  .action-buttons button {
+    width: 100%;
+  }
+  
+  .popup-content {
+    width: 90%;
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .reservation-container {
+    margin: var(--space-3) var(--space-2);
+    padding: var(--space-3);
+  }
+  
+  .header h1 {
+    font-size: var(--font-lg);
+  }
+  
+  .reservation-table td {
+    font-size: var(--font-sm);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+  
+  .reservation-table td::before {
+    margin-right: 0;
+    margin-bottom: var(--space-1);
+  }
+  
+  .status-badge {
+    font-size: var(--font-xs);
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  .action-buttons button {
+    font-size: var(--font-sm);
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .popup-content {
+    width: 95%;
+    padding: var(--space-3);
+  }
+  
+  .popup-content h3 {
+    font-size: var(--font-lg);
+  }
+  
+  .popup-actions {
+    flex-direction: column;
+  }
+  
+  .popup-actions button {
+    width: 100%;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pagination a,
+  .pagination span {
+    min-width: 28px;
+    padding: 4px 8px;
+    font-size: var(--font-xs);
+  }
+}

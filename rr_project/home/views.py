@@ -4,7 +4,6 @@ from restaurants.models import Restaurant
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from urllib.parse import urlencode
-from django.contrib.auth.decorators import login_required
 
 def get_guest_ranges(max_guests):
     """Generate guest count ranges: 1-2, 3-4, 5-6, 7+"""
@@ -16,10 +15,8 @@ def get_guest_ranges(max_guests):
         ranges.append("7+")
     return ranges
 
-@login_required
 def home_view(request):
-    """User home page"""
-    user = request.user
+    """User home page - supports both logged-in users and guests"""
     restaurants = Restaurant.objects.annotate(
         avg_rating=Avg('reviews__rating'),
         review_count=Count('reviews')
@@ -42,7 +39,7 @@ def home_view(request):
         })
         return redirect(f"{reverse('restaurants:restaurants')}?{query_params}")
     context = {
-        'user': user,
+        'user': request.user if request.user.is_authenticated else None,
         'restaurants': restaurant_list,
         'cities': cities
     }

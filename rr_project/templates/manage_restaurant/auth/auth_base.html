@@ -1,0 +1,76 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'accounts/css/auth.css' %}">
+  <style>
+    .auth_subtitle {
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+      color: #666;
+    }
+    .auth_link_secondary {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 1rem;
+      color: #888;
+    }
+    .auth_link_secondary a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .auth_link_secondary a:hover {
+      text-decoration: underline;
+    }
+    .brand-description h3 {
+      color: #d35400;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="auth-layout">
+    <div class="logo-section">
+      <div class="logo">
+        <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
+        <p class="title">RESTAURANT</p>
+        <p class="subtitle">MANAGEMENT</p>
+      </div>
+      
+      <div class="brand-description">
+        <h3>Manage Your Restaurant</h3>
+        <p>Access your restaurant management dashboard to handle reservations, manage staff, and grow your business.</p>
+        <p>Track reservations, organize your floor plan, and provide exceptional service to your customers.</p>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="container">
+        {% block page_title %}{% endblock %}
+        
+        {% block form_content %}
+          <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            {% block form_fields %}{% endblock %}
+            
+            {% block form_button %}
+              <button type="submit" class="btn_submit" id="btn_submit">Submit</button>
+            {% endblock %}
+
+            <div class="error-msg{% if first_error %} show{% endif %}">{% if first_error %}{{ first_error }}{% endif %}</div>
+            
+            {% block form_footer %}{% endblock %}
+
+          </form>
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'accounts/js/ErrorMessage.js' %}"></script>
+  <script src="{% static 'accounts/js/remove_error_msg_on_input.js' %}"></script>
+  {% block auth_js %}{% endblock %}
+{% endblock %}

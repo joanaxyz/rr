@@ -4,7 +4,7 @@
 {% block title %}Sign In - RR{% endblock %}
 
 {% block page_title %}
-  <p class="content_title">Sign In</p>
+  <p class="content_title">Customer Sign In</p>
 {% endblock %}
 
 {% block form_fields %}
@@ -23,6 +23,9 @@
 {% block form_footer %}
   <p class="auth_link">
     Don't have an account? <a href="{% url 'accounts:register' %}">Sign up</a>
+  </p>
+  <p class="auth_link_secondary">
+    Restaurant Owner? <a href="{% url 'manage_restaurant:login' %}">Restaurant Management</a>
   </p>
 {% endblock %}
 

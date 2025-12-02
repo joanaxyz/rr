@@ -1,0 +1,86 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}{% if user_obj %}Edit User{% else %}Create User{% endif %}{% endblock %}
+{% block page_title %}{% if user_obj %}Edit User{% else %}Create User{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>{% if user_obj %}Edit User{% else %}Create New User{% endif %}</h1>
+  <p>{% if user_obj %}Update user information{% else %}Add a new user to the system{% endif %}</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-user-edit"></i> User Form</h2>
+    <a href="{% if user_obj %}{% url 'admin_panel:user_detail' user_obj.id %}{% else %}{% url 'admin_panel:users' %}{% endif %}" class="btn btn-outline">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" name="email" id="email" class="form-control" value="{{ user_obj.email|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="username">Username *</label>
+          <input type="text" name="username" id="username" class="form-control" value="{{ user_obj.username|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password {% if user_obj %}(leave blank to keep current){% else %}*{% endif %}</label>
+          <input type="password" name="password" id="password" class="form-control" {% if not user_obj %}required{% endif %}>
+        </div>
+        <div class="form-group">
+          <label for="first_name">First Name</label>
+          <input type="text" name="first_name" id="first_name" class="form-control" value="{{ user_obj.first_name|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="last_name">Last Name</label>
+          <input type="text" name="last_name" id="last_name" class="form-control" value="{{ user_obj.last_name|default:'' }}">
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label for="phone_number">Phone Number</label>
+          <input type="text" name="phone_number" id="phone_number" class="form-control" value="{{ user_obj.phone_number|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label for="role">Role *</label>
+          <select name="role" id="role" class="form-control" required>
+            <option value="CUSTOMER" {% if user_obj.role == 'CUSTOMER' %}selected{% endif %}>Customer</option>
+            <option value="OWNER" {% if user_obj.role == 'OWNER' %}selected{% endif %}>Owner</option>
+            <option value="HOST" {% if user_obj.role == 'HOST' %}selected{% endif %}>Host</option>
+            <option value="MANAGER" {% if user_obj.role == 'MANAGER' %}selected{% endif %}>Manager</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" name="is_staff" {% if user_obj.is_staff %}checked{% endif %}>
+            <span>Is Admin/Staff</span>
+          </label>
+        </div>
+        {% if user_obj %}
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" name="banned" {% if user_obj.banned %}checked{% endif %}>
+            <span>Banned</span>
+          </label>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i> {% if user_obj %}Update User{% else %}Create User{% endif %}
+      </button>
+      <a href="{% if user_obj %}{% url 'admin_panel:user_detail' user_obj.id %}{% else %}{% url 'admin_panel:users' %}{% endif %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

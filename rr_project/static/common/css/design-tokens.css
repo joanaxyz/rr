@@ -5,79 +5,91 @@
 :root {
   /* ============ COLORS ============ */
   
-  /* Primary Brand Colors */
-  --color-primary: #D4530A;
-  --color-primary-hover: #B8440A;
-  --color-primary-light: #ff6b35;
-  --color-primary-lighter: #ff8c00;
-  --color-orange: #ff6b00;
-  --color-orange-hover: #ff8000;
+  /* Primary Orange Colors */
+  --color-primary: #D45310;
+  --color-primary-hover: #B34700;
+  --color-primary-light: #E65C00;
+  --color-primary-lighter: #FF6B00;
+  --color-primary-dark: #A03D00;
+  --color-primary-darker: #8A3400;
   
-  /* Neutral Colors */
-  --color-white: #ffffff;
+  /* Orange Palette */
+  --color-orange-50: #FFF7ED;
+  --color-orange-100: #FFEDD5;
+  --color-orange-200: #FED7AA;
+  --color-orange-300: #FDBA74;
+  --color-orange-400: #FB923C;
+  --color-orange-500: #D45310;
+  --color-orange-600: #B34700;
+  --color-orange-700: #A03D00;
+  --color-orange-800: #8A3400;
+  --color-orange-900: #702B00;
+  
+  /* Neutral Colors - Black & White */
+  --color-white: #FFFFFF;
   --color-black: #000000;
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #94a3b8;
-  --color-gray-500: #64748b;
-  --color-gray-600: #475569;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #1a202c;
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F5F5F5;
+  --color-gray-200: #E5E5E5;
+  --color-gray-300: #D4D4D4;
+  --color-gray-400: #A3A3A3;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
   
   /* Dark Theme Colors */
-  --color-dark-bg: #1a1a1a;
-  --color-dark-surface: #262626;
-  --color-dark-surface-hover: #2d2d2d;
-  --color-dark-border: rgba(255, 107, 0, 0.3);
-  --color-dark-text: rgba(255, 255, 255, 0.85);
-  --color-dark-text-secondary: rgba(255, 255, 255, 0.6);
-  --color-dark-text-tertiary: rgba(255, 255, 255, 0.4);
+  --color-dark-bg: #0A0A0A;
+  --color-dark-surface: #1A1A1A;
+  --color-dark-surface-hover: #262626;
+  --color-dark-border: rgba(212, 83, 16, 0.2);
+  --color-dark-text: rgba(255, 255, 255, 0.95);
+  --color-dark-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-dark-text-tertiary: rgba(255, 255, 255, 0.5);
   
   /* Light Theme Colors */
-  --color-light-bg: #ffffff;
-  --color-light-surface: #f8f8f8;
-  --color-light-border: rgba(255, 107, 0, 0.2);
-  --color-light-text: rgba(0, 0, 0, 0.8);
-  --color-light-text-secondary: rgba(0, 0, 0, 0.6);
-  --color-light-text-tertiary: rgba(0, 0, 0, 0.4);
+  --color-light-bg: #FFFFFF;
+  --color-light-surface: #FAFAFA;
+  --color-light-border: rgba(0, 0, 0, 0.1);
+  --color-light-text: rgba(0, 0, 0, 0.9);
+  --color-light-text-secondary: rgba(0, 0, 0, 0.65);
+  --color-light-text-tertiary: rgba(0, 0, 0, 0.45);
   
-  /* Status Colors */
-  --color-success: #28a745;
-  --color-success-bg: #d4edda;
-  --color-success-text: #155724;
+  /* Status Colors - Orange variants */
+  --color-success: #E65C00;
+  --color-success-bg: #FFF7ED;
+  --color-success-text: #A03D00;
   
-  --color-error: #dc2626;
-  --color-error-bg: #fef2f2;
-  --color-error-text: #721c24;
-  --color-error-border: #fecaca;
+  --color-error: #D45310;
+  --color-error-bg: #FFF7ED;
+  --color-error-text: #A03D00;
+  --color-error-border: #FED7AA;
   
-  --color-warning: #ffc107;
-  --color-warning-bg: #fff3cd;
-  --color-warning-text: #856404;
+  --color-warning: #FF6B00;
+  --color-warning-bg: #FFF7ED;
+  --color-warning-text: #A03D00;
   
-  --color-info: #17a2b8;
-  --color-info-bg: #d1ecf1;
-  --color-info-text: #0c5460;
+  --color-info: #D45310;
+  --color-info-bg: #FFF7ED;
+  --color-info-text: #A03D00;
   
   /* Table States */
-  --table-available: #28a745;
-  --table-reserved: #ff0707;
-  --table-selected: #D4530A;
-  --table-hover: #ff8c00;
+  --table-available: #E65C00;
+  --table-reserved: #A03D00;
+  --table-selected: #D45310;
+  --table-hover: #FF6B00;
   
   /* Semantic Color Aliases */
-  --primary-red: #D4530A;
-  --primary-red-dark: #B8440A;
-  --text-primary: rgba(0, 0, 0, 0.87);
-  --text-secondary: rgba(0, 0, 0, 0.6);
+  --primary-red: #D45310;
+  --primary-red-dark: #B34700;
+  --text-primary: rgba(0, 0, 0, 0.9);
+  --text-secondary: rgba(0, 0, 0, 0.65);
   --text-tertiary: rgba(0, 0, 0, 0.45);
-  --cream: #fffbf5;
-  --success: #28a745;
-  --info: #17a2b8;
-  --white: #ffffff;
+  --cream: #FFF7ED;
+  --success: #E65C00;
+  --info: #D45310;
+  --white: #FFFFFF;
   
   /* ============ TYPOGRAPHY ============ */
   
@@ -170,10 +182,10 @@
   --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
   
   /* Brand Specific Shadows */
-  --shadow-primary: 0 4px 12px rgba(212, 83, 10, 0.3);
-  --shadow-primary-lg: 0 8px 24px rgba(212, 83, 10, 0.4);
-  --shadow-orange: 0 4px 12px rgba(255, 107, 0, 0.3);
-  --shadow-orange-lg: 0 6px 16px rgba(255, 107, 0, 0.4);
+  --shadow-primary: 0 4px 20px rgba(212, 83, 16, 0.25);
+  --shadow-primary-lg: 0 10px 40px rgba(212, 83, 16, 0.35);
+  --shadow-orange: 0 4px 16px rgba(179, 71, 0, 0.3);
+  --shadow-orange-lg: 0 8px 30px rgba(179, 71, 0, 0.4);
   
   /* ============ TRANSITIONS ============ */
   
@@ -202,16 +214,19 @@
   /* ============ GRADIENTS ============ */
   
   /* Primary Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 50%, var(--color-primary-lighter) 100%);
-  --gradient-primary-reverse: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 50%, var(--color-primary-lighter) 100%);
+  --gradient-primary: linear-gradient(135deg, #D45310 0%, #B34700 50%, #A03D00 100%);
+  --gradient-primary-reverse: linear-gradient(135deg, #A03D00 0%, #B34700 50%, #D45310 100%);
+  --gradient-primary-subtle: linear-gradient(135deg, #FF6B00 0%, #E65C00 100%);
   
   /* Surface Gradients */
-  --gradient-surface-light: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  --gradient-surface-dark: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0.95) 100%);
+  --gradient-surface-light: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
+  --gradient-surface-dark: linear-gradient(135deg, #000000 0%, #171717 100%);
+  --gradient-surface-orange: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
   
   /* Text Gradients */
-  --gradient-text-light: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-  --gradient-text-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  --gradient-text-light: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
+  --gradient-text-primary: linear-gradient(135deg, #D45310 0%, #E65C00 100%);
+  --gradient-text-dark: linear-gradient(135deg, #000000 0%, #404040 100%);
   
   /* ============ BACKDROP FILTERS ============ */
   

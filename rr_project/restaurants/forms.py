@@ -2,13 +2,30 @@ from django import forms
 from .models import Review, Restaurant
 
 class ReviewForm(forms.ModelForm):
+    rating = forms.DecimalField(
+        max_value=5.0,
+        min_value=0.0,
+        widget=forms.NumberInput(attrs={
+            'min': 0, 
+            'max': 5, 
+            'step': 0.5,
+            'class': 'form-input',
+            'style': 'width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;',
+            'placeholder': 'Rating (0-5)'
+        })
+    )
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': 4, 
+            'placeholder': 'Write your review...',
+            'class': 'form-input',
+            'style': 'width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; resize: vertical;'
+        })
+    )
+    
     class Meta:
         model = Review
         fields = ['rating', 'comment']
-        widgets = {
-            'rating': forms.NumberInput(attrs={'min': 0, 'max': 5, 'step': 0.1}),
-            'comment': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Write your review...'})
-        }
 
 class RestaurantAddressForm(forms.ModelForm):
     """Form for editing restaurant address with separate components"""

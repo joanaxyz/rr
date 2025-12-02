@@ -16,6 +16,14 @@
         <h1>My Restaurants</h1>
         <p class="subtitle">Manage and organize your restaurant properties</p>
     </div>
+    {% if user.role == 'OWNER' %}
+    <div class="header-actions">
+        <a href="{% url 'manage_restaurant:create' %}" class="create-restaurant-btn">
+            <i class="fas fa-plus"></i>
+            Create Restaurant
+        </a>
+    </div>
+    {% endif %}
 </div>
 
 <!-- Main Management Container -->

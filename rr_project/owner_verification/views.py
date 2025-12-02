@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import OwnerVerificationRequest
@@ -22,7 +22,7 @@ def owner_verification(request):
 
         if not all([govt_full_name, government_id_type, government_id_number, business_address, tax_id]):
             messages.error(request, "All fields are required.")
-            return render(request, "owner_verification/register_restaurant.html")
+            return render(request, "owner_verification/apply_owner.html")
 
         req = OwnerVerificationRequest(
             user=request.user,
@@ -52,6 +52,23 @@ def owner_verification(request):
             req.proof_of_ownership = upload_to_supabase(proof_ownership_file, "files", file_path)
 
         req.save()
-        messages.success(request, "Your request has been sent!")
+        
+        # Send notification email to admin (optional - can be implemented later)
+        # For now, just notify the user
+        site_url = request.build_absolute_uri('/')
+        context = {
+            'user': request.user,
+            'site_url': site_url,
+        }
+        # Note: You might want to create an email template for request submission confirmation
+        # send_email(
+        #     subject='Owner Verification Request Submitted - RR',
+        #     template_name='emails/owner_request_submitted.html',
+        #     context=context,
+        #     recipient_email=request.user.email
+        # )
+        
+        messages.success(request, "Your request has been sent! You will be notified via email once it's reviewed.")
+        return redirect('owner_verification:owner_verification')
 
-    return render(request, "owner_verification/register_restaurant.html")
+    return render(request, "owner_verification/apply_owner.html")

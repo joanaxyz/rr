@@ -51,6 +51,14 @@ class Reservation(models.Model):
         return f"{self.name} - {self.guest_count} guests at {restaurant_name} on {self.date} at {self.time} [{self.status}]"
     
     def to_dict(self):
+        customer_data = None
+        if self.customer and self.customer.user:
+            customer_data = {
+                "id": self.customer.id,
+                "name": self.customer.user.get_full_name() or self.customer.user.username,
+                "email": self.customer.user.email
+            }
+        
         return {
             "id": self.id,
             "name": self.name,
@@ -67,11 +75,7 @@ class Reservation(models.Model):
             },
             "restaurant": self.restaurant.name if self.restaurant else None,
             "restaurant_id": self.restaurant.id if self.restaurant else None,
-            "customer": {
-                "id": self.customer.id,
-                "name": getattr(self.customer, "name", None),
-                "email": getattr(self.customer, "email", None)
-            } if self.customer else None,
+            "customer": customer_data,
             "created_at": localtime(self.created_at).isoformat() if self.created_at else None
         }
     

@@ -13,7 +13,10 @@
     <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
     <span class="brand">RESTAURANT RESERVATION</span>
   </div>
-  <ul class="nav-links">
+  <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+    <i class="fas fa-bars"></i>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="{% url 'home:home' %}"
         class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
         
@@ -73,9 +76,14 @@
       <i class="fas fa-magnifying-glass"></i>
     </button>
   </div>
+  {% if user.is_authenticated %}
   <div id="userProfile" class="user-profile">
     <div class="profile-icon">
-      <i class="fas fa-circle-user"></i>
+      {% if user.profile_image %}
+        <img src="{{ user.profile_image }}" alt="Profile" class="profile-image">
+      {% else %}
+        <i class="fas fa-circle-user"></i>
+      {% endif %}
     </div>
     <div class="profile-dropdown" id="profileDropdown">
       <div class="dropdown-header">
@@ -83,13 +91,19 @@
         <div class="user-email">{{ user.email }}</div>
       </div>
       <div class="dropdown-divider"></div>
-      <button class="dropdown-item">My Profile</button>
+      <a href="{% url 'accounts:profile' %}" class="dropdown-item">My Profile</a>
       <a href="{% url 'reservations:reservation_management' %}" class="dropdown-item">My Reservations</a>
       <button class="dropdown-item" id="btnSettings">Settings</button>
       <div class="dropdown-divider"></div>
       <button class="dropdown-item" id="btnLogout">Sign Out</button>
     </div>
   </div>
+  {% else %}
+  <div class="auth-buttons">
+    <a href="{% url 'accounts:login' %}" class="btn-sign-in">Sign In</a>
+    <a href="{% url 'accounts:register' %}" class="btn-sign-up">Sign Up</a>
+  </div>
+  {% endif %}
 </nav>
 
 <!-- Spacer for fixed navbar -->
@@ -98,6 +112,16 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+  // Set logout URL based on user role
+  {% if user.is_authenticated %}
+    {% if user.role in 'OWNER,HOST,MANAGER' %}
+      window.logoutUrl = "{% url 'manage_restaurant:logout' %}";
+    {% else %}
+      window.logoutUrl = "{% url 'accounts:logout' %}";
+    {% endif %}
+  {% endif %}
+</script>
 <script src="{% static 'home/js/userProfile.js' %}"></script>
 <script src="{% static 'restaurants/js/search.js' %}"></script>
 <script>
@@ -129,6 +153,44 @@ document.addEventListener('DOMContentLoaded', function() {
       hoverTimeout = setTimeout(function() {
         manageDropdown.classList.remove('show');
       }, 150);
+    });
+  }
+  
+  // Mobile menu toggle
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const navLinks = document.getElementById('navLinks');
+  
+  if (mobileMenuToggle && navLinks) {
+    mobileMenuToggle.addEventListener('click', function() {
+      navLinks.classList.toggle('mobile-open');
+      const icon = this.querySelector('i');
+      if (navLinks.classList.contains('mobile-open')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!navLinks.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+        navLinks.classList.remove('mobile-open');
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+    
+    // Close mobile menu when clicking on a link
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function() {
+        navLinks.classList.remove('mobile-open');
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      });
     });
   }
 });

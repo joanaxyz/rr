@@ -1,0 +1,104 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Restaurants{% endblock %}
+{% block page_title %}Restaurant Management{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>Restaurants</h1>
+  <p>Manage all restaurants in the system</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-utensils"></i> All Restaurants</h2>
+    <a href="{% url 'admin_panel:restaurant_create' %}" class="btn btn-success">
+      <i class="fas fa-plus"></i> Add New Restaurant
+    </a>
+  </div>
+  
+  <div class="search-bar">
+    <form method="GET" style="display: flex; gap: 1rem; flex: 1;">
+      <input type="text" name="search" class="search-input" placeholder="Search by name, city, or email..." value="{{ search }}">
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-search"></i> Search
+      </button>
+      {% if search %}
+      <a href="{% url 'admin_panel:restaurants' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Clear
+      </a>
+      {% endif %}
+    </form>
+  </div>
+
+  {% if restaurants %}
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Location</th>
+            <th>Contact</th>
+            <th>Price Range</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for restaurant in restaurants %}
+          <tr>
+            <td>
+              <strong>{{ restaurant.name }}</strong>
+            </td>
+            <td>{{ restaurant.owner.user.email|default:"N/A" }}</td>
+            <td>{{ restaurant.city|default:"N/A" }}</td>
+            <td>
+              {{ restaurant.email }}<br>
+              <small>{{ restaurant.phone_number }}</small>
+            </td>
+            <td>₱{{ restaurant.price_min }} - ₱{{ restaurant.price_max }}</td>
+            <td>{{ restaurant.max_guest_count }} guests</td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'admin_panel:restaurant_detail' restaurant.id %}" class="btn btn-sm btn-primary">
+                  <i class="fas fa-eye"></i> View
+                </a>
+                <a href="{% url 'admin_panel:restaurant_edit' restaurant.id %}" class="btn btn-sm btn-secondary">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if restaurants.has_other_pages %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+      {% if restaurants.has_previous %}
+      <a href="?page={{ restaurants.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-chevron-left"></i> Previous
+      </a>
+      {% endif %}
+      <span style="display: flex; align-items: center; padding: 0 1rem;">
+        Page {{ restaurants.number }} of {{ restaurants.paginator.num_pages }}
+      </span>
+      {% if restaurants.has_next %}
+      <a href="?page={{ restaurants.next_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn btn-secondary btn-sm">
+        Next <i class="fas fa-chevron-right"></i>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  {% else %}
+    <div class="empty-state">
+      <i class="fas fa-utensils"></i>
+      <p>No restaurants found</p>
+      <small>{% if search %}Try adjusting your search criteria{% else %}Create your first restaurant{% endif %}</small>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

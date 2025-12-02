@@ -23,6 +23,7 @@ class User(AbstractUser):
     banned = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     phone_number = models.CharField(max_length=20, null=True)
+    profile_image = models.CharField(max_length=500, blank=True, null=True, help_text="URL to profile image stored in Supabase")
 
     # Email verification fields
     email_verified = models.BooleanField(default=False)

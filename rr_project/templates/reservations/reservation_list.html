@@ -29,6 +29,7 @@
           <th>Date</th>
           <th>Time</th>
           <th>Guests</th>
+          <th>Tables</th>
           <th>Status</th>
           <th>Action</th>
         </tr>
@@ -37,8 +38,8 @@
         {% for reservation in reservations %}
         <tr>
           <!-- Continuous numbering -->
-          <td>{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
-          <td>
+          <td data-label="#">{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
+          <td data-label="Restaurant">
             {% if reservation.restaurant %}
               <a href="{% url 'restaurants:restaurant_detail' reservation.restaurant.id %}">
                 {{ reservation.restaurant.name }}
@@ -47,10 +48,17 @@
               <span>Unknown Restaurant</span>
             {% endif %}
           </td>
-          <td>{{ reservation.date }}</td>
-          <td>{{ reservation.time }}</td>
-          <td>{{ reservation.guest_count }}</td>
-          <td>
+          <td data-label="Date">{{ reservation.date }}</td>
+          <td data-label="Time">{{ reservation.time }}</td>
+          <td data-label="Guests">{{ reservation.guest_count }}</td>
+          <td data-label="Tables">
+            {% if reservation.table_numbers %}
+              {{ reservation.table_numbers|join:", " }}
+            {% else %}
+              <span style="color: #999;">Not assigned</span>
+            {% endif %}
+          </td>
+          <td data-label="Status">
             <span class="status-badge {{ reservation.status|lower }}">
               {{ reservation.status|title }}
             </span>

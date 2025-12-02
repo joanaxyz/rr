@@ -1,0 +1,172 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Restaurant Creation Requests{% endblock %}
+{% block page_title %}Restaurant Creation Requests{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>Restaurant Creation Requests</h1>
+  <p>Review and approve restaurant creation submissions</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-clock"></i> Pending Requests ({{ pending_requests.count }})</h2>
+  </div>
+  {% if pending_requests %}
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Restaurant Name</th>
+            <th>Owner</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Price Range</th>
+            <th>Capacity</th>
+            <th>Hours</th>
+            <th>Documents</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for request in pending_requests %}
+          <tr>
+            <td>
+              <strong>{{ request.name }}</strong><br>
+              <small>{{ request.description|truncatewords:10 }}</small>
+            </td>
+            <td>
+              <strong>{{ request.user.email }}</strong><br>
+              <small>{{ request.user.username }}</small>
+            </td>
+            <td>
+              {{ request.email }}<br>
+              {{ request.phone_number }}
+            </td>
+            <td>
+              {% if request.street_number %}{{ request.street_number }} {% endif %}
+              {% if request.street_name %}{{ request.street_name }}, {% endif %}
+              {% if request.street_block %}{{ request.street_block }}, {% endif %}
+              {% if request.city %}{{ request.city }} {% endif %}
+              {% if request.postal_code %}{{ request.postal_code }}{% endif %}
+            </td>
+            <td>₱{{ request.price_min }} - ₱{{ request.price_max }}</td>
+            <td>{{ request.max_guest_count }} guests</td>
+            <td>
+              {{ request.opening_time|time:"H:i" }} - {{ request.closing_time|time:"H:i" }}<br>
+              <small>{{ request.operating_days }}</small>
+            </td>
+            <td>
+              {% if request.image %}
+                <a href="{{ request.image }}" target="_blank" class="btn btn-small btn-primary">
+                  <i class="fas fa-image"></i> Image
+                </a>
+              {% endif %}
+              {% if request.proof_of_ownership %}
+                <a href="{{ request.proof_of_ownership }}" target="_blank" class="btn btn-small btn-primary">
+                  <i class="fas fa-file-contract"></i> Proof
+                </a>
+              {% endif %}
+            </td>
+            <td>{{ request.created_at|date:"M d, Y H:i" }}</td>
+            <td>
+              <form method="POST" style="display: inline;" onsubmit="return confirm('Accept this restaurant creation request? This will create the restaurant in the system.');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="accept">
+                <input type="hidden" name="request_id" value="{{ request.id }}">
+                <button type="submit" class="btn btn-success btn-small">
+                  <i class="fas fa-check"></i> Accept
+                </button>
+              </form>
+              <form method="POST" style="display: inline; margin-left: 0.5rem;" onsubmit="return confirm('Reject this restaurant creation request?');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="request_id" value="{{ request.id }}">
+                <button type="submit" class="btn btn-danger btn-small">
+                  <i class="fas fa-times"></i> Reject
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <p>No pending restaurant creation requests</p>
+    </div>
+  {% endif %}
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+  <div class="admin-card">
+    <div class="card-header">
+      <h2><i class="fas fa-check-circle"></i> Recently Accepted</h2>
+    </div>
+    {% if accepted_requests %}
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant</th>
+              <th>Owner</th>
+              <th>Accepted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in accepted_requests %}
+            <tr>
+              <td>{{ request.name }}</td>
+              <td>{{ request.user.email }}</td>
+              <td>{{ request.updated_at|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No accepted requests yet</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="admin-card">
+    <div class="card-header">
+      <h2><i class="fas fa-times-circle"></i> Recently Rejected</h2>
+    </div>
+    {% if rejected_requests %}
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant</th>
+              <th>Owner</th>
+              <th>Rejected</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in rejected_requests %}
+            <tr>
+              <td>{{ request.name }}</td>
+              <td>{{ request.user.email }}</td>
+              <td>{{ request.updated_at|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No rejected requests</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

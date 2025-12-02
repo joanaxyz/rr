@@ -13,9 +13,8 @@ from email_service.views import send_reservation_updated_email
 from django.contrib import messages
 import json
 
-@login_required
 def reservation(request, restaurant_id):
-    """Reservation page for a specific restaurant"""
+    """Reservation page for a specific restaurant - supports both logged-in users and guests"""
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     reserve_form = None
     floorplan = get_object_or_404(Floorplan, restaurant=restaurant)
@@ -25,10 +24,18 @@ def reservation(request, restaurant_id):
         reserve_form = ReservationForm(request.POST, restaurant=restaurant)
         if reserve_form.is_valid():
             try:
-                customer = get_object_or_404(Customer,user=request.user)
                 reservation = reserve_form.save(commit=False)
-                reservation.customer = customer
                 reservation.restaurant = restaurant
+                
+                # If user is logged in, try to associate with customer
+                if request.user.is_authenticated:
+                    try:
+                        customer = Customer.objects.get(user=request.user)
+                        reservation.customer = customer
+                    except Customer.DoesNotExist:
+                        # User exists but no customer profile - allow guest reservation
+                        reservation.customer = None
+                
                 reservation.save()
                 
                 messages.success(request, f'Reservation created! You will receive an email once a staff has confirmed your reservation.')
@@ -36,10 +43,15 @@ def reservation(request, restaurant_id):
             except Exception as e:
                 messages.error(request, f'An error occured during reservation: {str(e)}')
     else:
-        reserve_form = ReservationForm(initial={
-            'name': f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username,
-            'email': request.user.email
-        }, restaurant=restaurant)
+        # Set initial values based on whether user is logged in
+        initial_data = {}
+        if request.user.is_authenticated:
+            initial_data = {
+                'name': f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username,
+                'email': request.user.email
+            }
+        
+        reserve_form = ReservationForm(initial=initial_data, restaurant=restaurant)
 
     context = {
         'restaurant': restaurant.to_dict(),

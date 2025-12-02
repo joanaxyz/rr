@@ -29,6 +29,11 @@
       <div class="content-card">
         <div class="card-header">
           <h2>Reservation List</h2>
+          {% if has_reservations %}
+          <a href="?export=csv" class="btn btn-primary">
+            <i class="fas fa-download"></i> Export CSV
+          </a>
+          {% endif %}
         </div>
         
         <!-- Floor Plan Section -->
@@ -136,13 +141,13 @@
                   data-notes="{{ reservation.notes|default:'' }}"
                   data-cancellation-reason="{{ reservation.cancellation_info.reason|default:'' }}"
               >
-                <td>{{ forloop.counter }}</td>
-                <td>{{ reservation.name }}</td>
-                <td>{{ reservation.date }}</td>
-                <td>{{ reservation.time }}</td>
-                <td>{{ reservation.guest_count }}</td>
-                <td>{{ reservation.table_numbers|join:',' }}</td>
-                <td>
+                <td data-label="#">{{ forloop.counter }}</td>
+                <td data-label="Name">{{ reservation.name }}</td>
+                <td data-label="Date">{{ reservation.date }}</td>
+                <td data-label="Time">{{ reservation.time }}</td>
+                <td data-label="Guests">{{ reservation.guest_count }}</td>
+                <td data-label="Tables">{{ reservation.table_numbers|join:', '|default:'Not assigned' }}</td>
+                <td data-label="Status">
                   <span class="status-badge {{ reservation.status|lower }}">
                     {{ reservation.status|title }}
                   </span>

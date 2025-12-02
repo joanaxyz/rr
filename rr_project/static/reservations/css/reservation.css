@@ -331,9 +331,9 @@ body {
 /* Reservation Form Section */
 .reservation-form-section {
   background: var(--white);
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: var(--border-radius-xl);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--gray-200);
 }
 
@@ -341,28 +341,93 @@ body {
   font-size: 1.875rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.reservation-form-section h2::before {
+  content: '';
+  width: 4px;
+  height: 32px;
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-hover));
+  border-radius: 2px;
 }
 
 .reservation-form {
   display: flex;
   flex-direction: column;
+  gap: 1.75rem;
+}
+
+.reservation-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reservation-form .form-group label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reservation-form .form-group input,
+.reservation-form .form-group select,
+.reservation-form .form-group textarea {
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: var(--white);
+  font-family: inherit;
+}
+
+.reservation-form .form-group input:focus,
+.reservation-form .form-group select:focus,
+.reservation-form .form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(212, 83, 10, 0.1);
+}
+
+.reservation-form .form-group input::placeholder,
+.reservation-form .form-group textarea::placeholder {
+  color: var(--gray-400);
+}
+
+.reservation-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
 
-/* Form group and form-row styles are defined in components.css */
-
 .selected-table-display {
-  padding: 1rem;
-  background: var(--gray-50);
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   border-radius: var(--border-radius);
-  border: 1px solid var(--gray-200);
+  border: 2px solid #bae6fd;
 }
 
 .table-selection-status {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.table-selection-status svg {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.table-selection-status #table-status {
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -371,30 +436,37 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
-  background: var(--color-primary);
+  gap: 0.75rem;
+  padding: 1.125rem 2rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   color: var(--white);
   border: none;
   border-radius: var(--border-radius);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.0625rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
+  box-shadow: 0 4px 12px rgba(212, 83, 10, 0.3);
+  letter-spacing: 0.3px;
 }
 
 .reserve-btn:hover:not(:disabled) {
-  background: var(--color-primary-hover);
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 6px 20px rgba(212, 83, 10, 0.4);
+}
+
+.reserve-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .reserve-btn:disabled {
-  background: var(--color-gray-400);
+  background: var(--gray-400);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  opacity: 0.6;
 }
 
 /* Policies Section */
