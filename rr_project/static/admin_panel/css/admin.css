@@ -576,7 +576,7 @@ table thead {
 }
 
 table th {
-  padding: var(--space-4);
+  padding: 8px;
   text-align: left;
   font-weight: var(--font-weight-semibold);
   color: var(--gray-700);
@@ -587,7 +587,7 @@ table th {
 }
 
 table td {
-  padding: var(--space-4);
+  padding: 6px 8px;
   border-bottom: 1px solid var(--gray-100);
   color: var(--gray-700);
   font-size: var(--font-sm);
@@ -638,6 +638,7 @@ table tbody tr:hover {
   background: var(--orange-50);
   color: var(--orange-600);
 }
+
 
 /* ============ FORMS ============ */
 
@@ -972,3 +973,12 @@ select.form-control {
 .mt-1 { margin-top: var(--space-2); }
 .mt-2 { margin-top: var(--space-4); }
 .mt-3 { margin-top: var(--space-6); }
+
+
+.btn-small,
+.btn.btn-small,
+.action-buttons .btn {
+  padding: 3px 6px !important;
+  font-size: 11px !important;
+  border-radius: 6px;
+}
