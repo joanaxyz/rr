@@ -53,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let sortBy = 'newest';
     let sortOrder = "asc";
     let searchTerm = '';
-    const searchInput = document.querySelector('input[type="search"]');
+    const searchbar = document.querySelector('.navbar-searchbar');
+    const searchInput = searchbar ? searchbar.querySelector('input') : null;
 
 
     cuisines.forEach(c => {
@@ -101,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOperatingDay = contextOperatingDay;
         shouldApplyFilters = true;
     }
-    const searchValue = searchInput.value;
+    const searchValue = searchInput ? searchInput.value : '';
     console.log('searchvalue:', searchValue);
-    if (searchValue == ''){
+    if (searchInput && searchValue == ''){
         const savedSearchTerm = localStorage.getItem("searchTerm");
         if (savedSearchTerm) {
             searchInput.value = savedSearchTerm;
@@ -111,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    searchTerm = searchInput.value;
+    searchTerm = searchInput ? searchInput.value : '';
 
     if(searchTerm){
         shouldApplyFilters = true;
@@ -160,21 +161,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const searchbar = document.querySelector('.navbar-searchbar');
-    const searchBtn = searchbar.querySelector('button');
-    searchBtn.addEventListener('click',()=>{
-        searchTerm = searchInput.value.trim();
-        applyFiltersAndSort();
-    });
-    
-    
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            searchTerm = searchInput.value.trim();
-            applyFiltersAndSort();
+    if (searchbar && searchInput) {
+        const searchBtn = searchbar.querySelector('button');
+        if (searchBtn) {
+            searchBtn.addEventListener('click',()=>{
+                searchTerm = searchInput.value.trim();
+                applyFiltersAndSort();
+            });
         }
-    });
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchTerm = searchInput.value.trim();
+                applyFiltersAndSort();
+            }
+        });
+    }
 
     const addressForm = document.getElementById('addressForm');
     if (addressForm) {

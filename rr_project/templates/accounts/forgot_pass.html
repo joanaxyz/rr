@@ -52,5 +52,15 @@
 {% endblock %}
 
 {% block auth_js %}
+  <script>
+    // Set API URLs
+    window.apiUrls = {
+      forgotPassword: "{% url 'accounts:api_forgot_password' %}",
+      verifyResetCode: "{% url 'accounts:api_verify_reset_code' %}",
+      resetPassword: "{% url 'accounts:api_reset_password' %}",
+      resendResetCode: "{% url 'accounts:api_resend_reset_code' %}"
+    };
+    window.loginUrl = "{% url 'accounts:login' %}";
+  </script>
   <script src="{% static 'accounts/js/forgot_pass.js' %}"></script>
 {% endblock %}

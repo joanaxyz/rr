@@ -229,7 +229,15 @@
       }
     });
   </script>
-  {% block extra_js %}{% endblock %}
+  {% block extra_js %}
+  <script>
+    // Helper function for reservation API URL
+    window.getReservationApiUrl = function(reservationId) {
+      const baseUrl = "{% url 'reservations:list' %}";
+      return baseUrl + 'api/get/' + reservationId + '/';
+    };
+  </script>
+  {% endblock %}
 </body>
 </html>
 

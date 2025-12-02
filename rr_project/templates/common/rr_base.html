@@ -69,6 +69,19 @@
   {% if user.is_authenticated %}
     window.logoutUrl = "{% url 'accounts:logout' %}";
   {% endif %}
+  // Set restaurants list URL
+  window.restaurantsListUrl = "{% url 'restaurants:list' %}";
+  // Debug: Log the URL to console (remove in production if needed)
+  // console.log('Restaurants list URL:', window.restaurantsListUrl);
+  // Set settings URL
+  window.settingsUrl = "{% url 'settings:settings' %}";
+  // Set login URL
+  window.loginUrl = "{% url 'accounts:login' %}";
+  // Helper function for restaurant detail URL
+  window.getRestaurantDetailUrl = function(restaurantId) {
+    const baseUrl = "{% url 'restaurants:list' %}";
+    return baseUrl + restaurantId + '/';
+  };
 </script>
 <script src="{% static 'home/js/userProfile.js' %}"></script>
 <script src="{% static 'restaurants/js/search.js' %}"></script>

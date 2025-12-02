@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleSettings = () => {
-        window.location.href='/settings/';
+        window.location.href = window.settingsUrl || '/settings/';
     }
 
     setupEventListeners();

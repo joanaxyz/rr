@@ -123,5 +123,11 @@
 {% endblock %}
 
 {% block rr_base_js %}
+<script>
+  // Helper function for reservation edit URL
+  window.getReservationEditUrl = function(reservationId) {
+    return "{% url 'reservations:edit' reservation_id=0 %}".replace('0', reservationId);
+  };
+</script>
 <script src="{% static 'reservations/js/reservation_list.js' %}"></script>
 {% endblock %}

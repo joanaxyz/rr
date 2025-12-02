@@ -281,7 +281,8 @@ async function toggleBookmark(restaurantId) {
             }
         } else if (data.requires_login) {
             if (confirm(data.error + ' Would you like to log in now?')) {
-                window.location.href = '/accounts/login/?next=' + window.location.pathname;
+                const loginUrl = window.loginUrl || "{% url 'accounts:login' %}";
+                window.location.href = loginUrl + '?next=' + window.location.pathname;
             }
         } else {
             alert(data.error || 'Failed to update bookmark');
