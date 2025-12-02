@@ -53,22 +53,32 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    username = forms.EmailField(
-        widget=forms.EmailInput(attrs={'placeholder': 'Email address'})
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Email address or Username'})
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
     )
 
     def clean(self):
-        email = self.cleaned_data.get('username')
+        username_or_email = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
 
-        if email and password:
-            user = authenticate(username=email, password=password)
+        if username_or_email and password:
+            # Try to authenticate with username first
+            user = authenticate(username=username_or_email, password=password)
+            
+            # If that fails, try with email
+            if user is None:
+                try:
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(username=user_obj.username, password=password)
+                except User.DoesNotExist:
+                    user = None
+            
             if user is None:
                 raise forms.ValidationError(
-                    _("The email or password you entered is incorrect. Please try again."),
+                    _("The email/username or password you entered is incorrect. Please try again."),
                     code='invalid_login'
                 )
             else:

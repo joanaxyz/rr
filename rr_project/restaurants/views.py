@@ -6,12 +6,13 @@ from django.contrib import messages
 from datetime import datetime
 from .models import *
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from datetime import timedelta
 from django.utils import timezone
 from .models import Cuisine, Tags
 from .forms import ReviewForm
 from accounts.models import Customer
+from django.core.paginator import Paginator
 
 # Create your views here.
 def restaurant_detail_view(request, restaurant_id):
@@ -80,15 +81,26 @@ def restaurant_detail_view(request, restaurant_id):
         else:
             review_form = ReviewForm() if request.user.is_authenticated else None
     
-    # Convert queryset to list to ensure it's iterable in template
-    reviews_list = list(reviews)
+    # Paginate reviews - only load reviews for current page
+    paginator = Paginator(reviews.order_by('-created_at'), 10)  # 10 reviews per page
+    page_number = request.GET.get('page', 1)
+    reviews_page = paginator.get_page(page_number)
+    
+    # Only convert current page's reviews to dict
+    reviews_list = list(reviews_page)
+    reviews_dict = [r.to_dict() for r in reviews_list]
+    
+    # Recent reviews (limit to 5 most recent)
+    recent_reviews = recent_reviews[:5]
+    recent_reviews_dict = [r.to_dict() for r in recent_reviews]
     
     context = {
         'restaurant': restaurant,
         'restaurant_dict': restaurant.to_dict(),
         'reviews': reviews_list,
-        'reviews_dict': [r.to_dict() for r in reviews_list],
-        'recent_reviews': [r.to_dict() for r in recent_reviews],
+        'reviews_page': reviews_page,  # Pass page object for pagination
+        'reviews_dict': reviews_dict,
+        'recent_reviews': recent_reviews_dict,
         'avg_rating': avg_rating,
         'review_form': review_form,
         'is_bookmarked': is_bookmarked,
@@ -139,39 +151,75 @@ def toggle_bookmark(request, restaurant_id):
 
 
 def restaurants_view(request):
+    # Start with base queryset
     restaurants = Restaurant.objects.annotate(
         avg_rating=Avg('reviews__rating'),
         review_count=Count('reviews')
-    ).select_related().prefetch_related('cuisines', 'tags')
+    ).select_related('owner', 'owner__user').prefetch_related('cuisines', 'tags')
     
-    # Get all cuisines and tags for filters
-    cuisines = Cuisine.objects.all().order_by('name')
-    tags = Tags.objects.all().order_by('tag')
-
-    restaurant_list = [r.to_dict() for r in restaurants]
-    cuisines_list = [c.to_dict() for c in cuisines]
-    tags_list = [t.to_dict() for t in tags]
-
+    # Apply filters from query parameters
     city = request.GET.get('city', '')
     guest_count = request.GET.get('guest_count', '')
     date = request.GET.get('date', '')
-    day = None 
+    search = request.GET.get('search', '')
+    
+    # Filter by city
+    if city:
+        restaurants = restaurants.filter(city__iexact=city)
+    
+    # Filter by guest count
+    if guest_count:
+        try:
+            guest_num = int(guest_count)
+            restaurants = restaurants.filter(max_guest_count__gte=guest_num)
+        except ValueError:
+            pass
+    
+    # Filter by operating day
+    day = None
     if date:
         try:
             parsed_date = datetime.strptime(date, '%Y-%m-%d').date()
             weekday = parsed_date.weekday()
             weekday_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
             day = weekday_names[weekday]
+            restaurants = restaurants.filter(operating_days__icontains=day)
         except ValueError:
-            day = None 
+            day = None
+    
+    # Search filter
+    if search:
+        restaurants = restaurants.filter(
+            Q(name__icontains=search) |
+            Q(description__icontains=search) |
+            Q(city__icontains=search)
+        )
+    
+    # Get filter options (cuisines and tags) - these are small, so loading all is fine
+    cuisines = Cuisine.objects.all().order_by('name')
+    tags = Tags.objects.all().order_by('tag')
+    cuisines_list = [c.to_dict() for c in cuisines]
+    tags_list = [t.to_dict() for t in tags]
+    
+    # Apply server-side pagination - only convert to dict the items on current page
+    paginator = Paginator(restaurants.order_by('-avg_rating', '-created_at'), 12)  # 12 restaurants per page
+    page_number = request.GET.get('page', 1)
+    restaurants_page = paginator.get_page(page_number)
+    
+    # Pass both dict (for backward compatibility) and objects (for template access)
+    restaurant_list = [r.to_dict() for r in restaurants_page]
     
     context = {
-        'restaurants': restaurant_list,
+        'restaurants': restaurants_page,  # Pass page object with restaurant instances
+        'restaurants_dict': restaurant_list,  # Keep dict for any JS that might need it
+        'restaurants_page': restaurants_page,  # Pass page object for pagination controls
         'cuisines': cuisines_list,
         'tags': tags_list,
         'day': day,
         'city': city,
         'guest_count': guest_count,
-        'total_restaurants': len(restaurant_list),
+        'date': date,
+        'search': search,
+        'total_restaurants': paginator.count,  # Total count from database
     }
     return render(request, 'restaurants/restaurants.html', context)

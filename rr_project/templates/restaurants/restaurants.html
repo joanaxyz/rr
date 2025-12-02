@@ -1,5 +1,6 @@
 {% extends 'common/rr_base.html' %}
 {% load static %}
+{% load restaurant_filters %}
 {% block title %}Explore Restaurants - RR{% endblock %}
 
 {% block rr_base_css %}
@@ -138,9 +139,124 @@
         <p class="results-count"><strong>{{ total_restaurants }}</strong> restaurants found</p>
 
         <div class="restaurants-grid">
+            {% for restaurant in restaurants %}
+            <div class="restaurant-card" data-id="{{ restaurant.id }}">
+                <div class="card-image" style="background-image: url('{{ restaurant.image|default:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800" }}')">
+                    <div class="card-overlay">
+                        <div class="card-rating">
+                            <i class="fas fa-star"></i>
+                            <span>{% if restaurant.avg_rating %}{{ restaurant.avg_rating|floatformat:1 }}{% else %}New{% endif %}</span>
+                        </div>
+                        {% if restaurant.is_open_now %}
+                        <div class="card-status-badge open">Open Now</div>
+                        {% else %}
+                        <div class="card-status-badge closed">Closed</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-header">
+                        <h3>{{ restaurant.name }}</h3>
+                        <span class="card-price">{{ restaurant.price_range_display }}</span>
+                    </div>
+                    
+                    {% if restaurant.description %}
+                    <p class="card-description">{{ restaurant.description|truncatewords:15 }}</p>
+                    {% endif %}
+                    
+                    <div class="card-cuisines">
+                        {% for cuisine in restaurant.cuisines.all|slice:":3" %}
+                        <span class="cuisine-tag">{{ cuisine.name }}</span>
+                        {% endfor %}
+                        {% if restaurant.cuisines.count > 3 %}
+                        <span class="cuisine-tag more">+{{ restaurant.cuisines.count|add:"-3" }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if restaurant.tags.all %}
+                    <div class="card-tags">
+                        {% for tag in restaurant.tags.all|slice:":2" %}
+                        <span class="tag-badge">{{ tag.tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-info-grid">
+                        <div class="info-item">
+                            <i class="fas fa-location-dot"></i>
+                            <span class="info-text">{{ restaurant.full_address|truncatewords:8 }}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="info-text">
+                                {% if restaurant.opening_time and restaurant.closing_time %}
+                                    {{ restaurant.opening_time|time_12hour }} - {{ restaurant.closing_time|time_12hour }}
+                                {% else %}
+                                    Hours not available
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span class="info-text">{{ restaurant.operating_days|format_operating_days }}</span>
+                        </div>
+                        {% if restaurant.phone_number %}
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <span class="info-text">{{ restaurant.phone_number }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>Up to {{ restaurant.max_guest_count }} guests</span>
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-star"></i>
+                                <span>{{ restaurant.review_count }} review{{ restaurant.review_count|pluralize }}</span>
+                            </span>
+                        </div>
+                        
+                        <a href="{% url 'restaurants:detail' restaurant.id %}" class="btn-book">
+                            View Details
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-utensils"></i>
+                <h3>No Restaurants Found</h3>
+                <p>Try adjusting your filters or search criteria</p>
+            </div>
+            {% endfor %}
         </div>
-        <div class="pagination">
+        
+        <!-- Server-side Pagination -->
+        {% if restaurants_page.has_other_pages %}
+        <div class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem; align-items: center;">
+            {% if restaurants_page.has_previous %}
+            <a href="?page={{ restaurants_page.previous_page_number }}{% if city %}&city={{ city }}{% endif %}{% if guest_count %}&guest_count={{ guest_count }}{% endif %}{% if date %}&date={{ date }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="pagination-link">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% endif %}
+            
+            <span class="pagination-info">
+                Page {{ restaurants_page.number }} of {{ restaurants_page.paginator.num_pages }}
+            </span>
+            
+            {% if restaurants_page.has_next %}
+            <a href="?page={{ restaurants_page.next_page_number }}{% if city %}&city={{ city }}{% endif %}{% if guest_count %}&guest_count={{ guest_count }}{% endif %}{% if date %}&date={{ date }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="pagination-link">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
         </div>
+        {% endif %}
     </div>
 </div>
 
@@ -187,10 +303,19 @@
 {% endblock %}
 
 {% block rr_base_js %}
-{{ restaurants|json_script:"restaurant-data" }}
+{# Only pass current page's restaurants for backward compatibility with any remaining JS #}
+{% if restaurants_dict %}{{ restaurants_dict|json_script:"restaurant-data" }}{% endif %}
 <script src="{% static 'home/js/stars.js' %}"></script>
 <script src="{% static 'home/js/book.js' %}"></script>
-<script src="{% static 'restaurants/js/paginator.js' %}"></script>
-<script src="{% static 'restaurants/js/filter.js' %}"></script>
 <script src="{% static 'restaurants/js/addressModal.js' %}"></script>
+<script>
+// Disable client-side pagination since we're using server-side pagination now
+// The restaurants are already rendered server-side in the template
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize stars for restaurant cards
+    if (typeof initializeStars === 'function') {
+        initializeStars();
+    }
+});
+</script>
 {% endblock %}

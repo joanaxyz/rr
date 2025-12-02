@@ -99,9 +99,9 @@ body {
 .main-container {
   display: flex;
   gap: var(--space-8);
-  max-width: 1400px;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: var(--space-8);
+  padding: var(--space-4) var(--space-6);
   min-height: calc(100vh - 300px);
 }
 
@@ -112,6 +112,8 @@ body {
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-2xl);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
   padding: var(--space-6);
   height: fit-content;
   max-height: calc(100vh - 200px);
@@ -390,8 +392,26 @@ body {
 
 .restaurants-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: var(--space-6);
+}
+
+@media (min-width: 1600px) {
+  .restaurants-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .restaurants-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .restaurants-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .restaurant-card {
@@ -412,7 +432,7 @@ body {
 }
 
 .card-image {
-  height: 280px;
+  height: 240px;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -421,35 +441,58 @@ body {
 .card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.6) 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%);
   display: flex;
   align-items: flex-start;
-  justify-content: flex-end;
-  padding: var(--space-5);
+  justify-content: space-between;
+  padding: var(--space-4);
+  flex-direction: column;
 }
 
 .card-rating {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
   backdrop-filter: blur(10px);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-full);
   color: var(--white);
   font-size: var(--font-sm);
   font-weight: var(--font-weight-semibold);
+  align-self: flex-end;
 }
 
 .card-rating i {
   color: var(--orange-400);
 }
 
+.card-status-badge {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.card-status-badge.open {
+  background: rgba(34, 197, 94, 0.9);
+  color: var(--white);
+}
+
+.card-status-badge.closed {
+  background: rgba(239, 68, 68, 0.9);
+  color: var(--white);
+}
+
 .card-content {
-  padding: var(--space-6);
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
   flex: 1;
 }
 
@@ -457,15 +500,17 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-2);
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
 }
 
 .card-header h3 {
-  font-size: var(--font-xl);
+  font-size: var(--font-lg);
   font-weight: var(--font-weight-bold);
   color: var(--gray-900);
   margin: 0;
   flex: 1;
+  line-height: 1.3;
 }
 
 .card-price {
@@ -473,54 +518,119 @@ body {
   font-weight: var(--font-weight-bold);
   color: var(--orange-500);
   flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.card-description {
+  font-size: var(--font-sm);
+  color: var(--gray-600);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card-cuisines {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
 }
 
 .cuisine-tag {
   font-size: var(--font-xs);
-  padding: var(--space-1) var(--space-3);
+  padding: var(--space-1) var(--space-2);
   background: var(--orange-50);
   color: var(--orange-600);
   border-radius: var(--radius-full);
   font-weight: var(--font-weight-medium);
+  white-space: nowrap;
 }
 
-.card-info {
+.cuisine-tag.more {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.card-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.tag-badge {
+  font-size: var(--font-xs);
+  background: var(--gray-100);
+  color: var(--gray-600);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--gray-200);
+}
+
+.card-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
   margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
 }
 
 .info-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
-  font-size: var(--font-sm);
-  color: var(--gray-500);
+  font-size: var(--font-xs);
+  color: var(--gray-600);
+  line-height: 1.4;
 }
 
 .info-item i {
-  color: var(--gray-400);
-  font-size: 12px;
-}
-
-.info-item.open {
   color: var(--orange-500);
+  font-size: 11px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 14px;
 }
 
-.info-item.open i {
+.info-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--gray-200);
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-xs);
+  color: var(--gray-600);
+  gap: var(--space-3);
+}
+
+.card-meta .meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.card-meta .meta-item i {
+  font-size: 11px;
   color: var(--orange-500);
-}
-
-.info-item.closed {
-  color: var(--gray-400);
 }
 
 .card-details {
