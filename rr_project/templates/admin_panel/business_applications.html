@@ -65,7 +65,7 @@
                 </a>
               {% endif %}
             </td>
-            <td>{{ request.created_at|date:"M d, Y H:i" }}</td>
+            <td>{{ request.created_at|date:"M d, Y h:i A" }} </td>
             <td>
               <form method="POST" style="display: inline;" onsubmit="return confirm('Accept this business application?');">
                 {% csrf_token %}

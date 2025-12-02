@@ -287,7 +287,9 @@ body {
   flex-wrap: wrap;
   width: 100%;
   justify-content: center;
+  align-items: center;
 }
+
 
 .legend-item {
   display: flex;
@@ -326,20 +328,67 @@ body {
 }
 
 .table-map-container > .floor-plan {
-  height: 500px;
-  max-height: 500px;
+  width: 100%;
+  max-width: 100%;
   min-height: 500px;
   border: 2px solid var(--gray-200);
   border-radius: var(--radius-2xl);
   background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
-  overflow: auto;
+  overflow: hidden;
   box-shadow: var(--shadow-lg);
   transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: grab;
+  /* Hide scrollbars */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
+
+.table-map-container > .floor-plan::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.table-map-container > .floor-plan.dragging {
+  cursor: grabbing;
+}
+
+
+/* Inner wrapper for draggable content */
+.floor-plan-inner-wrapper {
+  position: relative;
+  transition: none;
+  background-image: 
+    linear-gradient(0deg, transparent 24%, rgba(255, 107, 0, 0.03) 25%, rgba(255, 107, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(255, 107, 0, 0.03) 75%, rgba(255, 107, 0, 0.03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(255, 107, 0, 0.03) 25%, rgba(255, 107, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(255, 107, 0, 0.03) 75%, rgba(255, 107, 0, 0.03) 76%, transparent 77%, transparent);
+  background-size: 40px 40px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin: 0;
+}
+
 
 .table-map-container > .floor-plan:hover {
   border-color: var(--orange-300);
   box-shadow: var(--shadow-xl), 0 0 40px rgba(255, 107, 0, 0.1);
+}
+
+.table-map-container > .floor-plan > .floor-plan {
+  position: relative;
+  width: 800px;
+  height: 500px;
+  background-image: 
+    linear-gradient(0deg, transparent 24%, rgba(255, 107, 0, 0.03) 25%, rgba(255, 107, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(255, 107, 0, 0.03) 75%, rgba(255, 107, 0, 0.03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(255, 107, 0, 0.03) 25%, rgba(255, 107, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(255, 107, 0, 0.03) 75%, rgba(255, 107, 0, 0.03) 76%, transparent 77%, transparent);
+  background-size: 40px 40px;
+  flex-shrink: 0;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .floor-plan {
@@ -351,7 +400,8 @@ body {
     linear-gradient(90deg, transparent 24%, rgba(255, 107, 0, 0.03) 25%, rgba(255, 107, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(255, 107, 0, 0.03) 75%, rgba(255, 107, 0, 0.03) 76%, transparent 77%, transparent);
   background-size: 40px 40px;
   flex-shrink: 0;
-  margin: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Floor Elements */
@@ -682,7 +732,17 @@ body {
   .table-map-container > .floor-plan {
     width: 100%;
     max-width: 100%;
+    padding: 15px;
   }
+
+  .table-map-container > .floor-plan > .floor-plan {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    min-width: 300px;
+    min-height: 300px;
+  }
+
 }
 
 @media (max-width: 768px) {
@@ -725,8 +785,34 @@ body {
   }
 
   .floor-legend {
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-5);
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    font-size: var(--font-xs);
+  }
+
+  .legend-color {
+    width: 16px;
+    height: 16px;
+  }
+
+
+  .table-map-container > .floor-plan {
+    padding: 15px 10px;
+    min-height: 400px;
+  }
+
+  .table-map-container > .floor-plan > .floor-plan {
+    min-width: 280px;
+    min-height: 280px;
+  }
+
+  .table-selection-info {
+    padding: var(--space-4);
+    font-size: var(--font-sm);
   }
 
   .restaurant-meta {
@@ -795,4 +881,35 @@ body {
   .meta-icon i {
     font-size: 14px;
   }
+
+  .table-map-container > .floor-plan {
+    padding: 10px 5px;
+    min-height: 350px;
+  }
+
+  .table-map-container > .floor-plan > .floor-plan {
+    min-width: 250px;
+    min-height: 250px;
+    transform: scale(0.85);
+    transform-origin: center;
+  }
+
+  .floor-item {
+    touch-action: none;
+  }
+
+  .table {
+    min-width: 50px;
+    min-height: 50px;
+  }
+
+  .floor-legend {
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .legend-item span {
+    font-size: 0.7rem;
+  }
+}
 }
