@@ -96,9 +96,34 @@ def owner_verification_requests(request):
             user.role = 'OWNER'
             user.save()
             
-            Owner.objects.get_or_create(user=user)
+            owner, _ = Owner.objects.get_or_create(user=user)
             
-            messages.success(request, f'Owner verification for {user.email} has been accepted.')
+            # Create restaurant if restaurant information was provided
+            if verification_request.restaurant_name:
+                from restaurants.models import Restaurant
+                
+                restaurant = Restaurant.objects.create(
+                    name=verification_request.restaurant_name,
+                    email=verification_request.business_email or user.email,
+                    phone_number=verification_request.restaurant_phone or '',
+                    description=verification_request.restaurant_description or '',
+                    street_number=verification_request.restaurant_street_number,
+                    street_name=verification_request.restaurant_street_name,
+                    street_block=verification_request.restaurant_street_block,
+                    city=verification_request.restaurant_city,
+                    postal_code=verification_request.restaurant_postal_code,
+                    price_min=verification_request.restaurant_price_min or 0,
+                    price_max=verification_request.restaurant_price_max or 0,
+                    max_guest_count=verification_request.restaurant_max_guests or 0,
+                    opening_time=verification_request.restaurant_opening_time,
+                    closing_time=verification_request.restaurant_closing_time,
+                    operating_days=verification_request.restaurant_operating_days or 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
+                    image=verification_request.restaurant_image,
+                    owner=owner
+                )
+                messages.success(request, f'Owner verification for {user.email} has been accepted and restaurant "{restaurant.name}" has been created.')
+            else:
+                messages.success(request, f'Owner verification for {user.email} has been accepted.')
         
         elif action == 'reject':
             verification_request.state = 'NOT_APPROVED'

@@ -337,6 +337,16 @@
   padding-left: calc(var(--space-5) + 4px);
 }
 
+.dropdown-item i {
+  color: var(--gray-500);
+  transition: color var(--transition-base);
+  flex-shrink: 0;
+}
+
+.dropdown-item:hover i {
+  color: var(--orange-500);
+}
+
 #btnLogout {
   color: var(--orange-600);
   font-weight: var(--font-weight-semibold);
@@ -345,6 +355,14 @@
 
 #btnLogout:hover {
   background: var(--orange-50);
+  color: var(--orange-700);
+}
+
+#btnLogout i {
+  color: var(--orange-600);
+}
+
+#btnLogout:hover i {
   color: var(--orange-700);
 }
 

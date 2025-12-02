@@ -220,6 +220,118 @@ body {
   color: var(--white);
 }
 
+/* ============ FORM SECTIONS ============ */
+
+.form-section-divider {
+  margin: var(--space-10) 0 var(--space-6);
+  padding: var(--space-6) 0;
+  border-top: 2px solid var(--gray-200);
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.form-section-divider h3 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-900);
+}
+
+.section-description {
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.required {
+  color: var(--orange-600);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ============ ADDRESS FIELDS ============ */
+
+.address-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.address-field {
+  width: 100%;
+}
+
+/* ============ HOURS FIELDS ============ */
+
+.hours-fields {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.hours-fields input[type="time"] {
+  flex: 1;
+  min-width: 150px;
+}
+
+.hours-separator {
+  color: var(--gray-600);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============ DAYS CHECKBOXES ============ */
+
+.days-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.days-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-700);
+  margin: 0;
+}
+
+.days-checkboxes input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--orange-500);
+}
+
+.days-checkboxes input[type="checkbox"]:checked + span,
+.days-checkboxes input[type="checkbox"]:checked {
+  color: var(--orange-600);
+}
+
+/* ============ PRICE FIELDS ============ */
+
+.price-fields {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.price-field {
+  flex: 1;
+  min-width: 150px;
+}
+
+.price-separator {
+  color: var(--gray-600);
+  font-weight: var(--font-weight-medium);
+}
+
 /* ============ RESPONSIVE ============ */
 
 @media (max-width: 768px) {
@@ -248,5 +360,24 @@ body {
   .form-group textarea,
   .form-group select {
     padding: var(--space-3);
+  }
+
+  .address-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .hours-fields,
+  .price-fields {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hours-separator,
+  .price-separator {
+    text-align: center;
+  }
+
+  .days-checkboxes {
+    gap: var(--space-3);
   }
 }

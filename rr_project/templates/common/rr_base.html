@@ -43,9 +43,18 @@
         <div class="user-email">{{ user.email }}</div>
       </div>
       <div class="dropdown-divider"></div>
-      <a href="{% url 'accounts:profile' %}" class="dropdown-item">My Profile</a>
-      <a href="{% url 'reservations:list' %}" class="dropdown-item">My Reservations</a>
-      <button class="dropdown-item" id="btnSettings">Settings</button>
+      <a href="{% url 'accounts:profile' %}" class="dropdown-item">
+        <i class="fas fa-user" style="margin-right: 8px; width: 16px;"></i>
+        <span>My Profile</span>
+      </a>
+      <a href="{% url 'reservations:list' %}" class="dropdown-item">
+        <i class="fas fa-calendar-check" style="margin-right: 8px; width: 16px;"></i>
+        <span>My Reservations</span>
+      </a>
+      <button class="dropdown-item" id="btnSettings">
+        <i class="fas fa-cog" style="margin-right: 8px; width: 16px;"></i>
+        <span>Settings</span>
+      </button>
       {% if user.role == 'OWNER' or user.role == 'HOST' or user.role == 'MANAGER' %}
       <div class="dropdown-divider"></div>
       <a href="{% url 'manage_restaurant:list' %}" class="dropdown-item">
@@ -61,7 +70,10 @@
       </a>
       {% endif %}
       <div class="dropdown-divider"></div>
-      <button class="dropdown-item" id="btnLogout">Sign Out</button>
+      <button class="dropdown-item" id="btnLogout">
+        <i class="fas fa-sign-out-alt" style="margin-right: 8px; width: 16px;"></i>
+        <span>Sign Out</span>
+      </button>
     </div>
   </div>
   {% else %}

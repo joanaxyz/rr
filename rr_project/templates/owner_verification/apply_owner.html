@@ -105,6 +105,103 @@
             <img id="preview_proof" class="preview-img" />
         </div>
 
+        <!-- Restaurant Information Section -->
+        <div class="form-section-divider">
+            <h3>Restaurant Information</h3>
+            <p class="section-description">Provide details about your restaurant. This will be used to create your restaurant listing once verification is approved.</p>
+        </div>
+
+        <!-- Restaurant Name -->
+        <div class="form-group">
+            <label for="restaurant_name">Restaurant Name <span class="required">*</span></label>
+            <input type="text" id="restaurant_name" name="restaurant_name" required 
+                   placeholder="Enter your restaurant name">
+        </div>
+
+        <!-- Restaurant Phone -->
+        <div class="form-group">
+            <label for="restaurant_phone">Restaurant Phone Number <span class="required">*</span></label>
+            <input type="tel" id="restaurant_phone" name="restaurant_phone" required 
+                   placeholder="Enter restaurant phone number">
+        </div>
+
+        <!-- Restaurant Description -->
+        <div class="form-group">
+            <label for="restaurant_description">Restaurant Description <span class="required">*</span></label>
+            <textarea id="restaurant_description" name="restaurant_description" rows="4" required 
+                      placeholder="Describe your restaurant, cuisine type, specialties, etc."></textarea>
+        </div>
+
+        <!-- Restaurant Address -->
+        <div class="form-group">
+            <label>Restaurant Address <span class="required">*</span></label>
+            <div class="address-fields">
+                <input type="text" id="restaurant_street_number" name="restaurant_street_number" 
+                       placeholder="Street Number" class="address-field">
+                <input type="text" id="restaurant_street_name" name="restaurant_street_name" required
+                       placeholder="Street Name *" class="address-field">
+                <input type="text" id="restaurant_street_block" name="restaurant_street_block" 
+                       placeholder="Block/District" class="address-field">
+                <input type="text" id="restaurant_city" name="restaurant_city" required
+                       placeholder="City *" class="address-field">
+                <input type="text" id="restaurant_postal_code" name="restaurant_postal_code" 
+                       placeholder="Postal Code" class="address-field">
+            </div>
+        </div>
+
+        <!-- Restaurant Operating Hours -->
+        <div class="form-group">
+            <label>Operating Hours</label>
+            <div class="hours-fields">
+                <input type="time" id="restaurant_opening_time" name="restaurant_opening_time" 
+                       placeholder="Opening Time">
+                <span class="hours-separator">to</span>
+                <input type="time" id="restaurant_closing_time" name="restaurant_closing_time" 
+                       placeholder="Closing Time">
+            </div>
+        </div>
+
+        <!-- Operating Days -->
+        <div class="form-group">
+            <label>Operating Days</label>
+            <div class="days-checkboxes">
+                <label><input type="checkbox" name="restaurant_operating_days" value="Mon" checked> Mon</label>
+                <label><input type="checkbox" name="restaurant_operating_days" value="Tue" checked> Tue</label>
+                <label><input type="checkbox" name="restaurant_operating_days" value="Wed" checked> Wed</label>
+                <label><input type="checkbox" name="restaurant_operating_days" value="Thu" checked> Thu</label>
+                <label><input type="checkbox" name="restaurant_operating_days" value="Fri" checked> Fri</label>
+                <label><input type="checkbox" name="restaurant_operating_days" value="Sat" checked> Sat</label>
+                <label><input type="checkbox" name="restaurant_operating_days" value="Sun" checked> Sun</label>
+            </div>
+        </div>
+
+        <!-- Max Guests -->
+        <div class="form-group">
+            <label for="restaurant_max_guests">Maximum Guest Capacity <span class="required">*</span></label>
+            <input type="number" id="restaurant_max_guests" name="restaurant_max_guests" required 
+                   min="1" placeholder="Enter maximum number of guests">
+        </div>
+
+        <!-- Price Range -->
+        <div class="form-group">
+            <label>Price Range (per person)</label>
+            <div class="price-fields">
+                <input type="number" id="restaurant_price_min" name="restaurant_price_min" 
+                       min="0" step="0.01" placeholder="Min Price" class="price-field">
+                <span class="price-separator">to</span>
+                <input type="number" id="restaurant_price_max" name="restaurant_price_max" 
+                       min="0" step="0.01" placeholder="Max Price" class="price-field">
+            </div>
+        </div>
+
+        <!-- Restaurant Image -->
+        <div class="form-group">
+            <label for="restaurant_image">Restaurant Image</label>
+            <input type="file" id="restaurant_image" name="restaurant_image" accept="image/*">
+            <small>Upload a photo of your restaurant (optional)</small>
+            <img id="preview_restaurant_image" class="preview-img" />
+        </div>
+
         <!-- Submit Button -->
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit Verification Request</button>
@@ -146,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const govtFront = document.getElementById('government_id_front');
     const govtBack = document.getElementById('government_id_back');
     const proofOwnership = document.getElementById('proof_ownership');
+    const restaurantImage = document.getElementById('restaurant_image');
     
     if (businessLicense) {
         businessLicense.addEventListener('change', function() {
@@ -165,6 +263,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (proofOwnership) {
         proofOwnership.addEventListener('change', function() {
             previewFile(this, 'preview_proof');
+        });
+    }
+    if (restaurantImage) {
+        restaurantImage.addEventListener('change', function() {
+            previewFile(this, 'preview_restaurant_image');
         });
     }
 });
