@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from owner_verification.models import OwnerVerificationRequest
+from owner_verification.models import BusinessApplication
 
 @login_required
 def settings_view(request):
@@ -23,8 +23,8 @@ def settings_view(request):
     
     verification_request = None
     try:
-        verification_request = OwnerVerificationRequest.objects.filter(user=user).latest('created_at')
-    except OwnerVerificationRequest.DoesNotExist:
+        verification_request = BusinessApplication.objects.filter(user=user).latest('created_at')
+    except BusinessApplication.DoesNotExist:
         pass
     
     from restaurants.models import Restaurant

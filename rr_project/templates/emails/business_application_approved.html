@@ -1,0 +1,65 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Business Application Approved - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#28a745"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}🎉 Congratulations! Your Application Has Been Approved{% endblock %}
+
+{% block email_description %}
+Great news! Your business application has been reviewed and approved. You are now a verified business partner on Restaurant Reservation.
+{% endblock %}
+
+{% block email_content %}
+<div class="success-box">
+    <strong>✓ Application Approved</strong>
+    <p style="margin: 10px 0 0 0;">You can now start managing your restaurant on our platform and begin accepting reservations from customers.</p>
+</div>
+
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Business Name</span>
+        <span class="detail-value">{{ application.business_address|default:"N/A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Account Email</span>
+        <span class="detail-value">{{ user.email }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Approved On</span>
+        <span class="detail-value">{{ application.updated_at|date:"F d, Y \a\t g:i A" }}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>Next Steps:</strong>
+    <ul style="margin: 10px 0 0 20px; padding-left: 20px;">
+        <li>Log in to your account to access the restaurant management dashboard</li>
+        <li>Create your first restaurant listing</li>
+        <li>Set up your table layout and availability</li>
+        <li>Start accepting reservations from customers</li>
+        <li>Invite staff members to help manage your restaurant</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}manage-restaurant/list/" class="email-button email-button-success">Manage Your Restaurant</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>Welcome to Restaurant Reservation! We're excited to have you on board.</p>
+    <p>If you need any assistance getting started, please don't hesitate to contact our support team.</p>
+</div>
+{% endblock %}
+

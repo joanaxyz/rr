@@ -4,18 +4,19 @@ from django.db.models import Count, Q, Avg
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from accounts.models import User, Owner, Customer
-from owner_verification.models import OwnerVerificationRequest
+from owner_verification.models import BusinessApplication
 from restaurants.models import RestaurantCreationRequest, Restaurant, Cuisine, Tags, Review
 from reservations.models import Reservation
 from django.contrib.auth.hashers import make_password
 from .decorators import admin_login_required
+from email_service.views import send_email
 import csv
 from datetime import datetime
 
 
 @admin_login_required
 def dashboard(request):
-    pending_owner_requests = OwnerVerificationRequest.objects.filter(state='PENDING').count()
+    pending_owner_requests = BusinessApplication.objects.filter(state='PENDING').count()
     pending_restaurant_requests = RestaurantCreationRequest.objects.filter(status='PENDING').count()
     total_admins = User.objects.filter(is_staff=True).count()
     total_users = User.objects.count()
@@ -76,74 +77,80 @@ def manage_admins(request):
     context = {
         'admins': admins,
         'non_admins': non_admins,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/manage_admins.html', context)
 
 @admin_login_required
-def owner_verification_requests(request):
+def business_applications(request):
     if request.method == 'POST':
         action = request.POST.get('action')
         request_id = request.POST.get('request_id')
-        verification_request = get_object_or_404(OwnerVerificationRequest, id=request_id)
+        application = get_object_or_404(BusinessApplication, id=request_id)
         
         if action == 'accept':
-            verification_request.state = 'ACCEPTED'
-            verification_request.save()
+            application.state = 'ACCEPTED'
+            application.save()
             
-            user = verification_request.user
+            user = application.user
             user.role = 'OWNER'
             user.save()
             
-            owner, _ = Owner.objects.get_or_create(user=user)
+            Owner.objects.get_or_create(user=user)
             
-            # Create restaurant if restaurant information was provided
-            if verification_request.restaurant_name:
-                from restaurants.models import Restaurant
-                
-                restaurant = Restaurant.objects.create(
-                    name=verification_request.restaurant_name,
-                    email=verification_request.business_email or user.email,
-                    phone_number=verification_request.restaurant_phone or '',
-                    description=verification_request.restaurant_description or '',
-                    street_number=verification_request.restaurant_street_number,
-                    street_name=verification_request.restaurant_street_name,
-                    street_block=verification_request.restaurant_street_block,
-                    city=verification_request.restaurant_city,
-                    postal_code=verification_request.restaurant_postal_code,
-                    price_min=verification_request.restaurant_price_min or 0,
-                    price_max=verification_request.restaurant_price_max or 0,
-                    max_guest_count=verification_request.restaurant_max_guests or 0,
-                    opening_time=verification_request.restaurant_opening_time,
-                    closing_time=verification_request.restaurant_closing_time,
-                    operating_days=verification_request.restaurant_operating_days or 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
-                    image=verification_request.restaurant_image,
-                    owner=owner
-                )
-                messages.success(request, f'Owner verification for {user.email} has been accepted and restaurant "{restaurant.name}" has been created.')
-            else:
-                messages.success(request, f'Owner verification for {user.email} has been accepted.')
+            # Send approval email
+            site_url = request.build_absolute_uri('/')
+            context = {
+                'user': user,
+                'application': application,
+                'site_url': site_url,
+            }
+            send_email(
+                subject='Business Application Approved - Restaurant Reservation',
+                template_name='emails/business_application_approved.html',
+                context=context,
+                recipient_email=user.email
+            )
+            
+            messages.success(request, f'Business application for {user.email} has been accepted.')
         
         elif action == 'reject':
-            verification_request.state = 'NOT_APPROVED'
-            verification_request.save()
-            messages.info(request, f'Owner verification for {verification_request.user.email} has been rejected.')
+            application.state = 'NOT_APPROVED'
+            application.save()
+            
+            # Send rejection email
+            site_url = request.build_absolute_uri('/')
+            admin_notes = request.POST.get('admin_notes', '')
+            context = {
+                'user': application.user,
+                'application': application,
+                'admin_notes': admin_notes,
+                'site_url': site_url,
+            }
+            send_email(
+                subject='Business Application Update - Restaurant Reservation',
+                template_name='emails/business_application_rejected.html',
+                context=context,
+                recipient_email=application.user.email
+            )
+            
+            messages.info(request, f'Business application for {application.user.email} has been rejected.')
         
-        return redirect('admin_panel:owner_verification_requests')
+        return redirect('admin_panel:business_applications')
     
-    pending_requests = OwnerVerificationRequest.objects.filter(state='PENDING').order_by('-created_at')
-    accepted_requests = OwnerVerificationRequest.objects.filter(state='ACCEPTED').order_by('-updated_at')[:10]
-    rejected_requests = OwnerVerificationRequest.objects.filter(state='NOT_APPROVED').order_by('-updated_at')[:10]
+    pending_requests = BusinessApplication.objects.filter(state='PENDING').order_by('-created_at')
+    accepted_requests = BusinessApplication.objects.filter(state='ACCEPTED').order_by('-updated_at')[:10]
+    rejected_requests = BusinessApplication.objects.filter(state='NOT_APPROVED').order_by('-updated_at')[:10]
     
     context = {
         'pending_requests': pending_requests,
         'accepted_requests': accepted_requests,
         'rejected_requests': rejected_requests,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
-    return render(request, 'admin_panel/owner_verification_requests.html', context)
+    return render(request, 'admin_panel/business_applications.html', context)
 
 @admin_login_required
 def restaurant_creation_requests(request):
@@ -199,7 +206,7 @@ def restaurant_creation_requests(request):
         'pending_requests': pending_requests,
         'accepted_requests': accepted_requests,
         'rejected_requests': rejected_requests,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/restaurant_creation_requests.html', context)
@@ -230,7 +237,7 @@ def users(request):
         'users': users_page,
         'search': search,
         'role': role,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/users.html', context)
@@ -240,7 +247,7 @@ def user_detail(request, user_id):
     user = get_object_or_404(User, id=user_id)
     context = {
         'user_obj': user,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/user_detail.html', context)
@@ -276,7 +283,7 @@ def user_create(request):
             return redirect('admin_panel:user_detail', user_id=user.id)
     
     context = {
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/user_form.html', context)
@@ -305,7 +312,7 @@ def user_edit(request, user_id):
     
     context = {
         'user_obj': user,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/user_form.html', context)
@@ -340,7 +347,7 @@ def restaurants(request):
     context = {
         'restaurants': restaurants_page,
         'search': search,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/restaurants.html', context)
@@ -350,7 +357,7 @@ def restaurant_detail(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     context = {
         'restaurant': restaurant,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/restaurant_detail.html', context)
@@ -390,7 +397,7 @@ def restaurant_create(request):
     
     context = {
         'owners': owners,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/restaurant_form.html', context)
@@ -430,7 +437,7 @@ def restaurant_edit(request, restaurant_id):
     context = {
         'restaurant': restaurant,
         'owners': owners,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/restaurant_form.html', context)
@@ -470,7 +477,7 @@ def reservations(request):
         'reservations': reservations_page,
         'search': search,
         'status': status,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/reservations.html', context)
@@ -480,7 +487,7 @@ def reservation_detail(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
     context = {
         'reservation': reservation,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/reservation_detail.html', context)
@@ -516,7 +523,7 @@ def reservation_create(request):
     context = {
         'restaurants': restaurants,
         'customers': customers,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/reservation_form.html', context)
@@ -550,7 +557,7 @@ def reservation_edit(request, reservation_id):
         'reservation': reservation,
         'restaurants': restaurants,
         'customers': customers,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/reservation_form.html', context)
@@ -584,7 +591,7 @@ def reviews(request):
     context = {
         'reviews': reviews_page,
         'search': search,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/reviews.html', context)
@@ -594,7 +601,7 @@ def review_detail(request, review_id):
     review = get_object_or_404(Review, id=review_id)
     context = {
         'review': review,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/review_detail.html', context)
@@ -625,7 +632,7 @@ def review_create(request):
     context = {
         'restaurants': restaurants,
         'customers': customers,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/review_form.html', context)
@@ -654,7 +661,7 @@ def review_edit(request, review_id):
         'review': review,
         'restaurants': restaurants,
         'customers': customers,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/review_form.html', context)
@@ -684,7 +691,7 @@ def cuisines(request):
     context = {
         'cuisines': cuisines_page,
         'search': search,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/cuisines.html', context)
@@ -701,7 +708,7 @@ def cuisine_create(request):
             return redirect('admin_panel:cuisines')
     
     context = {
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/cuisine_form.html', context)
@@ -718,7 +725,7 @@ def cuisine_edit(request, cuisine_id):
     
     context = {
         'cuisine': cuisine,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/cuisine_form.html', context)
@@ -749,7 +756,7 @@ def tags(request):
     context = {
         'tags': tags_page,
         'search': search,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/tags.html', context)
@@ -766,7 +773,7 @@ def tag_create(request):
             return redirect('admin_panel:tags')
     
     context = {
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/tag_form.html', context)
@@ -783,7 +790,7 @@ def tag_edit(request, tag_id):
     
     context = {
         'tag': tag,
-        'pending_owner_count': OwnerVerificationRequest.objects.filter(state='PENDING').count(),
+        'pending_owner_count': BusinessApplication.objects.filter(state='PENDING').count(),
         'pending_restaurant_count': RestaurantCreationRequest.objects.filter(status='PENDING').count(),
     }
     return render(request, 'admin_panel/tag_form.html', context)

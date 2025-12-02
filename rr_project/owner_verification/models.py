@@ -1,14 +1,14 @@
 from django.db import models
 from accounts.models import User
 
-class OwnerVerificationRequest(models.Model):
+class BusinessApplication(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
         ('ACCEPTED', 'Accepted'),
         ('NOT_APPROVED', 'Not Approved'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_requests')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='business_applications')
 
     govt_full_name = models.CharField(max_length=255)
     government_id_type = models.CharField(max_length=50)
@@ -46,6 +46,9 @@ class OwnerVerificationRequest(models.Model):
     state = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'owner_verification_ownerverificationrequest'  # Keep existing table name
 
     def __str__(self):
         return f"{self.user.username} - {self.state}"

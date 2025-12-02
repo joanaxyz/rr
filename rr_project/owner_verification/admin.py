@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import OwnerVerificationRequest
+from .models import BusinessApplication
 
-admin.site.register(OwnerVerificationRequest)
+admin.site.register(BusinessApplication)

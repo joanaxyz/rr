@@ -1,66 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Creation Request - Update</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 40px 30px; text-align: center; }
-        .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
-        .header p { margin: 10px 0 0; font-size: 16px; opacity: 0.9; }
-        .content { padding: 40px 30px; }
-        .content h2 { color: #dc3545; margin-top: 0; }
-        .content p { margin: 15px 0; line-height: 1.8; }
-        .button { display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; margin: 20px 0; }
-        .reason-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; border-radius: 5px; margin: 20px 0; }
-        .reason-box h3 { margin-top: 0; color: #856404; }
-        .reason-box p { margin: 10px 0; color: #856404; }
-        .footer { background: #f8f9fa; padding: 20px 30px; text-align: center; font-size: 14px; color: #666; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Restaurant Creation Request Update</h1>
-            <p>{{ restaurant_name }}</p>
-        </div>
-        <div class="content">
-            <h2>Hello {{ user.get_full_name|default:user.username }},</h2>
-            <p>Thank you for submitting your restaurant creation request for <strong>{{ restaurant_name }}</strong>.</p>
-            
-            <p>After careful review, we regret to inform you that your request has not been approved at this time.</p>
-            
-            {% if admin_notes %}
-            <div class="reason-box">
-                <h3>Reason for Rejection:</h3>
-                <p>{{ admin_notes }}</p>
-            </div>
-            {% endif %}
-            
-            <p><strong>What can you do next?</strong></p>
-            <ul>
-                <li>Review the reason provided above</li>
-                <li>Address any issues or concerns mentioned</li>
-                <li>Submit a new restaurant creation request with the necessary corrections</li>
-                <li>Contact our support team if you need clarification</li>
-            </ul>
-            
-            <p style="text-align: center;">
-                <a href="{{ site_url }}owner-verification/apply/" class="button">Submit New Request</a>
-            </p>
-            
-            <p>We appreciate your interest in joining our platform and encourage you to reapply once you've addressed the concerns mentioned above.</p>
-            
-            <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
-            
-            <p>Best regards,<br><strong>Restaurant Reservation Team</strong></p>
-        </div>
-        <div class="footer">
-            <p>&copy; 2024 Restaurant Reservation. All rights reserved.</p>
-            <p>This is an automated email. Please do not reply to this message.</p>
-        </div>
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Restaurant Creation Request Update - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#dc3545"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Restaurant Creation Request Update{% endblock %}
+
+{% block email_description %}
+Thank you for submitting your restaurant creation request for <strong>{{ restaurant_name }}</strong>. After careful review, we regret to inform you that your request has not been approved at this time.
+{% endblock %}
+
+{% block email_content %}
+<div class="error-box">
+    <strong>Request Not Approved</strong>
+    <p style="margin: 10px 0 0 0;">We appreciate your interest in joining our platform. Unfortunately, your restaurant creation request did not meet our current requirements.</p>
+</div>
+
+{% if admin_notes %}
+<div class="warning-box">
+    <strong>Reason for Rejection:</strong>
+    <p style="margin: 10px 0 0 0;">{{ admin_notes }}</p>
+</div>
+{% endif %}
+
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Restaurant Name</span>
+        <span class="detail-value">{{ restaurant_name }}</span>
     </div>
-</body>
-</html>
+    <div class="detail-item">
+        <span class="detail-label">Applicant</span>
+        <span class="detail-value">{{ user.get_full_name|default:user.username }}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>What can you do next?</strong>
+    <ul style="margin: 10px 0 0 20px; padding-left: 20px;">
+        <li>Review the reason provided above</li>
+        <li>Address any issues or concerns mentioned</li>
+        <li>Submit a new restaurant creation request with the necessary corrections</li>
+        <li>Contact our support team if you need clarification</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}business/apply/" class="email-button">Submit New Request</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>We appreciate your interest in joining our platform and encourage you to reapply once you've addressed the concerns mentioned above.</p>
+    <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+</div>
+{% endblock %}

@@ -1,12 +1,12 @@
 {% extends 'admin_panel/admin_base.html' %}
 
-{% block title %}Owner Verification Requests{% endblock %}
-{% block page_title %}Owner Verification Requests{% endblock %}
+{% block title %}Business Applications{% endblock %}
+{% block page_title %}Business Applications{% endblock %}
 
 {% block admin_content %}
 <div class="admin-header">
-  <h1>Owner Verification Requests</h1>
-  <p>Review and approve owner verification submissions</p>
+  <h1>Business Applications</h1>
+  <p>Review and approve business partner applications</p>
 </div>
 
 <div class="admin-card">
@@ -67,7 +67,7 @@
             </td>
             <td>{{ request.created_at|date:"M d, Y H:i" }}</td>
             <td>
-              <form method="POST" style="display: inline;" onsubmit="return confirm('Accept this owner verification request?');">
+              <form method="POST" style="display: inline;" onsubmit="return confirm('Accept this business application?');">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="accept">
                 <input type="hidden" name="request_id" value="{{ request.id }}">
@@ -75,7 +75,7 @@
                   <i class="fas fa-check"></i> Accept
                 </button>
               </form>
-              <form method="POST" style="display: inline; margin-left: 0.5rem;" onsubmit="return confirm('Reject this owner verification request?');">
+              <form method="POST" style="display: inline; margin-left: 0.5rem;" onsubmit="return confirm('Reject this business application?');">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="reject">
                 <input type="hidden" name="request_id" value="{{ request.id }}">
@@ -90,10 +90,10 @@
       </table>
     </div>
   {% else %}
-    <div class="empty-state">
-      <i class="fas fa-inbox"></i>
-      <p>No pending owner verification requests</p>
-    </div>
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No pending business applications</p>
+      </div>
   {% endif %}
 </div>
 

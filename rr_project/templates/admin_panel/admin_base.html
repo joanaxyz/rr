@@ -65,9 +65,9 @@
 
       <div class="nav-section">
         <div class="nav-section-title">Requests</div>
-        <a href="{% url 'admin_panel:owner_verification_requests' %}" class="nav-link {% if request.resolver_match.url_name == 'owner_verification_requests' %}active{% endif %}">
+        <a href="{% url 'admin_panel:business_applications' %}" class="nav-link {% if request.resolver_match.url_name == 'business_applications' %}active{% endif %}">
           <i class="fas fa-user-check"></i>
-          <span>Owner Requests</span>
+          <span>Business Applications</span>
         </a>
         <a href="{% url 'admin_panel:restaurant_creation_requests' %}" class="nav-link {% if request.resolver_match.url_name == 'restaurant_creation_requests' %}active{% endif %}">
           <i class="fas fa-store"></i>

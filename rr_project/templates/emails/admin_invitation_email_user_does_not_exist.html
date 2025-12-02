@@ -1,128 +1,77 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Invitation</title>
-    {% load static %}
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; margin: 0; padding: 20px; background-color: #ffffff; }
-        .invite-container { max-width: 600px; margin: 0 auto; }
-        .invite-content { width: 100%; }
-        .logo-header { text-align: center; background-color: #D4530A; color: #ffffff; padding: 30px 20px; margin: 0; }
-        .logo-header img { max-width: 80px; height: auto; margin: 0 0 15px 0; display: block; margin-left: auto; margin-right: auto; }
-        .company-name { margin: 10px 0 5px 0; font-size: 28px; font-weight: bold; color: #ffffff; }
-        .company-tagline { margin: 0; font-size: 14px; color: #ffffff; }
-        .invite-main { background-color: #f9fafb; padding: 40px 30px; margin: 0; border: 1px solid #d1d5db; }
-        .invite-icon { text-align: center; margin-bottom: 20px; }
-        .invite-icon svg { width: 64px; height: 64px; }
-        .invite-title { text-align: center; color: #333333; margin: 20px 0 15px 0; font-size: 24px; font-weight: bold; }
-        .invite-description { text-align: center; margin: 15px 0; font-size: 16px; line-height: 1.6; color: #555555; }
-        .invite-details { background-color: #ffffff; border: 1px solid #d1d5db; padding: 20px; margin: 20px 0; }
-        .detail-item { margin: 15px 0; padding: 10px 0; border-bottom: 1px solid #d1d5db; }
-        .detail-item:last-child { border-bottom: none; }
-        .detail-label { display: block; font-weight: bold; color: #666666; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; }
-        .detail-value { display: block; color: #333333; font-size: 16px; }
-        .btn-register { display: inline-block; background-color: #D4530A; color: #ffffff !important; text-decoration: none; padding: 15px 40px; margin: 20px auto; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .button-container { text-align: center; margin: 25px 0; }
-        .info-box { background-color: #f0f8ff; border: 1px solid #D4530A; border-left: 4px solid #D4530A; padding: 15px; margin: 20px 0; color: #333333; font-size: 14px; }
-        .steps-box { background-color: #ffffff; border: 1px solid #d1d5db; padding: 20px; margin: 20px 0; }
-        .step { margin: 15px 0; padding-bottom: 15px; border-bottom: 1px solid #d1d5db; }
-        .step:last-child { border-bottom: none; }
-        .step-number { display: inline-block; width: 32px; height: 32px; background-color: #D4530A; color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 10px; }
-        .step-content { display: inline-block; vertical-align: middle; }
-        .invite-footer { text-align: center; color: #666666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; }
-        .invite-footer p { margin: 8px 0; line-height: 1.5; }
-        h1, h2, h3, h4, h5, h6 { margin: 15px 0; }
-        p { margin: 15px 0; }
-        img { max-width: 100%; height: auto; }
-        a { color: #D4530A; }
-    </style>
-</head>
-<body>
-    <div class="invite-container">
-        <div class="invite-content">
-            <!-- Logo -->
-            <div class="logo-header">
-                <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
-                <h1 class="company-name">RR - Restaurant Reservation</h1>
-                <p class="company-tagline">Your One Stop Destination for Restaurant Reservations</p>
-            </div>
+{% extends "emails/email_base.html" %}
+{% load static %}
 
-            <!-- Main Content -->
-            <div class="invite-main">
-                <div class="invite-icon">
-                    <!-- Inline SVG for people/staff -->
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z" fill="#D4530A"/>
-                    </svg>
-                </div>
+{% block email_title %}Staff Invitation - Restaurant Reservation{% endblock %}
 
-                <h2 class="invite-title">Welcome! You're Invited to Join</h2>
-                
-                <p class="invite-description">
-                    You have been invited to join <strong>{{ restaurant.name }}</strong> as a <strong>{{ role }}</strong>.
-                </p>
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z" fill="#D4530A"/>
+    </svg>
+</div>
+{% endblock %}
 
-                <!-- Invite Details -->
-                <div class="invite-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Restaurant</span>
-                        <span class="detail-value">{{ restaurant.name }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Position</span>
-                        <span class="detail-value">{{ role|title }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Email Address</span>
-                        <span class="detail-value">{{ email }}</span>
-                    </div>
-                </div>
+{% block email_heading %}Welcome! You're Invited to Join{% endblock %}
 
-                <!-- Info Box -->
-                <div class="info-box">
-                    <strong>Getting Started:</strong> Since you don't have an account yet, you'll need to create one. Click the button below to register and join the team.
-                </div>
+{% block email_description %}
+You have been invited to join <strong>{{ restaurant.name }}</strong> as a <strong>{{ role }}</strong>.
+{% endblock %}
 
-                <!-- Steps -->
-                <div class="steps-box">
-                    <h3 style="margin-top: 0; color: #333333;">How to Get Started:</h3>
-                    <div class="step">
-                        <span class="step-number">1</span>
-                        <span class="step-content">Click the "Create Account" button below</span>
-                    </div>
-                    <div class="step">
-                        <span class="step-number">2</span>
-                        <span class="step-content">Fill in your details and create a password</span>
-                    </div>
-                    <div class="step">
-                        <span class="step-number">3</span>
-                        <span class="step-content">Verify your email address</span>
-                    </div>
-                    <div class="step">
-                        <span class="step-number">4</span>
-                        <span class="step-content">Log in and start managing the restaurant!</span>
-                    </div>
-                </div>
+{% block email_content %}
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Restaurant</span>
+        <span class="detail-value">{{ restaurant.name }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Position</span>
+        <span class="detail-value">{{ role|title }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Email Address</span>
+        <span class="detail-value">{{ email }}</span>
+    </div>
+</div>
 
-                <!-- Actions -->
-                <div class="button-container">
-                    <a href="{{ invitation_url }}" class="btn-register">Create Account</a>
-                </div>
-                
-                <div style="margin-top: 20px; text-align: center;">
-                    <p style="font-size: 14px; color: #6b7280; margin: 10px 0;">If the button above doesn't work, copy and paste this link into your browser:</p>
-                    <p style="font-size: 12px; color: #D4530A; word-break: break-all;">{{ invitation_url }}</p>
-                </div>
+<div class="info-box">
+    <strong>Getting Started:</strong>
+    <p style="margin: 10px 0 0 0;">Since you don't have an account yet, you'll need to create one. Click the button below to register and join the team.</p>
+</div>
 
-                <!-- Footer Info -->
-                <div class="invite-footer">
-                    <p>This invitation link will expire in 7 days.</p>
-                    <p>If you didn't expect this invitation, please contact your administrator.</p>
-                </div>
-            </div>
+<div class="details-section" style="margin-top: 30px;">
+    <h3 style="margin-top: 0; color: #1a1a1a; font-size: 18px;">How to Get Started:</h3>
+    <div style="margin: 15px 0;">
+        <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">1</span>
+            <span style="flex: 1; padding-top: 6px;">Click the "Create Account" button below</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">2</span>
+            <span style="flex: 1; padding-top: 6px;">Fill in your details and create a password</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">3</span>
+            <span style="flex: 1; padding-top: 6px;">Verify your email address</span>
+        </div>
+        <div style="display: flex; align-items: flex-start;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">4</span>
+            <span style="flex: 1; padding-top: 6px;">Log in and start managing the restaurant!</span>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ invitation_url }}" class="email-button">Create Account</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>If the button above doesn't work, copy and paste this link into your browser:</p>
+    <p><a href="{{ invitation_url }}">{{ invitation_url }}</a></p>
+    <p style="margin-top: 15px;">This invitation link will expire in 7 days.</p>
+    <p>If you didn't expect this invitation, please contact your administrator.</p>
+</div>
+{% endblock %}

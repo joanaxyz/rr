@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from .models import User
-from owner_verification.models import OwnerVerificationRequest  # Correct model
+from owner_verification.models import BusinessApplication
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(
@@ -77,9 +77,9 @@ class CustomAuthenticationForm(AuthenticationForm):
         return self.cleaned_data
 
 
-class OwnerForm(forms.ModelForm):
+class BusinessForm(forms.ModelForm):
     class Meta:
-        model = OwnerVerificationRequest  # Use the correct model
+        model = BusinessApplication
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -93,9 +93,9 @@ class OwnerForm(forms.ModelForm):
                 self.fields[field_name].required = False
 
 
-class OwnerVerificationForm(forms.ModelForm):
+class BusinessApplicationForm(forms.ModelForm):
     class Meta:
-        model = OwnerVerificationRequest
+        model = BusinessApplication
         fields = [
             "govt_full_name",
             "government_id_type",

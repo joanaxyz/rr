@@ -9,7 +9,7 @@ urlpatterns = [
     
     path('', views.dashboard, name='dashboard'),
     path('admins/', views.manage_admins, name='manage_admins'),
-    path('owner-requests/', views.owner_verification_requests, name='owner_verification_requests'),
+    path('business-applications/', views.business_applications, name='business_applications'),
     path('restaurant-requests/', views.restaurant_creation_requests, name='restaurant_creation_requests'),
     
     # User Management

@@ -86,7 +86,7 @@
     <div class="stat-header">
       <div class="stat-content">
         <h3>{{ pending_owner_requests }}</h3>
-        <p>Pending Owner Requests</p>
+        <p>Pending Business Applications</p>
       </div>
       <div class="stat-icon orange">
         <i class="fas fa-user-check"></i>
@@ -136,8 +136,8 @@
     <a href="{% url 'admin_panel:reviews' %}" class="btn btn-primary">
       <i class="fas fa-star"></i> Manage Reviews
     </a>
-    <a href="{% url 'admin_panel:owner_verification_requests' %}" class="btn btn-warning">
-      <i class="fas fa-user-check"></i> Review Owner Requests
+    <a href="{% url 'admin_panel:business_applications' %}" class="btn btn-warning">
+      <i class="fas fa-building"></i> Review Business Applications
       {% if pending_owner_requests > 0 %}
       <span class="badge badge-danger">{{ pending_owner_requests }}</span>
       {% endif %}
@@ -161,7 +161,7 @@
         <i class="fas fa-exclamation-triangle"></i>
         <div>
           <strong>Pending Actions Required</strong><br>
-          You have {{ pending_owner_requests }} owner request{% if pending_owner_requests != 1 %}s{% endif %}, 
+          You have {{ pending_owner_requests }} business application{% if pending_owner_requests != 1 %}s{% endif %}, 
           {{ pending_restaurant_requests }} restaurant request{% if pending_restaurant_requests != 1 %}s{% endif %}, 
           and {{ pending_reservations }} pending reservation{% if pending_reservations != 1 %}s{% endif %} 
           waiting for review.

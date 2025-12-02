@@ -1,0 +1,67 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Business Application Submitted - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="#D4530A"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Application Received!{% endblock %}
+
+{% block email_description %}
+Thank you for submitting your business application to Restaurant Reservation. We've received your application and our team will review it shortly.
+{% endblock %}
+
+{% block email_content %}
+<div class="success-box">
+    <strong>✓ Application Submitted Successfully</strong>
+    <p style="margin: 10px 0 0 0;">Your business application has been received and is now in our review queue. We typically review applications within 2-3 business days.</p>
+</div>
+
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Applicant Name</span>
+        <span class="detail-value">{{ user.get_full_name|default:user.username }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Email Address</span>
+        <span class="detail-value">{{ user.email }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Business Address</span>
+        <span class="detail-value">{{ application.business_address }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Submitted On</span>
+        <span class="detail-value">{{ application.created_at|date:"F d, Y \a\t g:i A" }}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>What happens next?</strong>
+    <ul style="margin: 10px 0 0 20px; padding-left: 20px;">
+        <li>Our team will review your submitted documents</li>
+        <li>We'll verify your business information</li>
+        <li>You'll receive an email notification once the review is complete</li>
+        <li>If approved, you'll gain access to manage your restaurant on our platform</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}" class="email-button">Visit Our Website</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>If you have any questions about your application, please contact our support team.</p>
+</div>
+{% endblock %}
+
