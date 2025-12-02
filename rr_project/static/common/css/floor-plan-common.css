@@ -13,6 +13,8 @@
   font-size: 0.75rem;
   color: white;
   pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .floor-item:hover {
@@ -140,8 +142,8 @@
 
 .table.selected {
   color: var(--table-selected);
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.3));
 }
 
 .table.selected:not(.reserved) {
@@ -181,5 +183,7 @@
 
 /* Selection state for management view */
 .floor-item.selected {
-  box-shadow: 0 0 0 3px var(--primary-red), 0 0 0 6px rgba(220, 38, 38, 0.1);
+  box-shadow: 0 0 0 2px var(--primary-red), 0 0 0 4px rgba(220, 38, 38, 0.15);
+  transform: scale(1.02);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }

@@ -88,6 +88,12 @@
                     </label>
                 </div>
                 <div class="control-group">
+                    <label for="show-grid">
+                        <input type="checkbox" id="show-grid" checked>
+                        Show Grid
+                    </label>
+                </div>
+                <div class="control-group">
                     <span class="position-info">Position: <span id="cursor-pos">0, 0</span></span>
                 </div>
                 <div class="control-group dimension-controls">
@@ -96,6 +102,14 @@
                     <label for="canvas-height">Height (px):</label>
                     <input type="number" id="canvas-height" min="600" max="1500" value="600" step="50">
                     <button class="btn-secondary" id="apply-dimensions-btn" title="Apply canvas dimensions">Apply</button>
+                </div>
+                <div class="control-group">
+                    <button class="btn-expand" id="expand-canvas-btn" title="Expand canvas to full screen">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                        </svg>
+                        Expand
+                    </button>
                 </div>
             </div>
 
@@ -169,6 +183,44 @@
             </div>
             <div id="no-selection" class="no-selection-msg">
                 <p>Select an element to view its properties</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Expanded Canvas Overlay -->
+<div id="expanded-canvas-overlay" class="expanded-canvas-overlay" style="display: none;">
+    <div class="expanded-canvas-container">
+        <div class="expanded-canvas-header">
+            <h2>Floor Plan Editor</h2>
+            <div class="expanded-controls">
+                <div class="control-group">
+                    <label for="expanded-snap-grid">
+                        <input type="checkbox" id="expanded-snap-grid" checked>
+                        Snap to Grid
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label for="expanded-show-grid">
+                        <input type="checkbox" id="expanded-show-grid" checked>
+                        Show Grid
+                    </label>
+                </div>
+                <div class="control-group">
+                    <span class="position-info">Position: <span id="expanded-cursor-pos">0, 0</span></span>
+                </div>
+                <button class="btn-close-expanded" id="close-expanded-btn" title="Close expanded view">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="expanded-canvas-wrapper">
+            <div class="expanded-floor-plan-container">
+                <div class="expanded-floor-plan" id="expanded-floor-plan">
+                    <!-- Floor elements will be rendered here -->
+                </div>
             </div>
         </div>
     </div>

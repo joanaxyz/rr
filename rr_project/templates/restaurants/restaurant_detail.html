@@ -47,7 +47,7 @@
                 <div class="restaurant-meta">
                     <div class="rating-display">
                         <div class="stars" data-rating="{{ avg_rating|default:0 }}"></div>
-                        <span class="rating-text">{{ avg_rating|floatformat:1|default:"New" }} <span class="review-count">({{ reviews|length }} review{{ reviews|length|pluralize }})</span></span>
+                        <span class="rating-text">{{ avg_rating|floatformat:1|default:"New" }} <span class="review-count">({{ reviews_page.paginator.count|default:reviews|length }} review{{ reviews_page.paginator.count|default:reviews|length|pluralize }})</span></span>
                     </div>
                     <div class="price-range-badge">
                         <span>{{ restaurant.price_range_display }}</span>
@@ -213,6 +213,25 @@
                         </div>
                     {% endfor %}
                 </div>
+                
+                <!-- Reviews Pagination -->
+                {% if reviews_page.has_other_pages %}
+                <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem; align-items: center; padding: 1rem;">
+                    {% if reviews_page.has_previous %}
+                    <a href="?page={{ reviews_page.previous_page_number }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                    {% endif %}
+                    <span style="padding: 0 1rem;">
+                        Page {{ reviews_page.number }} of {{ reviews_page.paginator.num_pages }}
+                    </span>
+                    {% if reviews_page.has_next %}
+                    <a href="?page={{ reviews_page.next_page_number }}" class="btn btn-secondary btn-sm">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
             {% else %}
                 <div class="no-reviews-state">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">

@@ -110,7 +110,8 @@ def business_applications(request):
                 subject='Business Application Approved - Restaurant Reservation',
                 template_name='emails/business_application_approved.html',
                 context=context,
-                recipient_email=user.email
+                recipient_email=user.email,
+                request=request
             )
             
             messages.success(request, f'Business application for {user.email} has been accepted.')
@@ -132,7 +133,8 @@ def business_applications(request):
                 subject='Business Application Update - Restaurant Reservation',
                 template_name='emails/business_application_rejected.html',
                 context=context,
-                recipient_email=application.user.email
+                recipient_email=application.user.email,
+                request=request
             )
             
             messages.info(request, f'Business application for {application.user.email} has been rejected.')

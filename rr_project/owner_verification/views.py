@@ -66,7 +66,8 @@ def apply_business(request):
             subject='Business Application Submitted - Restaurant Reservation',
             template_name='emails/business_application_submitted.html',
             context=context,
-            recipient_email=request.user.email
+            recipient_email=request.user.email,
+            request=request
         )
         
         messages.success(request, "Your business application has been submitted! You will be notified via email once it's reviewed.")

@@ -5,7 +5,7 @@ from django.urls import reverse
 import resend
 
 
-def send_email(subject, template_name, context, recipient_email, plain_text_fallback=None):
+def send_email(subject, template_name, context, recipient_email, plain_text_fallback=None, request=None):
     """
     Generic email sender function using Resend API
     
@@ -15,6 +15,7 @@ def send_email(subject, template_name, context, recipient_email, plain_text_fall
         context: Dictionary of template context variables
         recipient_email: Recipient's email address
         plain_text_fallback: Optional plain text template path, if None strips HTML
+        request: Optional request object to build absolute URLs
         
     Returns:
         bool: True if email sent successfully, False otherwise
@@ -27,6 +28,24 @@ def send_email(subject, template_name, context, recipient_email, plain_text_fall
         
         # Set Resend API key
         resend.api_key = settings.RESEND_API_KEY
+        
+        # Ensure site_url is in context for absolute URLs
+        if 'site_url' not in context:
+            if request:
+                context['site_url'] = request.build_absolute_uri('/')
+            else:
+                # Fallback to settings if available
+                context['site_url'] = getattr(settings, 'SITE_URL', 'http://localhost:8000')
+        
+        # Build absolute logo URL
+        if 'logo_url' not in context:
+            site_url = context.get('site_url', 'http://localhost:8000')
+            # Remove trailing slash and ensure static URL starts with /
+            static_path = settings.STATIC_URL.lstrip('/')
+            if not static_path.startswith('http'):
+                context['logo_url'] = site_url.rstrip('/') + '/' + static_path + 'common/images/cloche.png'
+            else:
+                context['logo_url'] = settings.STATIC_URL + 'common/images/cloche.png'
         
         # Render HTML message
         html_message = render_to_string(template_name, context)
@@ -94,7 +113,8 @@ def send_staff_invitation_email_u_d_n_e(restaurant, email, role, request):
         subject=subject,
         template_name=template,
         context=context,
-        recipient_email=email
+        recipient_email=email,
+        request=request
     )
 
 
@@ -122,7 +142,8 @@ def send_verification_email(user, request):
         subject=subject,
         template_name='emails/verification_email.html',
         context=context,
-        recipient_email=user.email
+        recipient_email=user.email,
+        request=request
     )
 
 def send_staff_verification_email(user, request, restaurant_id):
@@ -149,7 +170,8 @@ def send_staff_verification_email(user, request, restaurant_id):
         subject=subject,
         template_name='emails/verification_email.html',
         context=context,
-        recipient_email=user.email
+        recipient_email=user.email,
+        request=request
     )
 
 def send_password_reset_code_email(user, reset_code):
@@ -171,7 +193,8 @@ def send_password_reset_code_email(user, reset_code):
         subject=subject,
         template_name='emails/password_reset_code_email.html',
         context=context,
-        recipient_email=user.email
+        recipient_email=user.email,
+        request=None
     )
 
 def send_reservation_cancellation_email(cancelled_reservation):
@@ -183,18 +206,19 @@ def send_reservation_cancellation_email(cancelled_reservation):
         'reservation': cancelled_reservation,
         'site_name': 'RR',
     }
-    #Email subject
+    # Email subject
     subject = 'Reservation Cancellation - RR'
-    template_html='emails/reservation_cancellation_customer.html'
+    template_html = 'emails/reservation_cancellation_customer.html'
 
-    if cancelled_reservation.cancellation_info.get('sender') != 'CUSTOMER':
-        template_html='emails/reservation_cancellation_host.html',
+    if cancelled_reservation.cancellation_info and cancelled_reservation.cancellation_info.get('sender') != 'CUSTOMER':
+        template_html = 'emails/reservation_cancellation_host.html'
         
     return send_email(
         subject=subject,
         template_name=template_html,
         context=context,
-        recipient_email = cancelled_reservation.email
+        recipient_email=cancelled_reservation.email,
+        request=None
     )
 
 def send_reservation_confirmation_email(reservation):
@@ -213,7 +237,8 @@ def send_reservation_confirmation_email(reservation):
         subject=subject,
         template_name='emails/reservation_confirmation.html',
         context=context,
-        recipient_email=reservation.email
+        recipient_email=reservation.email,
+        request=None
     )
 
 def send_reservation_updated_email(reservation):
@@ -232,7 +257,8 @@ def send_reservation_updated_email(reservation):
         subject=subject,
         template_name='emails/reservation_updated.html',
         context=context,
-        recipient_email=reservation.email
+        recipient_email=reservation.email,
+        request=None
     )
 
 def send_reservation_completion_email(reservation):
@@ -251,5 +277,6 @@ def send_reservation_completion_email(reservation):
         subject=subject,
         template_name='emails/reservation_completion.html',
         context=context,
-        recipient_email=reservation.email
+        recipient_email=reservation.email,
+        request=None
     )
