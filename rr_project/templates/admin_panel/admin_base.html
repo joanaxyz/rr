@@ -106,6 +106,24 @@
             <div class="user-role">Administrator</div>
           </div>
           <div class="dropdown-divider"></div>
+          <a href="{% url 'home:home' %}" class="dropdown-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </a>
+          <a href="{% url 'restaurants:list' %}" class="dropdown-item">
+            <i class="fas fa-utensils"></i>
+            <span>Restaurants</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'accounts:profile' %}?from=admin" class="dropdown-item">
+            <i class="fas fa-user"></i>
+            <span>My Profile</span>
+          </a>
+          <a href="{% url 'settings:settings' %}?from=admin" class="dropdown-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+          <div class="dropdown-divider"></div>
           <a href="{% url 'admin_panel:logout' %}" class="dropdown-item logout-item">
             <i class="fas fa-sign-out-alt"></i>
             <span>Sign Out</span>

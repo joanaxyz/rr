@@ -66,13 +66,25 @@ def settings_view(request):
         except:
             pass
     
+    # Determine which template to use based on referrer or query parameter
+    referer = request.META.get('HTTP_REFERER', '')
+    from_param = request.GET.get('from', '')
+    
+    # Select template based on context
+    template_name = 'settings/settings.html'  # default
+    if from_param == 'admin' or '/admin-panel/' in referer:
+        template_name = 'settings/settings_admin.html'
+    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+        template_name = 'settings/settings_manage.html'
+    
     context = {
         'user_data': user_dict,
         'verification_request': verification_request,
         'staff_assignments': staff_assignments,
-        'owned_restaurants': owned_restaurants
+        'owned_restaurants': owned_restaurants,
+        'from_param': from_param
     }
-    return render(request, 'settings/settings.html', context)
+    return render(request, template_name, context)
 
 @login_required
 @require_http_methods(["POST"])

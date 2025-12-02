@@ -108,3 +108,30 @@ class OwnerVerificationForm(forms.ModelForm):
             "proof_of_ownership",
             # 'state' is optional because it defaults to PENDING
         ]
+
+
+class DeleteAccountForm(forms.Form):
+    """Form for confirming account deletion"""
+    confirm_delete = forms.BooleanField(
+        required=True,
+        label="I understand that deleting my account is permanent and cannot be undone",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    password = forms.CharField(
+        required=True,
+        label="Enter your password to confirm",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter your password', 'class': 'form-control'})
+    )
+    
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+    
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not self.user.check_password(password):
+            raise forms.ValidationError(
+                _("The password you entered is incorrect."),
+                code='invalid_password'
+            )
+        return password

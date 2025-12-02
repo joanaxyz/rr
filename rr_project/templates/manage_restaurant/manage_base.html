@@ -105,10 +105,24 @@
             <div class="user-role">{{ user.role|title }}</div>
           </div>
           <div class="dropdown-divider"></div>
-          <a href="{% url 'accounts:profile' %}" class="dropdown-item">
+          <a href="{% url 'home:home' %}" class="dropdown-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </a>
+          <a href="{% url 'restaurants:list' %}" class="dropdown-item">
+            <i class="fas fa-utensils"></i>
+            <span>Restaurants</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'accounts:profile' %}?from=manage" class="dropdown-item">
             <i class="fas fa-user"></i>
             <span>My Profile</span>
           </a>
+          <a href="{% url 'settings:settings' %}?from=manage" class="dropdown-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+          <div class="dropdown-divider"></div>
           <button type="button" class="dropdown-item" id="btnLogout">
             <i class="fas fa-sign-out-alt"></i>
             <span>Sign Out</span>

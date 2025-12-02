@@ -378,8 +378,16 @@ def manage_staffs(request, restaurant_id):
 
 @restaurant_login_required
 def manage_details(request, restaurant_id):
-    owner = get_object_or_404(Owner, user=request.user)
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    user = request.user
+    if user.role == 'OWNER':
+        owner = get_object_or_404(Owner, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner=owner)
+    elif user.role == 'HOST':
+        host = get_object_or_404(Host, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, hosts=host)
+    elif user.role == 'MANAGER':
+        manager = get_object_or_404(Manager, user=request.user)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, managers=manager)
     
     if request.method == 'POST':
         try:
@@ -405,7 +413,13 @@ def manage_details(request, restaurant_id):
             if closing_time:
                 restaurant.closing_time = closing_time
             
-            restaurant.operating_days = request.POST.get('operating_days', restaurant.operating_days)
+            # Update operating days - handle both checkbox list and text input
+            operating_days_list = request.POST.getlist('operating_days')
+            if operating_days_list:
+                restaurant.operating_days = ','.join(operating_days_list)
+            else:
+                operating_days_text = request.POST.get('operating_days', restaurant.operating_days)
+                restaurant.operating_days = operating_days_text
             
             # Update pricing and capacity
             price_min = request.POST.get('price_min')
@@ -416,7 +430,19 @@ def manage_details(request, restaurant_id):
             if price_max:
                 restaurant.price_max = float(price_max)
             
-            restaurant.max_guest_count = request.POST.get('max_guest_count', restaurant.max_guest_count)
+            max_guest_count = request.POST.get('max_guest_count')
+            if max_guest_count:
+                restaurant.max_guest_count = int(max_guest_count)
+            
+            # Update cuisines (always update to allow clearing selections)
+            cuisine_ids = request.POST.getlist('cuisines')
+            cuisines = Cuisine.objects.filter(id__in=cuisine_ids)
+            restaurant.cuisines.set(cuisines)
+            
+            # Update tags (always update to allow clearing selections)
+            tag_ids = request.POST.getlist('tags')
+            tags = Tags.objects.filter(id__in=tag_ids)
+            restaurant.tags.set(tags)
             
             if 'image' in request.FILES:
                 image_file = request.FILES['image']
@@ -434,8 +460,21 @@ def manage_details(request, restaurant_id):
         except Exception as e:
             messages.error(request, f'Error updating restaurant details: {str(e)}')
     
+    # Get current cuisines and tags for the restaurant
+    current_cuisine_ids = list(restaurant.cuisines.values_list('id', flat=True))
+    current_tag_ids = list(restaurant.tags.values_list('id', flat=True))
+    
+    # Parse operating days into a list for template
+    operating_days_list = restaurant.operating_days.split(',') if restaurant.operating_days else []
+    operating_days_list = [day.strip() for day in operating_days_list]
+    
     context = {
         "restaurant": restaurant.to_dict(),
+        "cuisines": Cuisine.objects.all(),
+        "tags": Tags.objects.all(),
+        "current_cuisine_ids": current_cuisine_ids,
+        "current_tag_ids": current_tag_ids,
+        "operating_days_list": operating_days_list,
     }
     return render(request, "manage_restaurant/manage_details.html", context)
 

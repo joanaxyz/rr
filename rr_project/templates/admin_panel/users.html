@@ -12,9 +12,14 @@
 <div class="admin-card">
   <div class="card-header">
     <h2><i class="fas fa-users"></i> All Users</h2>
-    <a href="{% url 'admin_panel:user_create' %}" class="btn btn-success">
-      <i class="fas fa-plus"></i> Add New User
-    </a>
+    <div class="button-group">
+      <a href="{% url 'admin_panel:export_users_csv' %}{% if search %}?search={{ search }}{% endif %}{% if role %}{% if search %}&{% else %}?{% endif %}role={{ role }}{% endif %}" class="btn btn-info">
+        <i class="fas fa-download"></i> Export CSV
+      </a>
+      <a href="{% url 'admin_panel:user_create' %}" class="btn btn-success">
+        <i class="fas fa-plus"></i> Add New User
+      </a>
+    </div>
   </div>
   
   <div class="search-bar">

@@ -1,9 +1,9 @@
-{% extends "common/rr_base.html" %}
+{% extends "manage_restaurant/manage_base.html" %}
 {% load static %}
 
 {% block title %}My Profile - Restaurant Reservations{% endblock %}
 
-{% block rr_base_css %}
+{% block extra_css %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
@@ -11,9 +11,11 @@
 <link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
 {% endblock %}
 
-{% block rr_base_content %}
+{% block manage_content %}
 {% include 'accounts/profile_content.html' %}
 {% endblock %}
 
-{% block rr_base_js %}
+{% block extra_js %}
 {% endblock %}
+
+

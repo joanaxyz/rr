@@ -32,6 +32,9 @@ urlpatterns = [
     # Profile URL
     path('profile/', views.profile_view, name='profile'),
     
+    # Delete Account URL
+    path('delete-account/', views.delete_account_view, name='delete_account'),
+    
     # API URLs
     path('api/forgot-password/', api_forgot_password, name='api_forgot_password'),
     path('api/verify-reset-code/', api_verify_reset_code, name='api_verify_reset_code'),

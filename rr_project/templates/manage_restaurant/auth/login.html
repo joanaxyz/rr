@@ -21,11 +21,5 @@
   <a class="fpass" href="{% url 'accounts:forgot_password' %}">Forgot Password?</a>
 {% endblock %}
 
-{% block form_footer %}
-  <p class="auth_link">
-    Don't have an account? <a href="{% url 'manage_restaurant:register' %}">Register as Owner</a>
-  </p>
-{% endblock %}
-
 {% block auth_js %}
 {% endblock %}

@@ -1,0 +1,229 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block title %}Delete Account - Restaurant Reservations{% endblock %}
+
+{% block rr_base_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'accounts/css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+<style>
+.delete-account-container {
+    max-width: 600px;
+    margin: var(--space-8) auto;
+    padding: var(--space-8);
+}
+
+.delete-account-card {
+    background: var(--white);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-10);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--gray-200);
+}
+
+.delete-account-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+}
+
+.delete-account-header .warning-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-4);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 2.5rem;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+}
+
+.delete-account-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: var(--space-2);
+}
+
+.delete-account-header p {
+    color: var(--gray-600);
+    font-size: var(--font-base);
+    line-height: 1.6;
+}
+
+.warning-section {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.warning-section h3 {
+    color: #dc2626;
+    font-size: var(--font-lg);
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.warning-section h3 i {
+    font-size: 1.25rem;
+}
+
+.warning-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.warning-section ul li {
+    color: #991b1b;
+    padding: var(--space-2) 0;
+    padding-left: var(--space-6);
+    position: relative;
+    line-height: 1.6;
+}
+
+.warning-section ul li::before {
+    content: '•';
+    position: absolute;
+    left: var(--space-2);
+    color: #dc2626;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.delete-account-form {
+    margin-top: var(--space-6);
+}
+
+.form-group {
+    margin-bottom: var(--space-6);
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: 500;
+    color: var(--gray-900);
+    margin-bottom: var(--space-3);
+    cursor: pointer;
+}
+
+.form-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--orange-500);
+}
+
+.form-group input[type="password"] {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-base);
+    transition: all var(--transition-base);
+    font-family: inherit;
+}
+
+.form-group input[type="password"]:focus {
+    outline: none;
+    border-color: var(--orange-500);
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+
+.error-msg {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+    display: none;
+}
+
+.error-msg.show {
+    display: block;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+}
+
+.btn {
+    flex: 1;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: var(--font-base);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-cancel {
+    background: var(--gray-100);
+    color: var(--gray-700);
+}
+
+.btn-cancel:hover {
+    background: var(--gray-200);
+    color: var(--gray-900);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-delete:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--gray-600);
+    text-decoration: none;
+    margin-bottom: var(--space-6);
+    transition: color var(--transition-base);
+}
+
+.back-link:hover {
+    color: var(--orange-500);
+}
+</style>
+{% endblock %}
+
+{% block rr_base_content %}
+{% include 'accounts/delete_account_content.html' %}
+{% endblock %}
+
+{% block rr_base_js %}
+{% endblock %}

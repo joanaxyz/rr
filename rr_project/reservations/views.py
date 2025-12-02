@@ -53,8 +53,14 @@ def reservation(request, restaurant_id):
         
         reserve_form = ReservationForm(initial=initial_data, restaurant=restaurant)
 
+    restaurant_dict = restaurant.to_dict()
     context = {
-        'restaurant': restaurant.to_dict(),
+        'restaurant': restaurant_dict,
+        'restaurant_json': json.dumps({
+            'opening_time': restaurant_dict.get('opening_time'),
+            'closing_time': restaurant_dict.get('closing_time'),
+            'operating_days': restaurant_dict.get('operating_days')
+        }),
         'floorplan': json.dumps(floorplan.to_dict()),
         'tables': json.dumps([t.to_dict() for t in tables]),
         'elements': json.dumps([e.to_dict() for e in elements]),

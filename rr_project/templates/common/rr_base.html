@@ -46,6 +46,20 @@
       <a href="{% url 'accounts:profile' %}" class="dropdown-item">My Profile</a>
       <a href="{% url 'reservations:list' %}" class="dropdown-item">My Reservations</a>
       <button class="dropdown-item" id="btnSettings">Settings</button>
+      {% if user.role == 'OWNER' or user.role == 'HOST' or user.role == 'MANAGER' %}
+      <div class="dropdown-divider"></div>
+      <a href="{% url 'manage_restaurant:list' %}" class="dropdown-item">
+        <i class="fas fa-utensils" style="margin-right: 8px; width: 16px;"></i>
+        <span>Manage Restaurant</span>
+      </a>
+      {% endif %}
+      {% if user.is_staff %}
+      <div class="dropdown-divider"></div>
+      <a href="{% url 'admin_panel:dashboard' %}" class="dropdown-item">
+        <i class="fas fa-shield-halved" style="margin-right: 8px; width: 16px;"></i>
+        <span>Admin Panel</span>
+      </a>
+      {% endif %}
       <div class="dropdown-divider"></div>
       <button class="dropdown-item" id="btnLogout">Sign Out</button>
     </div>

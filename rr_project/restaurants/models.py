@@ -138,8 +138,8 @@ class Restaurant(models.Model):
         else:
             # Normal case: opens and closes on same day
             return self.opening_time <= current_time <= self.closing_time
-    @property
     def is_open_on_date(self, date):
+        """Check if restaurant is open on a specific date"""
         # Get the day of the week for the date (0=Monday, 6=Sunday)
         weekday = date.weekday()
         

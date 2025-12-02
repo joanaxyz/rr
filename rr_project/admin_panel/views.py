@@ -2,12 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Count, Q, Avg
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 from accounts.models import User, Owner, Customer
 from owner_verification.models import OwnerVerificationRequest
 from restaurants.models import RestaurantCreationRequest, Restaurant, Cuisine, Tags, Review
 from reservations.models import Reservation
 from django.contrib.auth.hashers import make_password
 from .decorators import admin_login_required
+import csv
+from datetime import datetime
 
 
 @admin_login_required
@@ -769,3 +772,150 @@ def tag_delete(request, tag_id):
         messages.success(request, f'Tag "{tag_name}" deleted successfully.')
         return redirect('admin_panel:tags')
     return redirect('admin_panel:tags')
+
+# CSV Export Functions
+@admin_login_required
+def export_users_csv(request):
+    search = request.GET.get('search', '')
+    role = request.GET.get('role', '')
+    users_list = User.objects.all()
+    
+    if search:
+        users_list = users_list.filter(
+            Q(email__icontains=search) | 
+            Q(username__icontains=search) |
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search)
+        )
+    
+    if role:
+        users_list = users_list.filter(role=role)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="users_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Email', 'Username', 'First Name', 'Last Name', 'Full Name', 'Role', 'Phone Number', 'Is Staff', 'Is Active', 'Banned', 'Date Joined'])
+    
+    for user in users_list.order_by('-date_joined'):
+        writer.writerow([
+            user.email,
+            user.username,
+            user.first_name or '',
+            user.last_name or '',
+            user.get_full_name() or '',
+            user.get_role_display(),
+            user.phone_number or '',
+            'Yes' if user.is_staff else 'No',
+            'Yes' if user.is_active else 'No',
+            'Yes' if user.banned else 'No',
+            user.date_joined.strftime('%Y-%m-%d %H:%M:%S') if user.date_joined else ''
+        ])
+    
+    return response
+
+@admin_login_required
+def export_restaurants_csv(request):
+    search = request.GET.get('search', '')
+    restaurants_list = Restaurant.objects.all()
+    
+    if search:
+        restaurants_list = restaurants_list.filter(
+            Q(name__icontains=search) |
+            Q(city__icontains=search) |
+            Q(email__icontains=search)
+        )
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="restaurants_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Name', 'Owner Email', 'Email', 'Phone Number', 'City', 'Street Address', 'Postal Code', 'Price Min', 'Price Max', 'Max Guest Count', 'Opening Time', 'Closing Time', 'Operating Days', 'Created At'])
+    
+    for restaurant in restaurants_list.order_by('-created_at'):
+        street_address = f"{restaurant.street_number or ''} {restaurant.street_name or ''} {restaurant.street_block or ''}".strip()
+        writer.writerow([
+            restaurant.name,
+            restaurant.owner.user.email if restaurant.owner else '',
+            restaurant.email or '',
+            restaurant.phone_number or '',
+            restaurant.city or '',
+            street_address,
+            restaurant.postal_code or '',
+            restaurant.price_min or 0,
+            restaurant.price_max or 0,
+            restaurant.max_guest_count or 0,
+            restaurant.opening_time.strftime('%H:%M:%S') if restaurant.opening_time else '',
+            restaurant.closing_time.strftime('%H:%M:%S') if restaurant.closing_time else '',
+            restaurant.operating_days or '',
+            restaurant.created_at.strftime('%Y-%m-%d %H:%M:%S') if hasattr(restaurant, 'created_at') and restaurant.created_at else ''
+        ])
+    
+    return response
+
+@admin_login_required
+def export_reservations_csv(request):
+    search = request.GET.get('search', '')
+    status = request.GET.get('status', '')
+    reservations_list = Reservation.objects.all()
+    
+    if search:
+        reservations_list = reservations_list.filter(
+            Q(name__icontains=search) |
+            Q(email__icontains=search) |
+            Q(restaurant__name__icontains=search)
+        )
+    
+    if status:
+        reservations_list = reservations_list.filter(status=status)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="reservations_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Guest Name', 'Email', 'Restaurant', 'Date', 'Time', 'Guest Count', 'Status', 'Notes', 'Customer Email', 'Created At'])
+    
+    for reservation in reservations_list.order_by('-created_at'):
+        writer.writerow([
+            reservation.name,
+            reservation.email,
+            reservation.restaurant.name if reservation.restaurant else '',
+            reservation.date.strftime('%Y-%m-%d') if reservation.date else '',
+            reservation.time.strftime('%H:%M:%S') if reservation.time else '',
+            reservation.guest_count or 0,
+            reservation.status,
+            reservation.notes or '',
+            reservation.customer.user.email if reservation.customer and reservation.customer.user else '',
+            reservation.created_at.strftime('%Y-%m-%d %H:%M:%S') if hasattr(reservation, 'created_at') and reservation.created_at else ''
+        ])
+    
+    return response
+
+@admin_login_required
+def export_reviews_csv(request):
+    search = request.GET.get('search', '')
+    reviews_list = Review.objects.all()
+    
+    if search:
+        reviews_list = reviews_list.filter(
+            Q(restaurant__name__icontains=search) |
+            Q(comment__icontains=search) |
+            Q(customer__user__email__icontains=search)
+        )
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="reviews_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Restaurant', 'Customer Email', 'Rating', 'Comment', 'Created At'])
+    
+    for review in reviews_list.order_by('-created_at'):
+        writer.writerow([
+            review.restaurant.name if review.restaurant else '',
+            review.customer.user.email if review.customer and review.customer.user else 'Anonymous',
+            review.rating or 0,
+            review.comment or '',
+            review.created_at.strftime('%Y-%m-%d %H:%M:%S') if hasattr(review, 'created_at') and review.created_at else ''
+        ])
+    
+    return response

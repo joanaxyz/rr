@@ -25,10 +25,14 @@ def restaurant_detail_view(request, restaurant_id):
     avg_rating = reviews.aggregate(avg_rating=Avg('rating'))['avg_rating']
     
     is_bookmarked = False
+    existing_review = None
+    customer = None
     if request.user.is_authenticated:
         try:
             customer = Customer.objects.get(user=request.user)
             is_bookmarked = Bookmark.objects.filter(customer=customer, restaurant=restaurant).exists()
+            # Check if customer has an existing review for this restaurant
+            existing_review = Review.objects.filter(customer=customer, restaurant=restaurant).first()
         except Customer.DoesNotExist:
             pass
     
@@ -40,20 +44,41 @@ def restaurant_detail_view(request, restaurant_id):
         
         try:
             customer = Customer.objects.get(user=request.user)
-            review_form = ReviewForm(request.POST)
-            if review_form.is_valid():
-                review = review_form.save(commit=False)
-                review.customer = customer
-                review.restaurant = restaurant
-                review.save()
-                messages.success(request, 'Thank you for your review!')
-                return redirect('restaurants:detail', restaurant_id=restaurant_id)
+            # Check if customer has an existing review
+            existing_review = Review.objects.filter(customer=customer, restaurant=restaurant).first()
+            
+            if existing_review:
+                # Update existing review
+                review_form = ReviewForm(request.POST, instance=existing_review)
+                if review_form.is_valid():
+                    review = review_form.save(commit=False)
+                    review.customer = customer
+                    review.restaurant = restaurant
+                    review.save()
+                    messages.success(request, 'Your review has been updated!')
+                    return redirect('restaurants:detail', restaurant_id=restaurant_id)
+                else:
+                    messages.error(request, 'Please correct the errors in your review.')
             else:
-                messages.error(request, 'Please correct the errors in your review.')
+                # Create new review
+                review_form = ReviewForm(request.POST)
+                if review_form.is_valid():
+                    review = review_form.save(commit=False)
+                    review.customer = customer
+                    review.restaurant = restaurant
+                    review.save()
+                    messages.success(request, 'Thank you for your review!')
+                    return redirect('restaurants:detail', restaurant_id=restaurant_id)
+                else:
+                    messages.error(request, 'Please correct the errors in your review.')
         except Customer.DoesNotExist:
             messages.error(request, 'You must be a customer to leave a review.')
     else:
-        review_form = ReviewForm() if request.user.is_authenticated else None
+        # Load existing review for editing if it exists, otherwise create new form
+        if existing_review:
+            review_form = ReviewForm(instance=existing_review)
+        else:
+            review_form = ReviewForm() if request.user.is_authenticated else None
     
     # Convert queryset to list to ensure it's iterable in template
     reviews_list = list(reviews)
@@ -67,6 +92,7 @@ def restaurant_detail_view(request, restaurant_id):
         'avg_rating': avg_rating,
         'review_form': review_form,
         'is_bookmarked': is_bookmarked,
+        'existing_review': existing_review,
     }
     return render(request, 'restaurants/restaurant_detail.html', context)
 

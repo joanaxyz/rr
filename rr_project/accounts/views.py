@@ -9,6 +9,7 @@ import json
 from .forms import (
     CustomUserCreationForm,
     CustomAuthenticationForm,
+    DeleteAccountForm,
 )
 from .models import *
 from restaurants.models import Bookmark, Review
@@ -229,6 +230,8 @@ def verify_email_view(request, token):
         user.email_verified = True
         user.verification_token_expires = None
         user.save()
+        
+        Customer.objects.create(user=user)
 
         messages.success(request, "Email verified!")
         return redirect("accounts:login")
@@ -354,6 +357,17 @@ def profile_view(request):
         restaurant.avg_rating = restaurant_reviews.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
         restaurant.review_count = restaurant_reviews.count()
     
+    # Determine which template to use based on referrer or query parameter
+    referer = request.META.get('HTTP_REFERER', '')
+    from_param = request.GET.get('from', '')
+    
+    # Select template based on context
+    template_name = 'accounts/profile.html'  # default
+    if from_param == 'admin' or '/admin-panel/' in referer:
+        template_name = 'accounts/profile_admin.html'
+    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+        template_name = 'accounts/profile_manage.html'
+    
     context = {
         'user': request.user,
         'customer': customer,
@@ -363,4 +377,62 @@ def profile_view(request):
         'review_count': reviews.count(),
     }
     
-    return render(request, 'accounts/profile.html', context)
+    return render(request, template_name, context)
+
+
+# ------------------------------
+# DELETE ACCOUNT
+# ------------------------------
+@login_required
+def delete_account_view(request):
+    """Handle account deletion with confirmation"""
+    # Determine which template to use based on referrer or query parameter
+    referer = request.META.get('HTTP_REFERER', '')
+    from_param = request.GET.get('from', '')
+    
+    # Select template based on context
+    template_name = 'accounts/delete_account.html'  # default
+    if from_param == 'admin' or '/admin-panel/' in referer:
+        template_name = 'accounts/delete_account_admin.html'
+    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+        template_name = 'accounts/delete_account_manage.html'
+    
+    if request.method == 'POST':
+        form = DeleteAccountForm(request.user, request.POST)
+        
+        if form.is_valid():
+            # Store user email for confirmation message
+            user_email = request.user.email
+            
+            # Delete the user (CASCADE will handle related objects)
+            request.user.delete()
+            
+            # Logout the user
+            logout(request)
+            
+            messages.success(
+                request,
+                f"Your account ({user_email}) has been permanently deleted. We're sorry to see you go!"
+            )
+            return redirect('accounts:login')
+        else:
+            # Form validation failed
+            first_error = None
+            if form.non_field_errors():
+                first_error = form.non_field_errors()[0]
+            elif form.errors:
+                first_error_list = next(iter(form.errors.values()))
+                if first_error_list:
+                    first_error = first_error_list[0]
+            
+            context = {'form': form, 'first_error': first_error}
+            if from_param:
+                context['from_param'] = from_param
+            return render(request, template_name, context)
+    else:
+        form = DeleteAccountForm(request.user)
+    
+    context = {'form': form}
+    if from_param:
+        context['from_param'] = from_param
+    return render(request, template_name, context)

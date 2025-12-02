@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
         FloorPlanUtils.initializeFloorPlan(floorPlan);
         initializeTableSelection();
     }
+    
+    // Initialize date and time validation with restaurant operating hours
+    initializeDateTimeValidation();
 });
 
 function loadFloorplanDimensions(floorPlanElement) {
@@ -150,4 +153,166 @@ function initializeTableSelection() {
 
     // Initial UI refresh
     refreshUI();
+}
+
+// Date and Time Validation with Restaurant Operating Hours
+function initializeDateTimeValidation() {
+    const dateInput = document.querySelector('input[name="date"]');
+    const timeInput = document.querySelector('input[name="time"]');
+    const reservationForm = document.getElementById('reservation-form');
+    
+    if (!dateInput || !timeInput || !reservationForm) {
+        return;
+    }
+    
+    // Get restaurant data from the page (if available)
+    const restaurantData = getRestaurantData();
+    
+    // Set minimum date to today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    dateInput.setAttribute('min', todayStr);
+    
+    // Validate date and time on change
+    function validateDateTime() {
+        const selectedDate = new Date(dateInput.value);
+        const selectedTime = timeInput.value;
+        
+        // Clear previous errors
+        dateInput.setCustomValidity('');
+        timeInput.setCustomValidity('');
+        
+        if (!dateInput.value) {
+            return;
+        }
+        
+        // Check if date is in the past
+        if (selectedDate < today) {
+            dateInput.setCustomValidity('Reservation date cannot be in the past. Please select today or a future date.');
+            return;
+        }
+        
+        // Check if date is too far in the future (1 year)
+        const maxDate = new Date(today);
+        maxDate.setFullYear(maxDate.getFullYear() + 1);
+        if (selectedDate > maxDate) {
+            dateInput.setCustomValidity('Reservations can only be made up to 1 year in advance.');
+            return;
+        }
+        
+        // Validate operating days if restaurant data is available
+        if (restaurantData && restaurantData.operating_days) {
+            const weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            // JavaScript getDay(): 0=Sunday, 1=Monday, ..., 6=Saturday
+            // Convert to Mon=0, Tue=1, ..., Sun=6 format
+            const jsDay = selectedDate.getDay();
+            const dayIndex = jsDay === 0 ? 6 : jsDay - 1; // Sunday becomes 6, Monday becomes 0
+            const selectedDay = weekdayNames[dayIndex];
+            const operatingDays = restaurantData.operating_days.split(',').map(d => d.trim());
+            
+            if (!operatingDays.includes(selectedDay)) {
+                const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                const fullDayName = fullDayNames[dayIndex];
+                dateInput.setCustomValidity(
+                    `The restaurant is closed on ${fullDayName}. ` +
+                    `Please select a date when the restaurant is open. Operating days: ${restaurantData.operating_days}`
+                );
+                return;
+            }
+        }
+        
+        // If date is today, validate time
+        if (selectedDate.toDateString() === today.toDateString() && selectedTime) {
+            const [hours, minutes] = selectedTime.split(':').map(Number);
+            const selectedDateTime = new Date(today);
+            selectedDateTime.setHours(hours, minutes, 0, 0);
+            
+            const now = new Date();
+            if (selectedDateTime < now) {
+                timeInput.setCustomValidity('Reservation time cannot be in the past. Please select a future time.');
+                return;
+            }
+        }
+        
+        // Validate operating hours if restaurant data is available
+        if (restaurantData && selectedTime && restaurantData.opening_time && restaurantData.closing_time) {
+            const [openingHours, openingMinutes] = restaurantData.opening_time.split(':').map(Number);
+            const [closingHours, closingMinutes] = restaurantData.closing_time.split(':').map(Number);
+            const [selectedHours, selectedMinutes] = selectedTime.split(':').map(Number);
+            
+            const openingTime = openingHours * 60 + openingMinutes; // Convert to minutes
+            const closingTime = closingHours * 60 + closingMinutes;
+            const selectedTimeMinutes = selectedHours * 60 + selectedMinutes;
+            
+            let isWithinHours = false;
+            
+            // Handle case where restaurant closes after midnight
+            if (closingTime < openingTime) {
+                // Restaurant closes after midnight (e.g., opens 18:00, closes 02:00)
+                isWithinHours = selectedTimeMinutes >= openingTime || selectedTimeMinutes <= closingTime;
+            } else {
+                // Normal case: opens and closes on same day
+                isWithinHours = selectedTimeMinutes >= openingTime && selectedTimeMinutes <= closingTime;
+            }
+            
+            if (!isWithinHours) {
+                const openingStr = formatTime(openingHours, openingMinutes);
+                const closingStr = formatTime(closingHours, closingMinutes);
+                timeInput.setCustomValidity(
+                    `Reservation time must be within operating hours (${openingStr} - ${closingStr}). ` +
+                    `Please select a time when the restaurant is open.`
+                );
+                return;
+            }
+        }
+    }
+    
+    // Format time to 12-hour format
+    function formatTime(hours, minutes) {
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        const displayMinutes = minutes.toString().padStart(2, '0');
+        return `${displayHours}:${displayMinutes} ${period}`;
+    }
+    
+    // Get restaurant data from the page
+    function getRestaurantData() {
+        // Try to get from a data attribute or script tag
+        const restaurantScript = document.querySelector('script[data-restaurant]');
+        if (restaurantScript) {
+            try {
+                return JSON.parse(restaurantScript.dataset.restaurant);
+            } catch (e) {
+                console.error('Error parsing restaurant data:', e);
+            }
+        }
+        
+        // Try to get from window object (if set by template)
+        if (window.restaurantData) {
+            return window.restaurantData;
+        }
+        
+        return null;
+    }
+    
+    // Validate on input change
+    dateInput.addEventListener('change', validateDateTime);
+    timeInput.addEventListener('change', validateDateTime);
+    
+    // Validate on form submit
+    reservationForm.addEventListener('submit', function(e) {
+        validateDateTime();
+        
+        if (!dateInput.validity.valid || !timeInput.validity.valid) {
+            e.preventDefault();
+            // Show validation messages
+            if (!dateInput.validity.valid) {
+                dateInput.reportValidity();
+            } else if (!timeInput.validity.valid) {
+                timeInput.reportValidity();
+            }
+            return false;
+        }
+    });
 }

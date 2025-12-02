@@ -5,7 +5,6 @@ app_name = "manage_restaurant"
 
 urlpatterns = [
     path("auth/login/", auth_views.restaurant_login_view, name="login"),
-    path("auth/register/", auth_views.restaurant_register_view, name="register"),
     path("auth/logout/", auth_views.restaurant_logout_view, name="logout"),
     
     path("", views.view_restaurants, name="list"),
