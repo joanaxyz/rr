@@ -408,6 +408,7 @@ body {
   font-weight: var(--font-weight-medium);
   margin: 0;
   font-size: var(--font-base);
+  word-break: break-word;
 }
 
 /* ============ REVIEWS ============ */
