@@ -1164,3 +1164,32 @@ body {
     padding: 1rem;
   }
 }
+
+.floor-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.controls-row:first-child {
+  border-bottom: 1px solid var(--color-gray-200);
+  padding-bottom: 0.75rem;
+}
+
+.dimension-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-expand {
+  margin-top: 0.5rem;
+  white-space: nowrap;
+}
