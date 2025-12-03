@@ -201,8 +201,14 @@ def restaurants_view(request):
     cuisines_list = [c.to_dict() for c in cuisines]
     tags_list = [t.to_dict() for t in tags]
     
+    # Order restaurants for display
+    restaurants_ordered = restaurants.order_by('-avg_rating', '-created_at')
+    
+    # Convert ALL restaurants to dict for client-side filtering (before pagination)
+    all_restaurants_dict = [r.to_dict() for r in restaurants_ordered]
+    
     # Apply server-side pagination - only convert to dict the items on current page
-    paginator = Paginator(restaurants.order_by('-avg_rating', '-created_at'), 12)  # 12 restaurants per page
+    paginator = Paginator(restaurants_ordered, 12)  # 12 restaurants per page
     page_number = request.GET.get('page', 1)
     restaurants_page = paginator.get_page(page_number)
     
@@ -211,7 +217,8 @@ def restaurants_view(request):
     
     context = {
         'restaurants': restaurants_page,  # Pass page object with restaurant instances
-        'restaurants_dict': restaurant_list,  # Keep dict for any JS that might need it
+        'restaurants_dict': restaurant_list,  # Keep dict for any JS that might need it (current page only)
+        'all_restaurants_dict': all_restaurants_dict,  # ALL restaurants for client-side filtering
         'restaurants_page': restaurants_page,  # Pass page object for pagination controls
         'cuisines': cuisines_list,
         'tags': tags_list,

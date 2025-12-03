@@ -310,8 +310,8 @@
 {% endblock %}
 
 {% block rr_base_js %}
-{# Only pass current page's restaurants for backward compatibility with any remaining JS #}
-{% if restaurants_dict %}{{ restaurants_dict|json_script:"restaurant-data" }}{% endif %}
+{# Pass ALL restaurants for client-side filtering (not just current page) #}
+{% if all_restaurants_dict %}{{ all_restaurants_dict|json_script:"restaurant-data" }}{% elif restaurants_dict %}{{ restaurants_dict|json_script:"restaurant-data" }}{% endif %}
 <script src="{% static 'home/js/stars.js' %}"></script>
 <script src="{% static 'home/js/book.js' %}"></script>
 <script src="{% static 'restaurants/js/addressModal.js' %}"></script>

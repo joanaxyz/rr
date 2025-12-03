@@ -223,6 +223,11 @@ body::after {
   font-weight: var(--font-weight-normal);
 }
 
+/* Fix spacing for password wrapper fields to match regular inputs */
+.container form .form-group.password-wrapper {
+  margin-bottom: var(--space-2);
+}
+
 /* ============ SUBMIT BUTTON ============ */
 
 .container form input[type="button"],

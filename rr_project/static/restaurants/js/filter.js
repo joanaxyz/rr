@@ -400,14 +400,19 @@ function filterRestaurants(restaurants, cuisines, tags, guestCount, operatingDay
             matchesAddress = restaurantAddress.includes(address.toLowerCase());
         }
 
-        let matchesName = true;
+        let matchesSearch = true;
         if(searchTerm) {
-            const restaurantName = restaurant.name.toLowerCase();
-            matchesName = restaurantName.includes(searchTerm.toLowerCase());
+            const searchLower = searchTerm.toLowerCase();
+            const restaurantName = (restaurant.name || '').toLowerCase();
+            const restaurantDescription = (restaurant.description || '').toLowerCase();
+            const restaurantCity = (restaurant.city || '').toLowerCase();
+            matchesSearch = restaurantName.includes(searchLower) || 
+                          restaurantDescription.includes(searchLower) || 
+                          restaurantCity.includes(searchLower);
         }
 
         // Keep restaurant only if it matches all filters
-        return matchesCuisine && matchesTags && matchesGuestCount && matchesOperatingDay && matchesAddress && matchesName;
+        return matchesCuisine && matchesTags && matchesGuestCount && matchesOperatingDay && matchesAddress && matchesSearch;
     });
 }
 
