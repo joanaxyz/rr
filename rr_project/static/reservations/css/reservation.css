@@ -654,10 +654,17 @@ body {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
   opacity: 0;
   transition: opacity var(--transition-base);
+  z-index: 0;
 }
 
 .reserve-btn:hover::before {
   opacity: 1;
+}
+
+.reserve-btn svg,
+.reserve-btn > * {
+  position: relative;
+  z-index: 1;
 }
 
 .reserve-btn svg {

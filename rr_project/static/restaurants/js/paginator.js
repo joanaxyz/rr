@@ -15,8 +15,13 @@ class Paginator {
 
     setItems(items) {
         this.items = items;
+        // Reset to page 1 when items change (standard UX - when filtering, show first page)
         this.currentPage = 1;
         this.updateTotalPages();
+        // Ensure we're on a valid page (safety check)
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = Math.max(1, this.totalPages);
+        }
     }
 
     getCurrentPageItems() {

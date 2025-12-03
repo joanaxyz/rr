@@ -71,7 +71,7 @@ body {
   font-size: 2.5rem;
   font-weight: 800;
   font-family: var(--font-accent);
-  color: var(--text-primary);
+  color: var(--color-gray-900);
   margin-bottom: 0.5rem;
   line-height: 1.1;
 }
@@ -152,16 +152,26 @@ body {
   justify-content: center;
   flex-shrink: 0;
   margin-left: var(--space-4);
+  position: relative;
+  z-index: 1;
 }
 
 .manage-btn:hover {
   background: linear-gradient(135deg, rgba(255, 107, 0, 1) 0%, rgba(255, 133, 51, 1) 100%);
+  color: var(--color-white);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
 }
 
 .manage-btn:active {
   transform: translateY(0) scale(0.97);
+  color: var(--color-white);
+}
+
+.manage-btn:focus {
+  color: var(--color-white);
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
 }
 
 .no-restaurants {

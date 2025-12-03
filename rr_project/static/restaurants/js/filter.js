@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     const restaurants = JSON.parse(restaurantDataElement.textContent);
-    const paginator = new Paginator(restaurants, 5);
+    const paginator = new Paginator(restaurants, 8);
     renderPage(paginator);
     const cuisineFContainer = document.querySelector('.cuisines-filter');
     const tagsFContainer = document.querySelector('.tags-filter');
@@ -281,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sortBy) {
             filtered = sortRestaurants(filtered, sortBy, sortOrder);
         }
+        // setItems will reset to page 1 when items change, which is the expected behavior when filtering
         paginator.setItems(filtered);
         renderPage(paginator);
         if (resultNumbers) {

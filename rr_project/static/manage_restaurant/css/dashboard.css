@@ -187,6 +187,7 @@ body {
   background: rgba(255, 255, 255, 0.25);
   transform: translate(-50%, -50%);
   transition: width var(--duration-500), height var(--duration-500);
+  z-index: 0;
 }
 
 .action-btn:hover::before {
@@ -204,15 +205,14 @@ body {
   transform: translateY(0);
 }
 
-.action-btn i {
-  font-size: var(--font-lg);
+.action-btn i,
+.action-btn span {
   position: relative;
   z-index: 1;
 }
 
-.action-btn span {
-  position: relative;
-  z-index: 1;
+.action-btn i {
+  font-size: var(--font-lg);
 }
 
 /* Responsive */
