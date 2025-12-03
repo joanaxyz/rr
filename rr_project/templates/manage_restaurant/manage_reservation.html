@@ -63,6 +63,8 @@
         <!-- Filters -->
         <div class="filters-section">
           <div class="filters-container">
+            
+            <!-- Primary Filters -->
             <div class="filter-group filter-primary">
               <div class="filter-item">
                 <label for="statusFilter" class="filter-label">Status</label>
@@ -86,6 +88,7 @@
               </div>
             </div>
 
+            <!-- Secondary Filters -->
             <div class="filter-group filter-secondary">
               <div class="filter-item">
                 <label for="guestCountFilter" class="filter-label">Guest Count</label>
@@ -103,12 +106,14 @@
               </div>
             </div>
 
-            <div class="filter-actions">
+            <!-- Actions -->
+            <div class="filter-group filter-actions">
               <button class="btn btn-sm btn-secondary" id="resetFilters">Reset All</button>
             </div>
+
           </div>
         </div>
-
+        
         <!-- Reservation Table -->
         <div class="card-body">
           {% if has_reservations %}
