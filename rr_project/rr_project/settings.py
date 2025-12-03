@@ -77,6 +77,8 @@ INSTALLED_APPS = [
     'manage_restaurant',
     'email_service',
     'admin_panel',
+
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [

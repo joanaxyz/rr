@@ -690,6 +690,7 @@ body {
 .reserve-cta-btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-primary-lg);
+  color: var(--white); /* Ensure text stays visible */
 }
 
 .reserve-cta-btn span {

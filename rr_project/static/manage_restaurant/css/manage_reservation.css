@@ -342,10 +342,12 @@ body {
   padding: var(--space-5) var(--space-6);
   text-align: left;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
+  color: var(--color-white); /* Make text white */
   letter-spacing: 0.3px;
   white-space: nowrap;
+  background-color: var(--color-orange, #ff6b00); /* Orange header background */
 }
+
 
 .reservation-table tbody tr {
   border-bottom: var(--border-1) solid var(--color-gray-200);

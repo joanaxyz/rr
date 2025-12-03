@@ -199,18 +199,17 @@ body {
   background: var(--gradient-primary-reverse);
   transform: translateY(-2px);
   box-shadow: var(--shadow-primary-lg);
+  color: var(--color-white); /* Ensure text stays white */
 }
 
 .action-btn:active {
   transform: translateY(0);
 }
 
-.action-btn i,
-.action-btn span {
-  position: relative;
-  z-index: 1;
+.action-btn:hover i,
+.action-btn:hover span {
+  color: var(--color-white); /* Ensure icon stays white */
 }
-
 .action-btn i {
   font-size: var(--font-lg);
 }
