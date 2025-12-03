@@ -801,7 +801,7 @@ select.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: calc(var(--z-modal) + 1000);
+  z-index: var(--z-max) !important;
   backdrop-filter: blur(4px);
 }
 

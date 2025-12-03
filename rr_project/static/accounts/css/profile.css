@@ -456,7 +456,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-modal);
+  z-index: var(--z-max) !important;
   backdrop-filter: blur(8px);
 }
 
