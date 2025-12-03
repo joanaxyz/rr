@@ -74,7 +74,7 @@ def settings_view(request):
     template_name = 'settings/settings.html'  # default
     if from_param == 'admin' or '/admin-panel/' in referer:
         template_name = 'settings/settings_admin.html'
-    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+    elif from_param == 'manage' or '/rr-manage/' in referer or '/manage-restaurant/' in referer:
         template_name = 'settings/settings_manage.html'
     
     context = {

@@ -741,7 +741,7 @@ class FloorPlanManager {
 
     async saveLayout() {
         try {
-            const response = await APIClient.post('/manage-restaurant/api/save_floor_plan/',
+            const response = await APIClient.post('/rr-manage/api/save_floor_plan/',
                 {
                     restaurant_id: this.restaurant_id,
                     tables: this.tables,

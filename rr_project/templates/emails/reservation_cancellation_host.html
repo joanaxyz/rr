@@ -61,7 +61,7 @@ A reservation at <strong>{{ reservation.restaurant.name }}</strong> has been can
 
 {% block email_actions %}
 <div class="button-container">
-    <a href="{{ site_url }}manage-restaurant/reservations/" class="email-button">View Reservations</a>
+    <a href="{{ site_url }}rr-manage/{{ reservation.restaurant.id }}/reservations/" class="email-button">View Reservations</a>
 </div>
 {% endblock %}
 

@@ -24,7 +24,7 @@ document.getElementById('sendInviteBtn').addEventListener('click', () => {
 function removeStaff(staff_name, staff_id, role){
     window.Modal.confirm(`Are you sure you want to delete, ${staff_name} (${formatRole (role)})?`, async ()=>{
         try {
-            const response = await APIClient.post(`/manage-restaurant/api/remove_staff/${staff_id}/${role.toUpperCase()}/`,
+            const response = await APIClient.post(`/rr-manage/api/remove_staff/${staff_id}/${role.toUpperCase()}/`,
                 options = { loadingText: 'Deleting Staff from records...' }
             );
 

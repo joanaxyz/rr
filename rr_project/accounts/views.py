@@ -365,7 +365,7 @@ def profile_view(request):
     template_name = 'accounts/profile.html'  # default
     if from_param == 'admin' or '/admin-panel/' in referer:
         template_name = 'accounts/profile_admin.html'
-    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+    elif from_param == 'manage' or '/rr-manage/' in referer or '/manage-restaurant/' in referer:
         template_name = 'accounts/profile_manage.html'
     
     context = {
@@ -394,7 +394,7 @@ def delete_account_view(request):
     template_name = 'accounts/delete_account.html'  # default
     if from_param == 'admin' or '/admin-panel/' in referer:
         template_name = 'accounts/delete_account_admin.html'
-    elif from_param == 'manage' or '/manage-restaurant/' in referer:
+    elif from_param == 'manage' or '/rr-manage/' in referer or '/manage-restaurant/' in referer:
         template_name = 'accounts/delete_account_manage.html'
     
     if request.method == 'POST':

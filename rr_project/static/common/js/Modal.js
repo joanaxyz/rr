@@ -1,6 +1,8 @@
 class Modal {
     constructor() {
         this.modalContainer = null;
+        this.activeModal = null;
+        this.keydownHandler = null;
         this.init();
     }
 
@@ -49,6 +51,10 @@ class Modal {
 
     confirm(message, onConfirm, onCancel = null) {
         return new Promise((resolve) => {
+            if (this.activeModal) {
+                this.closeModal(this.activeModal);
+            }
+
             const overlay = this.createOverlay();
             const dialog = this.createDialog('Confirm', `<p>${this.escapeHtml(message)}</p>`, 'confirm');
             const footer = dialog.querySelector('.modal-footer');
@@ -75,15 +81,18 @@ class Modal {
                 }
             });
 
-            document.addEventListener('keydown', (e) => {
+            this.keydownHandler = (e) => {
                 if (e.key === 'Escape' && overlay.parentNode) {
                     this.closeModal(overlay);
                     resolve(false);
                 }
-            });
+            };
+
+            document.addEventListener('keydown', this.keydownHandler);
 
             overlay.appendChild(dialog);
             this.modalContainer.appendChild(overlay);
+            this.activeModal = overlay;
             setTimeout(() => overlay.classList.add('show'), 10);
             confirmBtn.focus();
         });
@@ -98,6 +107,10 @@ class Modal {
         } = options;
 
         return new Promise((resolve, reject) => {
+            if (this.activeModal) {
+                this.closeModal(this.activeModal);
+            }
+
             const overlay = this.createOverlay();
             
             let inputHtml = `
@@ -167,16 +180,19 @@ class Modal {
                 }
             });
 
-            document.addEventListener('keydown', (e) => {
+            this.keydownHandler = (e) => {
                 if (e.key === 'Escape' && overlay.parentNode) {
                     handleCancel();
                 }
-            });
+            };
+
+            document.addEventListener('keydown', this.keydownHandler);
 
             footer.appendChild(cancelBtn);
             footer.appendChild(confirmBtn);
             overlay.appendChild(dialog);
             this.modalContainer.appendChild(overlay);
+            this.activeModal = overlay;
             setTimeout(() => overlay.classList.add('show'), 10);
             inputElement.focus();
         });
@@ -184,6 +200,13 @@ class Modal {
 
     closeModal(overlay) {
         overlay.classList.remove('show');
+        if (this.activeModal === overlay) {
+            this.activeModal = null;
+        }
+        if (this.keydownHandler) {
+            document.removeEventListener('keydown', this.keydownHandler);
+            this.keydownHandler = null;
+        }
         setTimeout(() => {
             if (overlay.parentNode) {
                 overlay.parentNode.removeChild(overlay);

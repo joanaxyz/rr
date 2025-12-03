@@ -733,7 +733,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 9999;
+  z-index: 1000;
   align-items: center;
   justify-content: center;
   padding: var(--space-4);
@@ -888,6 +888,25 @@ body {
   .modal-body {
     padding: var(--space-4);
   }
+}
+
+/* ============ PROFILE DROPDOWN FIX ============ */
+/* Ensure dropdown is always on top on restaurant detail page */
+
+.user-profile {
+  position: relative;
+  z-index: 10000;
+}
+
+.profile-dropdown {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+.profile-dropdown .dropdown-item {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 10000;
 }
 
 /* ============ RESPONSIVE ============ */
