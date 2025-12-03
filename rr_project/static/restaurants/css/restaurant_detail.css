@@ -417,6 +417,13 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--space-5);
+  width: 100%;
+  overflow: hidden;
+}
+
+.reviews-grid > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .review-card {
@@ -426,6 +433,12 @@ body {
   border: 1px solid var(--gray-200);
   transition: all var(--transition-base);
   cursor: pointer;
+  overflow: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 .review-card:hover {
@@ -452,11 +465,25 @@ body {
   line-height: 1.7;
   margin-bottom: var(--space-3);
   position: relative;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
 }
 
 .review-text-preview,
 .review-text-full {
   display: block;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .read-more-indicator {
@@ -472,6 +499,8 @@ body {
 .review-date {
   color: var(--gray-500);
   font-size: var(--font-sm);
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .no-reviews-state {
