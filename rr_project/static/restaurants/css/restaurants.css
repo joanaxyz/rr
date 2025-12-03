@@ -1135,14 +1135,13 @@ body {
 
 /* ============ BUTTONS ============ */
 
-.view-details-button,
-.btn-book {
+.view-details-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-3) var(--space-6);
-  background: #ff6b00;
-  color: #fff;
+  background: #000; /* old black button */
+  color: #fff;      /* text white */
   font-weight: var(--font-weight-semibold);
   border-radius: var(--radius-lg);
   cursor: pointer;
@@ -1155,6 +1154,7 @@ body {
   background: #ff8c42;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+  color: #fff!important;
 }
 
 /* ============ PAGINATION ============ */
