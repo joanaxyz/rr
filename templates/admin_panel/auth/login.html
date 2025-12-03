@@ -1,0 +1,26 @@
+{% extends 'accounts/auth.html' %}
+{% load static %}
+
+{% block title %}Admin Sign In - RR{% endblock %}
+
+{% block page_title %}
+  <p class="content_title">Admin Sign In</p>
+{% endblock %}
+
+{% block form_fields %}
+  <div class="form-group">
+    {{ form.username }}
+  </div>
+
+  <div class="form-group password-wrapper">
+    {{ form.password }}
+    <i class="fa-regular fa-eye toggle-password" id="togglePassword"></i>
+  </div>
+{% endblock %}
+
+{% block form_footer %}
+{% endblock %}
+
+{% block auth_js %}
+{% endblock %}
+

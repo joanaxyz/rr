@@ -1,0 +1,35 @@
+{% extends 'accounts/auth.html' %}
+{% load static %}
+
+{% block title %}Register - RR{% endblock %}
+
+{% block page_title %}
+  <p class="content_title">Customer Registration</p>
+{% endblock %}
+
+{% block form_fields %}
+    {{ form.first_name }}
+
+    {{ form.last_name }}
+
+    {{ form.username }}
+
+  <div class="form-group password-wrapper">
+    {{ form.password1 }}
+    <i class="fa-regular fa-eye toggle-password" data-target="id_password1"></i>
+  </div>
+
+  <div class="form-group password-wrapper">
+    {{ form.password2 }}
+    <i class="fa-regular fa-eye toggle-password" data-target="id_password2"></i>
+  </div>
+{% endblock %}
+
+{% block form_footer %}
+  <p class="auth_link">
+    Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a>
+  </p>
+{% endblock %}
+
+{% block auth_js %}
+{% endblock %}

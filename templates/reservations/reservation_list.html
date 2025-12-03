@@ -1,0 +1,133 @@
+{% extends "common/rr_base.html" %}
+{% load static %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'reservations/css/reservation_list.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<div class="reservation-container">
+  <div class="header">
+    <h1>My Reservations</h1>
+  </div>
+
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if has_reservations %}
+  <div class="table-container">
+    <table class="reservation-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Restaurant</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Guests</th>
+          <th>Tables</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reservation in reservations %}
+        <tr>
+          <!-- Continuous numbering -->
+          <td data-label="#">{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
+          <td data-label="Restaurant">
+            {% if reservation.restaurant %}
+              <a href="{% url 'restaurants:detail' reservation.restaurant.id %}">
+                {{ reservation.restaurant.name }}
+              </a>
+            {% else %}
+              <span>Unknown Restaurant</span>
+            {% endif %}
+          </td>
+          <td data-label="Date">{{ reservation.date }}</td>
+          <td data-label="Time">{{ reservation.time }}</td>
+          <td data-label="Guests">{{ reservation.guest_count }}</td>
+          <td data-label="Tables">
+            {% if reservation.table_numbers %}
+              {{ reservation.table_numbers|join:", " }}
+            {% else %}
+              <span style="color: #999;">Not assigned</span>
+            {% endif %}
+          </td>
+          <td data-label="Status">
+            <span class="status-badge {{ reservation.status|lower }}">
+              {{ reservation.status|title }}
+            </span>
+          </td>
+          <td>
+            <form method="post" action="">
+              {% csrf_token %}
+              {% if reservation.status != 'CANCELLED' %}
+              <div class="action-buttons">
+                <input type="hidden" name="cancel_reservation" value="{{ reservation.id }}">
+                <input type="hidden" name="cancel_reason" class="cancel-reason-input">
+                <button type="button" class="cancel-btn" onclick="showCancelReason(this.form)">Cancel</button>
+                <button type="button" class="edit-btn" onclick="editReservation('{{ reservation.id }}')">Edit</button>
+              </div>
+              {% else %}
+              <div class="action-buttons">
+                <input type="hidden" name="restore_reservation" value="{{ reservation.id }}">
+                <button type="button" class="restore-btn" onclick="restoreReservation(this.form)">Restore</button>
+              </div>
+              {% endif %}
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination at bottom-right -->
+  {% if page_obj.has_other_pages %}
+  <div class="pagination-container">
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+      {% else %}
+        <span class="disabled">&laquo;</span>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+          <span class="current">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+      {% else %}
+        <span class="disabled">&raquo;</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% else %}
+  <p class="no-reservations">
+    You have no reservations yet. Start by exploring restaurants and making your first reservation!
+  </p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+<script>
+  // Helper function for reservation edit URL
+  window.getReservationEditUrl = function(reservationId) {
+    return "{% url 'reservations:edit' reservation_id=0 %}".replace('0', reservationId);
+  };
+</script>
+<script src="{% static 'reservations/js/reservation_list.js' %}"></script>
+{% endblock %}

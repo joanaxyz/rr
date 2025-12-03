@@ -1,0 +1,16 @@
+{% extends 'common/rr_base.html' %}
+{% load static %}
+
+{% block title %}Settings{% endblock %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'settings/css/settings.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+{% include 'settings/settings_content.html' %}
+{% endblock %}
+
+{% block rr_base_js %}
+<script src="{% static 'settings/js/settings.js' %}"></script>
+{% endblock %}

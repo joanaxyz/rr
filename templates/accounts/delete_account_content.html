@@ -1,0 +1,118 @@
+{% load static %}
+<div class="delete-account-container">
+    <a href="{% url 'settings:settings' %}{% if from_param %}?from={{ from_param }}{% endif %}" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Settings</span>
+    </a>
+
+    <div class="delete-account-card">
+        <div class="delete-account-header">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h1>Delete Account</h1>
+            <p>This action cannot be undone. Please read the information below carefully.</p>
+        </div>
+
+        <div class="warning-section">
+            <h3>
+                <i class="fas fa-info-circle"></i>
+                What will be deleted:
+            </h3>
+            <ul>
+                <li>Your account and all personal information</li>
+                <li>All your bookmarked restaurants</li>
+                <li>All your reviews and ratings</li>
+                <li>All your reservation history</li>
+                <li>Your profile image and settings</li>
+            </ul>
+        </div>
+
+        <form method="post" class="delete-account-form">
+            {% csrf_token %}
+            {% if from_param %}
+                <input type="hidden" name="from" value="{{ from_param }}">
+            {% endif %}
+            
+            <div class="error-msg{% if first_error %} show{% endif %}">
+                {% if first_error %}{{ first_error }}{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.confirm_delete.id_for_label }}">
+                    {{ form.confirm_delete }}
+                    <span>{{ form.confirm_delete.label }}</span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">
+                    {{ form.password.label }}
+                </label>
+                {{ form.password }}
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'settings:settings' %}{% if from_param %}?from={{ from_param }}{% endif %}" class="btn btn-cancel">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-delete" id="deleteBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete My Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'common/js/Notifications.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteBtn = document.getElementById('deleteBtn');
+    const confirmCheckbox = document.getElementById('{{ form.confirm_delete.id_for_label }}');
+    const passwordInput = document.getElementById('{{ form.password.id_for_label }}');
+    const form = document.querySelector('.delete-account-form');
+
+    // Disable delete button until checkbox is checked
+    if (deleteBtn && confirmCheckbox) {
+        deleteBtn.disabled = !confirmCheckbox.checked;
+        
+        confirmCheckbox.addEventListener('change', function() {
+            deleteBtn.disabled = !this.checked;
+        });
+    }
+
+    // Add confirmation dialog on form submit
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!confirmCheckbox.checked) {
+                e.preventDefault();
+                alert('Please confirm that you understand the consequences of deleting your account.');
+                return false;
+            }
+
+            if (!passwordInput.value.trim()) {
+                e.preventDefault();
+                alert('Please enter your password to confirm account deletion.');
+                passwordInput.focus();
+                return false;
+            }
+
+            const confirmed = confirm(
+                'Are you absolutely sure you want to delete your account? This action is permanent and cannot be undone.\n\n' +
+                'All your data will be permanently deleted.'
+            );
+
+            if (!confirmed) {
+                e.preventDefault();
+                return false;
+            }
+
+            // Disable button to prevent double submission
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+        });
+    }
+});
+</script>
+

@@ -1,0 +1,128 @@
+{% extends "manage_restaurant/manage_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_staff.css' %}">
+{% endblock %}
+
+{% block page_title %}Manage Staff{% endblock %}
+
+{% block manage_content %}
+<div class="manage-header">
+  <div class="header-content">
+    
+    <p class="subtitle">Add, remove, or invite staff members</p>
+  </div>
+</div>
+
+<div class="manage-restaurant-container">
+
+  <!-- Staff List -->
+  <section class="manage-section">
+    <div class="section-content">
+      <div class="content-card">
+        <div class="card-header">
+          <h2>Staff Members</h2>
+          
+          <div class="header-actions">
+            <div class="filters-section">
+              <div class="filters-container">
+                <div class="filter-group filter-primary">
+                  <div class="filter-item">
+                    <label for="filterName" class="filter-label">Name</label>
+                    <input type="text" class="filter-input" id="filterName" placeholder="Filter by Name">
+                  </div>
+                  <div class="filter-item">
+                    <label for="filterEmail" class="filter-label">Email</label>
+                    <input type="text" class="filter-input" id="filterEmail" placeholder="Filter by Email">
+                  </div>
+                  <div class="filter-item">
+                    <label for="filterRole" class="filter-label">Role</label>
+                    <select class="filter-select" id="filterRole">
+                      <option value="">All Roles</option>
+                      <option value="HOST">Host</option>
+                      <option value="MANAGER">Manager</option>
+                      <option value="STAFF">Staff</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="filter-actions">
+                  <button class="btn btn-sm btn-secondary" id="resetStaffFilters">Reset All</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invite Staff button -->
+            <button class="btn btn-primary" id="inviteStaffBtn">Invite Staff</button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          {% if staff %}
+          <table class="staff-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for member in staff %}
+              <tr{% if member.is_current_user %} class="current-user-row"{% endif %}>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ member.name }}</td>
+                <td>{{ member.email }}</td>
+                <td><span class="role-badge">{{ member.role|default:"Staff" }}</span></td>
+                <td>{{ member.joined_at|date:"M d, Y" }}</td>
+                <td>
+                  {% if not member.is_current_user %}
+                  <button class="btn btn-danger btn-sm" onclick="removeStaff('{{ member.name }}', '{{ member.id }}', '{{ member.role }}')">Remove</button>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">
+            <p>No staff members yet.</p>
+            <small>Invite staff to manage your restaurant efficiently.</small>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Invite Staff Modal -->
+  <div id="inviteModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Invite Staff</h2>
+        <button type="button" class="modal-close-btn" id="closeInviteModal">&times;</button>
+      </div>
+      <form method="post" class="modal-body">
+        <input type="hidden" name="modalOpened">
+        {% csrf_token %}
+        <label for="inviteEmail">Staff Email</label>
+        <input type="email" name="email" id="inviteEmail" placeholder="Enter staff email">
+        <label for="inviteRole">Role</label>
+        <select id="inviteRole" name="role">
+          <option value="HOST">Host</option>
+          <option value="MANAGER">Manager</option>
+        </select>
+        <button type="submit" class="btn btn-primary" id="sendInviteBtn">Send Invite</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'manage_restaurant/js/manage_staffs.js' %}"></script>
+{% endblock %}

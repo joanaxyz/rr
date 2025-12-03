@@ -1,0 +1,321 @@
+{% extends 'common/rr_base.html' %}
+{% load static %}
+{% load restaurant_filters %}
+{% block title %}Explore Restaurants - RR{% endblock %}
+
+{% block rr_base_css %}
+<link rel="stylesheet" href="{% static 'restaurants/css/restaurants.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<!-- Page Hero -->
+<div class="page-hero">
+    <div class="page-hero-content">
+        <div class="page-hero-badge">
+            <span class="badge-dot"></span>
+            <span>Discover Amazing Dining</span>
+        </div>
+        <h1>Find Your <span>Perfect Restaurant</span></h1>
+        <p>Explore our curated collection of the finest restaurants, filter by cuisine, and book your next dining experience.</p>
+    </div>
+</div>
+
+<div class="main-container">
+    <!-- LEFT SIDEBAR -->
+    <div class="left-container">
+        <div class="locationButton" id="addressEditTrigger">
+            <i class="fas fa-location-dot"></i>
+            <div>
+                <p>LOCATION</p>
+                <p id="address" data-city="{{ city|default:'' }}">{{ address|default:city|default:"Select Location" }}</p>
+            </div>
+        </div>
+
+        <!-- CUISINE FILTER -->
+        <div class="cuisines-filter">
+            <div class="filter-section-title">Cuisines</div>
+            {% for c in cuisines|slice:":10" %}
+            <label>
+                <input type="checkbox" name="cuisines" value="{{ c.id }}">
+                {{ c.name }}
+            </label>
+            {% endfor %}
+            {% if cuisines|length > 10 %}
+            <div class="hidden-cuisines">
+                {% for c in cuisines|slice:"10:" %}
+                <label>
+                    <input type="checkbox" name="cuisines" value="{{ c.id }}">
+                    {{ c.name }}
+                </label>
+                {% endfor %}
+            </div>
+            <p class="more-toggle" data-toggle="cuisines">
+                <i class="fas fa-plus"></i> Show More
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- TAG FILTER -->
+        <div class="tags-filter">
+            <div class="filter-section-title">Features</div>
+            {% for t in tags|slice:":10" %}
+            <label>
+                <input type="checkbox" name="tags" value="{{ t.id }}">
+                {{ t.tag }}
+            </label>
+            {% endfor %}
+            {% if tags|length > 10 %}
+            <div class="hidden-tags">
+                {% for t in tags|slice:"10:" %}
+                <label>
+                    <input type="checkbox" name="tags" value="{{ t.id }}">
+                    {{ t.tag }}
+                </label>
+                {% endfor %}
+            </div>
+            <p class="more-toggle" data-toggle="tags">
+                <i class="fas fa-plus"></i> Show More
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- GUEST COUNT FILTER -->
+        <div class="guest-count-filter">
+            <div class="filter-section-title">Party Size</div>
+            <select id="guest_count_select" data-value="{{ guest_count }}">
+                <option value="">Any Size</option>
+                <option value="1">1 Guest</option>
+                <option value="2">2 Guests</option>
+                <option value="3-4">3-4 Guests</option>
+                <option value="5-6">5-6 Guests</option>
+                <option value="7-10">7-10 Guests</option>
+                <option value="11-20">11-20 Guests</option>
+                <option value="20+">20+ Guests</option>
+            </select>
+        </div>
+
+        <!-- OPERATING DAYS FILTER -->
+        <div class="operating-days-filter">
+            <div class="filter-section-title">Open On</div>
+            <select id="operating_day_select" data-value="{{ day }}">
+                <option value="">Any Day</option>
+                <option value="Mon">Monday</option>
+                <option value="Tue">Tuesday</option>
+                <option value="Wed">Wednesday</option>
+                <option value="Thu">Thursday</option>
+                <option value="Fri">Friday</option>
+                <option value="Sat">Saturday</option>
+                <option value="Sun">Sunday</option>
+            </select>
+        </div>
+
+        <!-- SORTING FILTER -->
+        <div class="filter-by">
+            <div class="filter-section-title">Sort By</div>
+            <label>
+                <input type="radio" name="sort_by" value="newest" checked> Newest
+            </label>
+            <label>
+                <input type="radio" name="sort_by" value="rating"> Rating
+            </label>
+            <label>
+                <input type="radio" name="sort_by" value="bookmarks"> Popularity
+            </label>
+
+            <div class="sort-order">
+                <span>Order</span>
+                <label>
+                    <input type="radio" name="order" value="asc" checked> Ascending
+                </label>
+                <label>
+                    <input type="radio" name="order" value="desc"> Descending
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="right-container">
+        <p class="results-count"><strong>{{ total_restaurants }}</strong> restaurants found</p>
+
+        <div class="restaurants-grid">
+            {% for restaurant in restaurants %}
+            <div class="restaurant-card" data-id="{{ restaurant.id }}">
+                <div class="card-image" style="background-image: url('{{ restaurant.image|default:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800" }}')">
+                    <div class="card-overlay">
+                        <div class="card-rating">
+                            <i class="fas fa-star"></i>
+                            <span>{% if restaurant.avg_rating %}{{ restaurant.avg_rating|floatformat:1 }}{% else %}New{% endif %}</span>
+                        </div>
+                        {% if restaurant.is_open_now %}
+                        <div class="card-status-badge open">Open Now</div>
+                        {% else %}
+                        <div class="card-status-badge closed">Closed</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-header">
+                        <h3>{{ restaurant.name }}</h3>
+                        <span class="card-price">{{ restaurant.price_range_display }}</span>
+                    </div>
+                    
+                    {% if restaurant.description %}
+                    <p class="card-description">{{ restaurant.description|truncatewords:15 }}</p>
+                    {% endif %}
+                    
+                    <div class="card-cuisines">
+                        {% for cuisine in restaurant.cuisines.all|slice:":3" %}
+                        <span class="cuisine-tag">{{ cuisine.name }}</span>
+                        {% endfor %}
+                        {% if restaurant.cuisines.count > 3 %}
+                        <span class="cuisine-tag more">+{{ restaurant.cuisines.count|add:"-3" }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if restaurant.tags.all %}
+                    <div class="card-tags">
+                        {% for tag in restaurant.tags.all|slice:":2" %}
+                        <span class="tag-badge">{{ tag.tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-info-grid">
+                        <div class="info-item">
+                            <i class="fas fa-location-dot"></i>
+                            <span class="info-text">{{ restaurant.full_address|truncatewords:8 }}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="info-text">
+                                {% if restaurant.opening_time and restaurant.closing_time %}
+                                    {{ restaurant.opening_time|time_12hour }} - {{ restaurant.closing_time|time_12hour }}
+                                {% else %}
+                                    Hours not available
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span class="info-text">{{ restaurant.operating_days|format_operating_days }}</span>
+                        </div>
+                        {% if restaurant.phone_number %}
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <span class="info-text">{{ restaurant.phone_number }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>Up to {{ restaurant.max_guest_count }} guests</span>
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-star"></i>
+                                <span>{{ restaurant.review_count }} review{{ restaurant.review_count|pluralize }}</span>
+                            </span>
+                        </div>
+                        
+                        <a href="{% url 'restaurants:detail' restaurant.id %}" class="btn-book">
+                            View Details
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-utensils"></i>
+                <h3>No Restaurants Found</h3>
+                <p>Try adjusting your filters or search criteria</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Server-side Pagination -->
+        {% if restaurants_page.has_other_pages %}
+        <div class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem; align-items: center;">
+            {% if restaurants_page.has_previous %}
+            <a href="?page={{ restaurants_page.previous_page_number }}{% if city %}&city={{ city }}{% endif %}{% if guest_count %}&guest_count={{ guest_count }}{% endif %}{% if date %}&date={{ date }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="pagination-link">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% endif %}
+            
+            <span class="pagination-info">
+                Page {{ restaurants_page.number }} of {{ restaurants_page.paginator.num_pages }}
+            </span>
+            
+            {% if restaurants_page.has_next %}
+            <a href="?page={{ restaurants_page.next_page_number }}{% if city %}&city={{ city }}{% endif %}{% if guest_count %}&guest_count={{ guest_count }}{% endif %}{% if date %}&date={{ date }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="pagination-link">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ADDRESS EDIT MODAL -->
+<div id="addressModal" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Change Location</h2>
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="addressForm">
+                <div class="form-group">
+                    <label for="street_number">Street Number</label>
+                    <input type="text" id="street_number" name="street_number" placeholder="e.g., 123">
+                </div>
+                <div class="form-group">
+                    <label for="street_name">Street Name</label>
+                    <input type="text" id="street_name" name="street_name" placeholder="e.g., Main Street">
+                </div>
+                <div class="form-group">
+                    <label for="street_block">Block / District</label>
+                    <input type="text" id="street_block" name="street_block" placeholder="e.g., Downtown">
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" placeholder="e.g., Manila">
+                </div>
+                <div class="form-group">
+                    <label for="postal_code">Postal Code</label>
+                    <input type="text" id="postal_code" name="postal_code" placeholder="e.g., 1000">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
+                    <button type="submit" class="btn-submit">Save Location</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+{# Only pass current page's restaurants for backward compatibility with any remaining JS #}
+{% if restaurants_dict %}{{ restaurants_dict|json_script:"restaurant-data" }}{% endif %}
+<script src="{% static 'home/js/stars.js' %}"></script>
+<script src="{% static 'home/js/book.js' %}"></script>
+<script src="{% static 'restaurants/js/addressModal.js' %}"></script>
+<script>
+// Disable client-side pagination since we're using server-side pagination now
+// The restaurants are already rendered server-side in the template
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize stars for restaurant cards
+    if (typeof initializeStars === 'function') {
+        initializeStars();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "manage_restaurant/manage_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/list.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block page_title %}My Restaurants{% endblock %}
+
+{% block manage_content %}
+<!-- Management Header -->
+<div class="manage-header">
+    <div class="header-content">
+        
+        <p class="subtitle">Manage and organize your restaurant properties</p>
+    </div>
+    {% if user.role == 'OWNER' %}
+    <div class="header-actions">
+        <a href="{% url 'manage_restaurant:create' %}" class="create-restaurant-btn">
+            <i class="fas fa-plus"></i>
+            Create Restaurant
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Main Management Container -->
+<div class="manage-restaurants-container">
+
+  <!-- <div class="action">
+  </div> -->
+  {% if restaurants %}
+    <div class="restaurants-list">
+      {% for restaurant in restaurants %}
+        <div class="restaurant-item">
+          <div class="restaurant-name-section">
+            <h2>{{ restaurant.name }}</h2>
+          </div>
+          <a href="{% url 'manage_restaurant:dashboard' restaurant.id %}" class="manage-btn">Manage</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-restaurants">
+      <p>No restaurants to manage</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

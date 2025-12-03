@@ -1,0 +1,156 @@
+{% extends "common/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'common/css/navbar.css' %}">
+{% block rr_base_css %} {% endblock %}
+{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="logo">
+    <img src="{% static 'common/images/cloche.png' %}" alt="Logo">
+    <span class="brand">RESTAURANT RESERVATION</span>
+  </div>
+  <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+    <i class="fas fa-bars"></i>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="{% url 'home:home' %}"
+        class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+    <li><a href="{% url 'restaurants:list' %}"
+        class="{% if request.resolver_match.url_name == 'restaurants' %}active{% endif %} navlast">Restaurants</a></li>
+  </ul>
+  <div class="navbar-searchbar">
+    <input type="search" placeholder="Search..." />
+    <button aria-label="Search">
+      <i class="fas fa-magnifying-glass"></i>
+    </button>
+  </div>
+  {% if user.is_authenticated %}
+  <div id="userProfile" class="user-profile">
+    <div class="profile-icon">
+      {% if user.profile_image %}
+        <img src="{{ user.profile_image }}" alt="Profile" class="profile-image">
+      {% else %}
+        <i class="fas fa-circle-user"></i>
+      {% endif %}
+    </div>
+    <div class="profile-dropdown" id="profileDropdown">
+      <div class="dropdown-header">
+        <div class="user-name">{{ user.get_full_name }}</div>
+        <div class="user-email">{{ user.email }}</div>
+      </div>
+      <div class="dropdown-divider"></div>
+      <a href="{% url 'accounts:profile' %}" class="dropdown-item">
+        <i class="fas fa-user" style="margin-right: 8px; width: 16px;"></i>
+        <span>My Profile</span>
+      </a>
+      <a href="{% url 'reservations:list' %}" class="dropdown-item">
+        <i class="fas fa-calendar-check" style="margin-right: 8px; width: 16px;"></i>
+        <span>My Reservations</span>
+      </a>
+      <button class="dropdown-item" id="btnSettings">
+        <i class="fas fa-cog" style="margin-right: 8px; width: 16px;"></i>
+        <span>Settings</span>
+      </button>
+      {% if user.role == 'OWNER' or user.role == 'HOST' or user.role == 'MANAGER' %}
+      <div class="dropdown-divider"></div>
+      <a href="{% url 'manage_restaurant:list' %}" class="dropdown-item">
+        <i class="fas fa-utensils" style="margin-right: 8px; width: 16px;"></i>
+        <span>Manage Restaurant</span>
+      </a>
+      {% endif %}
+      {% if user.is_staff %}
+      <div class="dropdown-divider"></div>
+      <a href="{% url 'admin_panel:dashboard' %}" class="dropdown-item">
+        <i class="fas fa-shield-halved" style="margin-right: 8px; width: 16px;"></i>
+        <span>Admin Panel</span>
+      </a>
+      {% endif %}
+      <div class="dropdown-divider"></div>
+      <button class="dropdown-item" id="btnLogout">
+        <i class="fas fa-sign-out-alt" style="margin-right: 8px; width: 16px;"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </div>
+  {% else %}
+  <div class="auth-buttons">
+    <a href="{% url 'accounts:login' %}" class="btn-sign-in">Sign In</a>
+    <a href="{% url 'accounts:register' %}" class="btn-sign-up">Sign Up</a>
+  </div>
+  {% endif %}
+</nav>
+
+<!-- Spacer for fixed navbar -->
+<div class="navbar-spacer"></div>
+{% block rr_base_content %}{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Set logout URL
+  {% if user.is_authenticated %}
+    window.logoutUrl = "{% url 'accounts:logout' %}";
+  {% endif %}
+  // Set restaurants list URL
+  window.restaurantsListUrl = "{% url 'restaurants:list' %}";
+  // Debug: Log the URL to console (remove in production if needed)
+  // console.log('Restaurants list URL:', window.restaurantsListUrl);
+  // Set settings URL
+  window.settingsUrl = "{% url 'settings:settings' %}";
+  // Set login URL
+  window.loginUrl = "{% url 'accounts:login' %}";
+  // Helper function for restaurant detail URL
+  window.getRestaurantDetailUrl = function(restaurantId) {
+    const baseUrl = "{% url 'restaurants:list' %}";
+    return baseUrl + restaurantId + '/';
+  };
+</script>
+<script src="{% static 'home/js/userProfile.js' %}"></script>
+<script src="{% static 'restaurants/js/search.js' %}"></script>
+<script>
+// Mobile menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const navLinks = document.getElementById('navLinks');
+  
+  if (mobileMenuToggle && navLinks) {
+    mobileMenuToggle.addEventListener('click', function() {
+      navLinks.classList.toggle('mobile-open');
+      const icon = this.querySelector('i');
+      if (navLinks.classList.contains('mobile-open')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!navLinks.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+        navLinks.classList.remove('mobile-open');
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+    
+    // Close mobile menu when clicking on a link
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function() {
+        navLinks.classList.remove('mobile-open');
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      });
+    });
+  }
+});
+</script>
+{% block rr_base_js %}{% endblock %}
+{% endblock %}

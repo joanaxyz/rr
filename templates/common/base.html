@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Mga Bulakbol">
+  <title>{% block title %}RR{% endblock %}</title>
+
+  <!-- Fonts - Outfit: Modern, clean, premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Design System -->
+  <link rel="stylesheet" href="{% static 'common/css/design-tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/components.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/notification.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/modal.css' %}">
+  <link rel="stylesheet" href="{% static 'common/css/spinner.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  
+
+  {% block content %}
+  <!-- Page content goes here -->
+  {% endblock %}
+
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p class="loading-text" id="loadingText">Loading...</p>
+    </div>
+  </div>
+
+   {% if messages %}
+  <script id="djangoMessages" type="application/json">
+    [
+      {% for message in messages %}
+      {
+        "level": {{ message.level }},
+        "text": "{{ message|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  </script>
+  {% endif %}
+  <script src="{% static 'common/js/Notification.js' %}"></script>
+  <script src="{% static 'common/js/Modal.js' %}"></script>
+  <script src="{% static 'common/js/LoadingOverlay.js' %}"></script>
+  <script src="{% static 'common/js/APIClient.js' %}"></script>
+  <script src="{% static 'common/js/MessageNotification.js' %}"></script>
+  <script src="{% static 'common/js/SubmitStyling.js' %}"></script>
+  <script src="{% static 'common/js/password_toggle.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

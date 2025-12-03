@@ -1,0 +1,66 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Restaurant Creation Approved - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#28a745"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}🎉 Congratulations! Your Restaurant Has Been Approved{% endblock %}
+
+{% block email_description %}
+Great news! Your restaurant creation request has been approved by our admin team. Your restaurant is now live on our platform!
+{% endblock %}
+
+{% block email_content %}
+<div class="success-box">
+    <strong>✓ Restaurant Approved</strong>
+    <p style="margin: 10px 0 0 0;">Your restaurant is now live on our platform! Customers can now discover and make reservations at your restaurant.</p>
+</div>
+
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Restaurant Name</span>
+        <span class="detail-value">{{ restaurant.name }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Location</span>
+        <span class="detail-value">{{ restaurant.city }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Email</span>
+        <span class="detail-value">{{ restaurant.email }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Phone</span>
+        <span class="detail-value">{{ restaurant.phone_number }}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>Next Steps:</strong>
+    <ul style="margin: 10px 0 0 20px; padding-left: 20px;">
+        <li>Set up your table layout and floor plan</li>
+        <li>Manage your restaurant details and menu</li>
+        <li>Start accepting reservations</li>
+        <li>Invite your staff members</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}manage-restaurant/list/" class="email-button email-button-success">Manage Your Restaurant</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+</div>
+{% endblock %}

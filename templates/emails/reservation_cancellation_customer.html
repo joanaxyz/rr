@@ -1,0 +1,65 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Reservation Cancelled - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="11" stroke="#dc3545" stroke-width="2" fill="none"/>
+        <path d="M8 8L16 16M16 8L8 16" stroke="#dc3545" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Reservation Cancelled{% endblock %}
+
+{% block email_description %}
+Your reservation has been cancelled. We appreciate your understanding and hope to see you again at <strong>{{ reservation.restaurant.name }}</strong> in the future.
+{% endblock %}
+
+{% block email_content %}
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Restaurant</span>
+        <span class="detail-value">{{ reservation.restaurant.name|default:"N/A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Original Reservation Date</span>
+        <span class="detail-value">{{ reservation.date|date:"D, d M Y" }} at {{ reservation.time|time:"H:i A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Party Size</span>
+        <span class="detail-value">{{ reservation.guest_count }} guest{% if reservation.guest_count != 1 %}s{% endif %}</span>
+    </div>
+    {% if reservation.table_numbers %}
+    <div class="detail-item">
+        <span class="detail-label">Table Numbers</span>
+        <span class="detail-value">{{ reservation.table_numbers|join:", " }}</span>
+    </div>
+    {% endif %}
+    {% if reservation.cancellation_info %}
+    <div class="detail-item">
+        <span class="detail-label">Cancellation Reason</span>
+        <span class="detail-value">{{ reservation.cancellation_info.reason }}</span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="info-box">
+    <strong>What happens next?</strong>
+    <p style="margin: 10px 0 0 0;">If you previously made any special requests or had notes on your reservation, please be aware that the restaurant may have been preparing for your visit. We recommend contacting them directly if you have any questions.</p>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}restaurants/" class="email-button">Book Another Reservation</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>If you did not cancel this reservation or have any concerns, please contact our support team immediately.</p>
+</div>
+{% endblock %}

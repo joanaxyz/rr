@@ -1,0 +1,51 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Verify Your Email Address - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="#D4530A"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Verify Your Email Address{% endblock %}
+
+{% block email_description %}
+Thank you for signing up for {{ site_name }}. To complete your registration, please verify your email address by clicking the button below.
+{% endblock %}
+
+{% block email_content %}
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Email Address</span>
+        <span class="detail-value">{{ user.email|default:"N/A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Account Name</span>
+        <span class="detail-value">{{ user.first_name|default:user.username|default:"N/A" }}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>Why verify your email?</strong>
+    <p style="margin: 10px 0 0 0;">Email verification helps us ensure the security of your account and allows us to send you important updates about your reservations and account activity.</p>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ verification_url }}" class="email-button">Verify Email Address</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>If the button above doesn't work, copy and paste this link into your browser:</p>
+    <p><a href="{{ verification_url }}">{{ verification_url }}</a></p>
+    <p style="margin-top: 15px;"><strong>⚠️ Important:</strong> This verification link will expire in 24 hours.</p>
+    <p>If you didn't create an account, you can safely ignore this message.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Thank You for Your Visit - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#D4530A"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Thank You for Your Visit!{% endblock %}
+
+{% block email_description %}
+We hope you had a wonderful dining experience at <strong>{{ reservation.restaurant.name }}</strong>. Thank you for choosing us!
+{% endblock %}
+
+{% block email_content %}
+<div class="success-box">
+    <strong>Reservation Summary:</strong>
+</div>
+
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Restaurant</span>
+        <span class="detail-value">{{ reservation.restaurant.name|default:"N/A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Visit Date & Time</span>
+        <span class="detail-value">{{ reservation.date|date:"D, d M Y" }} at {{ reservation.time|time:"H:i A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Party Size</span>
+        <span class="detail-value">{{ reservation.guest_count }} guest{% if reservation.guest_count != 1 %}s{% endif %}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>We'd love your feedback!</strong>
+    <p style="margin: 10px 0 0 0;">If you enjoyed your meal and service, please consider leaving a review. Your feedback helps us improve and helps other diners make great choices.</p>
+</div>
+
+<div class="info-box">
+    <strong>Plan Your Next Visit:</strong>
+    <p style="margin: 10px 0 0 0;">We'd be delighted to welcome you back soon. Don't hesitate to make another reservation through Restaurant Reservation whenever you're ready for your next dining experience!</p>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}restaurants/{{ reservation.restaurant.id }}/" class="email-button">Leave a Review</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>Thank you for choosing Restaurant Reservation!</p>
+    <p>We look forward to seeing you again soon!</p>
+</div>
+{% endblock %}

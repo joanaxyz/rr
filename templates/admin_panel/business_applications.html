@@ -1,0 +1,183 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Business Applications{% endblock %}
+{% block page_title %}Business Applications{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>Business Applications</h1>
+  <p>Review and approve business partner applications</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-clock"></i> Pending Requests ({{ pending_requests.count }})</h2>
+  </div>
+  {% if pending_requests %}
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Full Name (Govt)</th>
+            <th>ID Type</th>
+            <th>ID Number</th>
+            <th>Business Address</th>
+            <th>Business Email</th>
+            <th>Tax ID</th>
+            <th>Documents</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for request in pending_requests %}
+          <tr class="compact-row">
+            <!-- User Info -->
+            <td>
+              <strong>{{ request.user.email }}</strong><br>
+              <small>{{ request.user.username }}</small>
+            </td>
+
+            <!-- Government Info -->
+            <td>{{ request.govt_full_name }}</td>
+            <td>{{ request.government_id_type }}</td>
+            <td>{{ request.government_id_number }}</td>
+
+            <!-- Business Info -->
+            <td>{{ request.business_address }}</td>
+            <td>{{ request.business_email|default:"N/A" }}</td>
+            <td>{{ request.tax_id|default:"N/A" }}</td>
+
+            <!-- Documents -->
+            <td>
+              <div class="action-buttons compact-buttons">
+                {% if request.business_license %}
+                <a href="{{ request.business_license }}" target="_blank" class="btn btn-small btn-primary">
+                  <i class="fas fa-file"></i> License
+                </a>
+                {% endif %}
+                {% if request.government_id_front %}
+                <a href="{{ request.government_id_front }}" target="_blank" class="btn btn-small btn-primary">
+                  <i class="fas fa-id-card"></i> ID Front
+                </a>
+                {% endif %}
+                {% if request.government_id_back %}
+                <a href="{{ request.government_id_back }}" target="_blank" class="btn btn-small btn-primary">
+                  <i class="fas fa-id-card"></i> ID Back
+                </a>
+                {% endif %}
+                {% if request.proof_of_ownership %}
+                <a href="{{ request.proof_of_ownership }}" target="_blank" class="btn btn-small btn-primary">
+                  <i class="fas fa-file-contract"></i> Proof
+                </a>
+                {% endif %}
+              </div>
+            </td>
+
+            <!-- Request Date -->
+            <td>{{ request.created_at|date:"M d, Y H:i:s" }}</td>
+
+            <!-- Actions -->
+            <td>
+              <div class="action-buttons compact-buttons">
+                <form method="POST" onsubmit="return confirm('Accept this business application?');">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="accept">
+                  <input type="hidden" name="request_id" value="{{ request.id }}">
+                  <button type="submit" class="btn btn-success btn-small">
+                    <i class="fas fa-check"></i>
+                  </button>
+                </form>
+
+                <form method="POST" onsubmit="return confirm('Reject this business application?');">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="reject">
+                  <input type="hidden" name="request_id" value="{{ request.id }}">
+                  <button type="submit" class="btn btn-danger btn-small">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No pending business applications</p>
+      </div>
+  {% endif %}
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+  <div class="admin-card">
+    <div class="card-header">
+      <h2><i class="fas fa-check-circle"></i> Recently Accepted</h2>
+    </div>
+    {% if accepted_requests %}
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Full Name</th>
+              <th>Accepted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in accepted_requests %}
+            <tr>
+              <td>{{ request.user.email }}</td>
+              <td>{{ request.govt_full_name }}</td>
+              <td>{{ request.updated_at|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No accepted requests yet</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="admin-card">
+    <div class="card-header">
+      <h2><i class="fas fa-times-circle"></i> Recently Rejected</h2>
+    </div>
+    {% if rejected_requests %}
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Full Name</th>
+              <th>Rejected</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in rejected_requests %}
+            <tr>
+              <td>{{ request.user.email }}</td>
+              <td>{{ request.govt_full_name }}</td>
+              <td>{{ request.updated_at|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No rejected requests</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

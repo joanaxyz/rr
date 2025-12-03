@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Business Application Not Approved</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f8f8; color: #333; }
+        .container { background-color: #fff; padding: 20px; margin: 20px auto; max-width: 600px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #dc3545; }
+        a.btn { display: inline-block; padding: 10px 15px; background-color: #dc3545; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sorry, {{ user.username }}</h2>
+        <p>Your business application has been <strong>NOT APPROVED</strong> by the admin.</p>
+        <p>If you believe this is a mistake, please contact support.</p>
+        <a class="btn" href="{{ site_url }}">Go to Home</a>
+    </div>
+</body>
+</html>

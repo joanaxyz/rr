@@ -1,0 +1,77 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Staff Invitation - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z" fill="#D4530A"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Welcome! You're Invited to Join{% endblock %}
+
+{% block email_description %}
+You have been invited to join <strong>{{ restaurant.name }}</strong> as a <strong>{{ role }}</strong>.
+{% endblock %}
+
+{% block email_content %}
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Restaurant</span>
+        <span class="detail-value">{{ restaurant.name }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Position</span>
+        <span class="detail-value">{{ role|title }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Email Address</span>
+        <span class="detail-value">{{ email }}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>Getting Started:</strong>
+    <p style="margin: 10px 0 0 0;">Since you don't have an account yet, you'll need to create one. Click the button below to register and join the team.</p>
+</div>
+
+<div class="details-section" style="margin-top: 30px;">
+    <h3 style="margin-top: 0; color: #1a1a1a; font-size: 18px;">How to Get Started:</h3>
+    <div style="margin: 15px 0;">
+        <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">1</span>
+            <span style="flex: 1; padding-top: 6px;">Click the "Create Account" button below</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">2</span>
+            <span style="flex: 1; padding-top: 6px;">Fill in your details and create a password</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">3</span>
+            <span style="flex: 1; padding-top: 6px;">Verify your email address</span>
+        </div>
+        <div style="display: flex; align-items: flex-start;">
+            <span style="display: inline-block; width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B00 0%, #D4530A 100%); color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">4</span>
+            <span style="flex: 1; padding-top: 6px;">Log in and start managing the restaurant!</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ invitation_url }}" class="email-button">Create Account</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>If the button above doesn't work, copy and paste this link into your browser:</p>
+    <p><a href="{{ invitation_url }}">{{ invitation_url }}</a></p>
+    <p style="margin-top: 15px;">This invitation link will expire in 7 days.</p>
+    <p>If you didn't expect this invitation, please contact your administrator.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Business Application Update - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#dc3545"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Application Status Update{% endblock %}
+
+{% block email_description %}
+Thank you for your interest in joining Restaurant Reservation. After careful review, we regret to inform you that your business application could not be approved at this time.
+{% endblock %}
+
+{% block email_content %}
+<div class="error-box">
+    <strong>Application Not Approved</strong>
+    <p style="margin: 10px 0 0 0;">We appreciate your interest in joining our platform. Unfortunately, your application did not meet our current requirements.</p>
+</div>
+
+{% if admin_notes %}
+<div class="warning-box">
+    <strong>Reason for Rejection:</strong>
+    <p style="margin: 10px 0 0 0;">{{ admin_notes }}</p>
+</div>
+{% endif %}
+
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Applicant Name</span>
+        <span class="detail-value">{{ user.get_full_name|default:user.username }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Email Address</span>
+        <span class="detail-value">{{ user.email }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Reviewed On</span>
+        <span class="detail-value">{{ application.updated_at|date:"F d, Y \a\t g:i A" }}</span>
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>What can you do next?</strong>
+    <ul style="margin: 10px 0 0 20px; padding-left: 20px;">
+        <li>Review the reason provided above (if available)</li>
+        <li>Address any issues or concerns mentioned</li>
+        <li>Ensure all required documents are clear and valid</li>
+        <li>Submit a new application with the necessary corrections</li>
+        <li>Contact our support team if you need clarification</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}business/apply/" class="email-button">Submit New Application</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>We appreciate your interest in joining our platform and encourage you to reapply once you've addressed any concerns.</p>
+    <p>If you have any questions or need assistance, please contact our support team.</p>
+</div>
+{% endblock %}
+

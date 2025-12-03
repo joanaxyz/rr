@@ -1,0 +1,17 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% load static %}
+
+{% block title %}Settings{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'settings/css/settings.css' %}">
+{% endblock %}
+
+{% block admin_content %}
+{% include 'settings/settings_content.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'settings/js/settings.js' %}"></script>
+{% endblock %}
+

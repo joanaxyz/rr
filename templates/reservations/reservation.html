@@ -1,0 +1,181 @@
+{% extends 'common/rr_base.html' %}
+{% load static %}
+
+{% block title %}Reserve at {{ restaurant.name }} - Restaurant Reservations{% endblock %}
+
+{% block rr_base_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'reservations/css/reservation.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block rr_base_content %}
+<!-- Reservation Header -->
+<div class="reservation-header">
+    <div class="header-bg">
+        <div class="header-gradient"></div>
+        <div class="header-pattern"></div>
+        <div class="header-glow"></div>
+    </div>
+    <div class="header-content">
+        <a href="{% url 'restaurants:detail' restaurant.id %}" class="back-button animate-fade-in">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Restaurant</span>
+        </a>
+        <div class="header-text animate-fade-in-up">
+            {% if edit_mode %}
+            <h1>Edit Reservation</h1>
+            {% else %}
+            <h1>Make a Reservation</h1>
+            {% endif %}
+            <p class="subtitle">at <span class="restaurant-name">{{ restaurant.name }}</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Main Reservation Container -->
+<div class="reservation-wrapper">
+    <!-- Restaurant Info Card -->
+    <div class="restaurant-info-card animate-fade-in-up delay-1">
+        <div class="restaurant-header-info">
+            <h3>{{ restaurant.name }}</h3>
+            <div class="restaurant-meta">
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fas fa-location-dot"></i>
+                    </div>
+                    <span>{{ restaurant.address }}</span>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <span>{{ restaurant.phone_number }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Reservation Content -->
+    <div class="reservation-main">
+        <!-- Table Selection Section -->
+        <section class="table-section animate-fade-in-up delay-2">
+            <div class="section-header-inline">
+                <div class="section-icon">
+                    <i class="fas fa-map"></i>
+                </div>
+                <h2>Select Your Table</h2>
+            </div>
+            <div class="table-map-container">
+                <div class="floor-legend">
+                    <div class="legend-item">
+                        <div class="legend-color available"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color reserved"></div>
+                        <span>Reserved</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color selected"></div>
+                        <span>Selected</span>
+                    </div>
+                </div>
+                
+                <div class='floor-plan' data-tables='{{ tables|safe }}' data-elements='{{ elements|safe }}'
+                data-floorplan='{{ floorplan|safe }}'>
+                    
+                </div>
+                
+                <div class="table-selection-info">
+                    <p id="selected-table-info">Click on an available table to select it</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservation Form -->
+        <section class="reservation-form-section animate-fade-in-up delay-3">
+            <div class="section-header-inline">
+                <div class="section-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h2>Reservation Details</h2>
+            </div>
+            <form id="reservation-form" class="reservation-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="restaurant-id" value="{{ restaurant.id }}">
+                <input type="hidden" id="selected-table" name="table_number" value="">
+                
+                <div class="form-group">
+                    <label for="guest-name">Full Name</label>
+                    {{ reserve_form.name }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-email">Email Address</label>
+                    {{ reserve_form.email }}
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reservation-date">Date</label>
+                        {{ reserve_form.date }}
+                    </div>
+                    <div class="form-group">
+                        <label for="reservation-time">Time</label>
+                        {{ reserve_form.time }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-count">Number of Guests</label>
+                    {{ reserve_form.guest_count }}
+                </div>
+                
+                <div class="selected-table-display">
+                    <div class="table-selection-status">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/>
+                        </svg>
+                        {{ reserve_form.table_numbers }}
+                        <span id="table-status">No table selected</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="special-notes">Special Requests</label>
+                    {{ reserve_form.notes }}
+                </div>
+                
+                <button type="submit" class="reserve-btn" id="reserve-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,5 19,5H18V3M17,12H12V17H17V12Z"/>
+                    </svg>
+                    {% if edit_mode %}
+                        Update Reservation
+                    {% else %}
+                        Complete Reservation
+                    {% endif %}
+                </button>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block rr_base_js %}
+<script src="{% static 'common/js/Notifications.js' %}"></script>
+<script src="{% static 'common/js/floor-plan-common.js' %}"></script>
+<script>
+    // Make restaurant data available to JavaScript
+    window.restaurantData = {{ restaurant_json|safe }};
+    
+    // Make selected tables available for edit mode
+    window.selectedTableNumbers = {{ selected_table_numbers|default:"[]"|safe }};
+    window.editMode = {{ edit_mode|default:"false"|lower }};
+</script>
+<script src="{% static 'reservations/js/reservation.js' %}"></script>
+<script src="{% static 'home/js/stars.js' %}"></script>
+{% endblock %}

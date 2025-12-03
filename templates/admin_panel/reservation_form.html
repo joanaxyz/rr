@@ -1,0 +1,90 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}{% if reservation %}Edit Reservation{% else %}Create Reservation{% endif %}{% endblock %}
+{% block page_title %}{% if reservation %}Edit Reservation{% else %}Create Reservation{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>{% if reservation %}Edit Reservation{% else %}Create New Reservation{% endif %}</h1>
+  <p>{% if reservation %}Update reservation information{% else %}Add a new reservation{% endif %}</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-calendar-check"></i> Reservation Form</h2>
+    <a href="{% if reservation %}{% url 'admin_panel:reservation_detail' reservation.id %}{% else %}{% url 'admin_panel:reservations' %}{% endif %}" class="btn btn-outline">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div>
+        <div class="form-group">
+          <label for="name">Guest Name *</label>
+          <input type="text" name="name" id="name" class="form-control" value="{{ reservation.name|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" name="email" id="email" class="form-control" value="{{ reservation.email|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="customer">Customer (Optional)</label>
+          <select name="customer" id="customer" class="form-control">
+            <option value="">Select Customer</option>
+            {% for customer in customers %}
+            <option value="{{ customer.id }}" {% if reservation.customer.id == customer.id %}selected{% endif %}>{{ customer.user.email }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="restaurant">Restaurant *</label>
+          <select name="restaurant" id="restaurant" class="form-control" required>
+            <option value="">Select Restaurant</option>
+            {% for rest in restaurants %}
+            <option value="{{ rest.id }}" {% if reservation.restaurant.id == rest.id %}selected{% endif %}>{{ rest.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label for="date">Date *</label>
+          <input type="date" name="date" id="date" class="form-control" value="{{ reservation.date|date:'Y-m-d'|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="time">Time *</label>
+          <input type="time" name="time" id="time" class="form-control" value="{{ reservation.time|time:'H:i'|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="guest_count">Guest Count *</label>
+          <input type="number" name="guest_count" id="guest_count" class="form-control" value="{{ reservation.guest_count|default:1 }}" min="1" required>
+        </div>
+        <div class="form-group">
+          <label for="status">Status *</label>
+          <select name="status" id="status" class="form-control" required>
+            <option value="PENDING" {% if reservation.status == 'PENDING' %}selected{% endif %}>Pending</option>
+            <option value="CONFIRMED" {% if reservation.status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+            <option value="CANCELLED" {% if reservation.status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+            <option value="COMPLETED" {% if reservation.status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea name="notes" id="notes" class="form-control" rows="4">{{ reservation.notes|default:'' }}</textarea>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i> {% if reservation %}Update Reservation{% else %}Create Reservation{% endif %}
+      </button>
+      <a href="{% if reservation %}{% url 'admin_panel:reservation_detail' reservation.id %}{% else %}{% url 'admin_panel:reservations' %}{% endif %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

@@ -1,0 +1,189 @@
+/* Shared Floor Plan Styles for Reservation and Table Management */
+
+/* Floor Items (Tables and Elements) */
+.floor-item {
+  position: absolute;
+  user-select: none;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: white;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.floor-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.draggable-floor-plan .floor-item {
+  cursor: grab;
+}
+
+.draggable-floor-plan .floor-item:hover {
+  cursor: grab;
+}
+
+.floor-item.table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.floor-item.table svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  pointer-events: none;
+}
+
+/* Table sizes */
+.floor-item.table-2 {
+  width: 65px;
+  height: 75px;
+  color: var(--table-available);
+}
+
+.floor-item.table-4 {
+  width: 80px;
+  height: 90px;
+  color: var(--table-available);
+}
+
+.floor-item.table-6 {
+  width: 95px;
+  height: 105px;
+  color: var(--table-available);
+}
+
+.floor-item.table-8 {
+  width: 110px;
+  height: 125px;
+  color: var(--table-available);
+}
+
+/* Floor elements (bar, kitchen, etc.) */
+.floor-item.element {
+  background: var(--primary-red);
+  color: var(--white);
+  border: 2px solid var(--primary-red-dark);
+}
+
+/* Floor item content and label */
+.floor-item-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.floor-item-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  height: 100%;
+}
+
+.floor-item-content svg {
+  width: 60%;
+  height: 60%;
+  flex-shrink: 0;
+  max-width: 100%;
+  max-height: 100%;
+  pointer-events: none;
+}
+
+/* Table states */
+.table {
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--table-available);
+  transition: all 0.3s ease;
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+}
+
+.table:hover:not(.reserved) {
+  color: var(--table-hover);
+  transform: scale(1.05);
+}
+
+.reservation-wrapper .table.available {
+  color: var(--table-available);
+}
+
+.reservation-wrapper .table.available:hover {
+  color: var(--table-hover);
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 12px rgba(34, 197, 94, 0.3));
+}
+
+.reservation-wrapper .table.reserved {
+  color: var(--table-reserved);
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.reservation-wrapper .table.reserved svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.table.selected {
+  color: var(--table-selected);
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.3));
+}
+
+.table.selected:not(.reserved) {
+  pointer-events: auto;
+}
+
+.table svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Table number display */
+.table-number {
+  position: absolute;
+  background: var(--white);
+  color: var(--text-primary);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 2px solid currentColor;
+  top: -8px;
+  right: -8px;
+}
+
+/* Dragging state */
+.floor-item.dragging {
+  opacity: 0.6;
+  cursor: grabbing;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--primary-red);
+  z-index: 200;
+  transform: scale(1.05);
+}
+
+/* Selection state for management view */
+.floor-item.selected {
+  box-shadow: 0 0 0 2px var(--primary-red), 0 0 0 4px rgba(220, 38, 38, 0.15);
+  transform: scale(1.02);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}

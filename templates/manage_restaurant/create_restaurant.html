@@ -1,0 +1,351 @@
+{% extends "manage_restaurant/manage_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'manage_restaurant/css/manage_details.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/notifications.css' %}">
+{% endblock %}
+
+{% block page_title %}Request New Restaurant{% endblock %}
+
+{% block manage_content %}
+<!-- Management Header -->
+<div class="manage-header">
+    <div class="header-content">
+        <h1>Request New Restaurant</h1>
+        <p class="subtitle">Submit a request to add a new restaurant to your portfolio</p>
+    </div>
+</div>
+
+<!-- Main Management Container -->
+<div class="manage-restaurant-container">
+
+  <!-- Create Restaurant Form -->
+  <section class="manage-section" id="create-section" data-section="create">
+
+    <div class="section-content">
+      <div class="content-card">
+        <div class="card-header">
+          <h2>Restaurant Information</h2>
+        </div>
+
+        <div class="card-body">
+          <form class="form-details" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if messages %}
+            <div class="messages">
+              {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Basic Information Section -->
+            <div class="form-section">
+              <h3 class="section-title">Basic Information</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Restaurant Name *</label>
+                  <input type="text" class="form-input" name="name" placeholder="Enter restaurant name" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Phone Number *</label>
+                  <input type="tel" class="form-input" name="phone_number" placeholder="Enter phone number" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Email Address *</label>
+                  <input type="email" class="form-input" name="email" placeholder="Enter restaurant email address" required>
+                  <p class="form-text-muted">This is the restaurant's contact email (not your personal email)</p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Description *</label>
+                <textarea class="form-input" name="description" placeholder="Describe your restaurant..." rows="5" required></textarea>
+              </div>
+
+              <div class="form-group image-upload-group">
+                <label class="form-label">Restaurant Image</label>
+                <div>
+                  <input type="file" class="form-input" name="image" accept="image/*">
+                  <p class="form-text-muted">JPG, PNG or GIF (Max 10MB)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="form-section">
+              <h3 class="section-title">Address Information</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Street Number</label>
+                  <input type="text" class="form-input" name="street_number" placeholder="Building/House number">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Street Name</label>
+                  <input type="text" class="form-input" name="street_name" placeholder="Street name">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Block/District</label>
+                  <input type="text" class="form-input" name="street_block" placeholder="Block or District">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-input" name="city" placeholder="Enter city">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Postal Code</label>
+                <input type="text" class="form-input" name="postal_code" placeholder="Enter postal code">
+              </div>
+            </div>
+
+            <!-- Operating Hours Section -->
+            <div class="form-section">
+              <h3 class="section-title">Operating Hours</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Opening Time</label>
+                  <input type="time" class="form-input" name="opening_time">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Closing Time</label>
+                  <input type="time" class="form-input" name="closing_time">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Operating Days</label>
+                <p class="form-text-small">Select the days your restaurant is open</p>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="operating_days" value="Mon" checked>
+                    <span>Monday</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="operating_days" value="Tue" checked>
+                    <span>Tuesday</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="operating_days" value="Wed" checked>
+                    <span>Wednesday</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="operating_days" value="Thu" checked>
+                    <span>Thursday</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="operating_days" value="Fri" checked>
+                    <span>Friday</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="operating_days" value="Sat" checked>
+                    <span>Saturday</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="operating_days" value="Sun" checked>
+                    <span>Sunday</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pricing & Capacity Section -->
+            <div class="form-section">
+              <h3 class="section-title">Pricing & Capacity</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Minimum Price (₱)</label>
+                  <input type="number" class="form-input" name="price_min" placeholder="0.00" step="0.01" value="0" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Maximum Price (₱)</label>
+                  <input type="number" class="form-input" name="price_max" placeholder="0.00" step="0.01" value="0" min="0">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Maximum Guest Count *</label>
+                <input type="number" class="form-input" name="max_guest_count" placeholder="Enter maximum number of guests" required min="1">
+              </div>
+            </div>
+
+            <!-- Cuisines Section -->
+            {% if cuisines %}
+            <div class="form-section">
+              <h3 class="section-title">Cuisines</h3>
+              <p class="form-text-muted">Select the cuisines your restaurant offers</p>
+              <div class="checkbox-group">
+                {% for cuisine in cuisines %}
+                <label class="checkbox-label">
+                  <input type="checkbox" name="cuisines" value="{{ cuisine.id }}">
+                  <span>{{ cuisine.name }}</span>
+                </label>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Tags Section -->
+            <div class="form-section">
+              <h3 class="section-title">Tags</h3>
+              <p class="form-text-muted">Select existing tags or create new ones</p>
+              
+              <div class="checkbox-group" id="tagsContainer" style="margin-bottom: var(--space-4);">
+                {% for tag in tags %}
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tags" value="{{ tag.id }}">
+                  <span>{{ tag.tag }}</span>
+                </label>
+                {% endfor %}
+              </div>
+              
+              <div class="add-tag-container">
+                <input type="text" id="newTagInput" class="form-input" placeholder="Enter new tag name..." maxlength="50">
+                <button type="button" id="addTagBtn" class="btn-add-tag" title="Add new tag">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+              <p class="form-text-muted">Type a tag name and click the plus button to create and add it</p>
+            </div>
+
+            <!-- Proof of Ownership Section -->
+            <div class="form-section">
+              <h3 class="section-title">Proof of Ownership</h3>
+              <p class="form-text-muted">Upload a document proving you own this restaurant (e.g., business registration, lease agreement, etc.)</p>
+              <div class="form-group">
+                <label class="form-label">Proof of Ownership Document *</label>
+                <input type="file" class="form-input" name="proof_of_ownership" accept="image/*,.pdf" required>
+                <p class="form-text-muted">JPG, PNG or PDF (Max 10MB)</p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Submit Request</button>
+              <a href="{% url 'manage_restaurant:list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'common/js/Notifications.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addTagBtn = document.getElementById('addTagBtn');
+    const newTagInput = document.getElementById('newTagInput');
+    const tagsContainer = document.getElementById('tagsContainer');
+    
+    // Handle Enter key in input field
+    newTagInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTagBtn.click();
+        }
+    });
+    
+    addTagBtn.addEventListener('click', async function() {
+        const tagName = newTagInput.value.trim();
+        
+        if (!tagName) {
+            Notifications.error('Please enter a tag name');
+            return;
+        }
+        
+        if (tagName.length > 50) {
+            Notifications.error('Tag name must be 50 characters or less');
+            return;
+        }
+        
+        // Disable button and show loading state
+        addTagBtn.disabled = true;
+        addTagBtn.style.opacity = '0.6';
+        
+        try {
+            const formData = new FormData();
+            formData.append('tag_name', tagName);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            const response = await fetch('{% url "manage_restaurant:add_tag" %}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success && data.tag) {
+                // Check if tag already exists in the UI
+                const existingTag = Array.from(tagsContainer.querySelectorAll('input[name="tags"]'))
+                    .find(input => input.value == data.tag.id);
+                
+                if (!existingTag) {
+                    // Create new checkbox for the tag
+                    const label = document.createElement('label');
+                    label.className = 'checkbox-label';
+                    label.innerHTML = `
+                        <input type="checkbox" name="tags" value="${data.tag.id}" checked>
+                        <span>${data.tag.name}</span>
+                    `;
+                    
+                    // Add animation
+                    label.style.animation = 'slideIn 0.3s ease';
+                    tagsContainer.appendChild(label);
+                    
+                    Notifications.success(data.message || 'Tag added successfully!');
+                } else {
+                    // Tag already exists, just check it
+                    existingTag.checked = true;
+                    existingTag.closest('.checkbox-label').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    Notifications.info(data.message || 'Tag already exists and has been selected');
+                }
+                
+                // Clear input
+                newTagInput.value = '';
+            } else {
+                Notifications.error(data.message || 'Failed to add tag');
+            }
+        } catch (error) {
+            console.error('Error adding tag:', error);
+            Notifications.error('An error occurred while adding the tag');
+        } finally {
+            // Re-enable button
+            addTagBtn.disabled = false;
+            addTagBtn.style.opacity = '1';
+        }
+    });
+});
+</script>
+<style>
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+</style>
+{% endblock %}
+

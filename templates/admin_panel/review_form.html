@@ -1,0 +1,65 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}{% if review %}Edit Review{% else %}Create Review{% endif %}{% endblock %}
+{% block page_title %}{% if review %}Edit Review{% else %}Create Review{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>{% if review %}Edit Review{% else %}Create New Review{% endif %}</h1>
+  <p>{% if review %}Update review information{% else %}Add a new review{% endif %}</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-star"></i> Review Form</h2>
+    <a href="{% if review %}{% url 'admin_panel:review_detail' review.id %}{% else %}{% url 'admin_panel:reviews' %}{% endif %}" class="btn btn-outline">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div>
+        <div class="form-group">
+          <label for="restaurant">Restaurant *</label>
+          <select name="restaurant" id="restaurant" class="form-control" required>
+            <option value="">Select Restaurant</option>
+            {% for rest in restaurants %}
+            <option value="{{ rest.id }}" {% if review.restaurant.id == rest.id %}selected{% endif %}>{{ rest.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="customer">Customer (Optional)</label>
+          <select name="customer" id="customer" class="form-control">
+            <option value="">Select Customer</option>
+            {% for customer in customers %}
+            <option value="{{ customer.id }}" {% if review.customer.id == customer.id %}selected{% endif %}>{{ customer.user.email }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="rating">Rating * (0.0 - 5.0)</label>
+          <input type="number" name="rating" id="rating" class="form-control" value="{{ review.rating|default:0 }}" min="0" max="5" step="0.1" required>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label for="comment">Comment *</label>
+          <textarea name="comment" id="comment" class="form-control" rows="8" required>{{ review.comment|default:'' }}</textarea>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i> {% if review %}Update Review{% else %}Create Review{% endif %}
+      </button>
+      <a href="{% if review %}{% url 'admin_panel:review_detail' review.id %}{% else %}{% url 'admin_panel:reviews' %}{% endif %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

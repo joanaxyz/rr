@@ -1,0 +1,37 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}{% if tag %}Edit Tag{% else %}Create Tag{% endif %}{% endblock %}
+{% block page_title %}{% if tag %}Edit Tag{% else %}Create Tag{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+  <h1>{% if tag %}Edit Tag{% else %}Create New Tag{% endif %}</h1>
+  <p>{% if tag %}Update tag information{% else %}Add a new tag{% endif %}</p>
+</div>
+
+<div class="admin-card">
+  <div class="card-header">
+    <h2><i class="fas fa-tags"></i> Tag Form</h2>
+    <a href="{% url 'admin_panel:tags' %}" class="btn btn-outline">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="tag">Tag Name *</label>
+      <input type="text" name="tag" id="tag" class="form-control" value="{{ tag.tag|default:'' }}" required placeholder="e.g., Romantic, Family-friendly, Outdoor seating">
+    </div>
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i> {% if tag %}Update Tag{% else %}Create Tag{% endif %}
+      </button>
+      <a href="{% url 'admin_panel:tags' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

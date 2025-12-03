@@ -1,0 +1,70 @@
+{% extends "emails/email_base.html" %}
+{% load static %}
+
+{% block email_title %}Reservation Updated - Restaurant Reservation{% endblock %}
+
+{% block email_icon %}
+<div class="email-icon">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 17.25V21h3.75L17.81 9.94L14.06 6.19L3 17.25Z" stroke="#D4530A" stroke-width="2" fill="none"/>
+        <path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" stroke="#D4530A" stroke-width="2" fill="none"/>
+    </svg>
+</div>
+{% endblock %}
+
+{% block email_heading %}Reservation Updated{% endblock %}
+
+{% block email_description %}
+Your reservation at <strong>{{ reservation.restaurant.name }}</strong> has been successfully updated. Please review the new details below.
+{% endblock %}
+
+{% block email_content %}
+<div class="info-box">
+    <strong>Updated Reservation Details:</strong>
+</div>
+
+<div class="details-section">
+    <div class="detail-item">
+        <span class="detail-label">Restaurant</span>
+        <span class="detail-value">{{ reservation.restaurant.name|default:"N/A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Guest Name</span>
+        <span class="detail-value">{{ reservation.name|default:"N/A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">New Date & Time</span>
+        <span class="detail-value">{{ reservation.date|date:"D, d M Y" }} at {{ reservation.time|time:"H:i A" }}</span>
+    </div>
+    <div class="detail-item">
+        <span class="detail-label">Party Size</span>
+        <span class="detail-value">{{ reservation.guest_count }} guest{% if reservation.guest_count != 1 %}s{% endif %}</span>
+    </div>
+    {% if reservation.notes %}
+    <div class="detail-item">
+        <span class="detail-label">Special Requests</span>
+        <span class="detail-value">{{ reservation.notes }}</span>
+    </div>
+    {% endif %}
+    <div class="detail-item">
+        <span class="detail-label">Current Status</span>
+        <span class="detail-value">{{ reservation.status|title }}</span>
+    </div>
+</div>
+
+<div class="success-box">
+    <strong>Important:</strong> If you made significant changes (such as date, time, or party size), the restaurant will need to re-confirm your updated reservation. You may receive another confirmation email from them shortly.
+</div>
+{% endblock %}
+
+{% block email_actions %}
+<div class="button-container">
+    <a href="{{ site_url }}reservations/" class="email-button">View My Reservations</a>
+</div>
+{% endblock %}
+
+{% block email_footer_info %}
+<div class="link-fallback">
+    <p>Keep this email for your records. You can manage your reservations anytime from your account.</p>
+</div>
+{% endblock %}
