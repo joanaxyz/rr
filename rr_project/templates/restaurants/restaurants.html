@@ -23,6 +23,13 @@
 <div class="main-container">
     <!-- LEFT SIDEBAR -->
     <div class="left-container">
+        <div class="filters-header">
+            <button id="clearFiltersBtn" class="clear-filters-btn" title="Clear all filters">
+                <i class="fas fa-times"></i>
+                Clear Filters
+            </button>
+        </div>
+        
         <div class="locationButton" id="addressEditTrigger">
             <i class="fas fa-location-dot"></i>
             <div>
@@ -308,6 +315,8 @@
 <script src="{% static 'home/js/stars.js' %}"></script>
 <script src="{% static 'home/js/book.js' %}"></script>
 <script src="{% static 'restaurants/js/addressModal.js' %}"></script>
+<script src="{% static 'restaurants/js/paginator.js' %}"></script>
+<script src="{% static 'restaurants/js/filter.js' %}"></script>
 <script>
 // Disable client-side pagination since we're using server-side pagination now
 // The restaurants are already rendered server-side in the template

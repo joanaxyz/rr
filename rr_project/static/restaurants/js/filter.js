@@ -25,9 +25,32 @@ function setupMoreLessToggle() {
 document.addEventListener('DOMContentLoaded', () => {
     // Handle +MORE and -LESS toggle
     setupMoreLessToggle();
-    let address = document.getElementById('address').textContent;
+    const addressElement = document.getElementById('address');
+    
+    // Get URL query parameters for initialization (from home page redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCity = urlParams.get('city');
+    const urlGuestCount = urlParams.get('guest_count');
+    const urlDate = urlParams.get('date');
+    const urlSearch = urlParams.get('search');
+    
+    // Initialize address from URL parameter or element content
+    let address = 'Select Location';
+    if (urlCity && addressElement) {
+        address = urlCity;
+        addressElement.textContent = urlCity;
+        addressElement.setAttribute('data-city', urlCity);
+    } else if (addressElement) {
+        address = addressElement.textContent || 'Select Location';
+    }
 
-    const restaurants = JSON.parse(document.getElementById('restaurant-data').textContent);
+    const restaurantDataElement = document.getElementById('restaurant-data');
+    if (!restaurantDataElement) {
+        console.error('restaurant-data element not found');
+        return;
+    }
+    
+    const restaurants = JSON.parse(restaurantDataElement.textContent);
     const paginator = new Paginator(restaurants, 5);
     renderPage(paginator);
     const cuisineFContainer = document.querySelector('.cuisines-filter');
@@ -86,35 +109,95 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Initialize from dataset values (set by server-side template) or URL parameters
     const contextGuestCount = guestCountSelect.dataset.value;
     const contextOperatingDay = operatingDaySelect.dataset.value;
     let shouldApplyFilters = false;
     
-    if (contextGuestCount) {
-        guestCountSelect.value = contextGuestCount;
-        selectedGuestCount = contextGuestCount;
-        shouldApplyFilters = true;
-        console.log("gcount: ", contextGuestCount);
+    // Initialize guest count - prioritize URL param, then dataset value
+    const guestCountToUse = urlGuestCount || contextGuestCount;
+    if (guestCountToUse) {
+        // Map single numbers to dropdown values (handles cases from home page form)
+        let mappedGuestCount = guestCountToUse;
+        const guestNum = parseInt(guestCountToUse);
+        
+        if (!isNaN(guestNum)) {
+            // It's a number, map it to the appropriate range
+            if (guestNum === 1) {
+                mappedGuestCount = '1';
+            } else if (guestNum === 2) {
+                mappedGuestCount = '2';
+            } else if (guestNum === 3 || guestNum === 4) {
+                mappedGuestCount = '3-4';
+            } else if (guestNum === 5 || guestNum === 6) {
+                mappedGuestCount = '5-6';
+            } else if (guestNum >= 7 && guestNum <= 10) {
+                mappedGuestCount = '7-10';
+            } else if (guestNum >= 11 && guestNum <= 20) {
+                mappedGuestCount = '11-20';
+            } else if (guestNum > 20) {
+                mappedGuestCount = '20+';
+            }
+        }
+        // If it's already a range like "3-4", "7-10", etc., keep it as is
+        
+        // Check if the mapped value exists in the dropdown
+        if (guestCountSelect.querySelector(`option[value="${mappedGuestCount}"]`)) {
+            guestCountSelect.value = mappedGuestCount;
+            selectedGuestCount = mappedGuestCount;
+            shouldApplyFilters = true;
+        } else if (guestCountSelect.querySelector(`option[value="${guestCountToUse}"]`)) {
+            // Try the original value if mapping didn't work (e.g., if it's already a valid range)
+            guestCountSelect.value = guestCountToUse;
+            selectedGuestCount = guestCountToUse;
+            shouldApplyFilters = true;
+        }
     }
     
-    if (contextOperatingDay && contextOperatingDay != 'None') {
-        operatingDaySelect.value = contextOperatingDay;
-        selectedOperatingDay = contextOperatingDay;
-        shouldApplyFilters = true;
+    // Initialize operating day - prioritize URL param (convert date to day), then dataset value
+    let operatingDayToUse = contextOperatingDay;
+    if (urlDate) {
+        try {
+            // Parse date string (format: YYYY-MM-DD)
+            const [year, month, day] = urlDate.split('-').map(Number);
+            const parsedDate = new Date(year, month - 1, day);
+            const weekday = parsedDate.getDay();
+            const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            operatingDayToUse = weekdayNames[weekday];
+        } catch (e) {
+            console.error('Error parsing date:', e);
+        }
     }
+    
+    if (operatingDayToUse && operatingDayToUse !== 'None') {
+        if (operatingDaySelect.querySelector(`option[value="${operatingDayToUse}"]`)) {
+            operatingDaySelect.value = operatingDayToUse;
+            selectedOperatingDay = operatingDayToUse;
+            shouldApplyFilters = true;
+        }
+    }
+    
+    // Initialize search from URL parameter or localStorage
     const searchValue = searchInput ? searchInput.value : '';
-    console.log('searchvalue:', searchValue);
-    if (searchInput && searchValue == ''){
+    if (urlSearch) {
+        if (searchInput) {
+            searchInput.value = urlSearch;
+        }
+        searchTerm = urlSearch;
+        shouldApplyFilters = true;
+    } else if (searchInput && searchValue === '') {
         const savedSearchTerm = localStorage.getItem("searchTerm");
         if (savedSearchTerm) {
             searchInput.value = savedSearchTerm;
+            searchTerm = savedSearchTerm;
             localStorage.removeItem("searchTerm");
+            shouldApplyFilters = true;
         }
+    } else {
+        searchTerm = searchInput ? searchInput.value : '';
     }
 
-    searchTerm = searchInput ? searchInput.value : '';
-
-    if(searchTerm){
+    if (searchTerm) {
         shouldApplyFilters = true;
     }
 
@@ -203,6 +286,75 @@ document.addEventListener('DOMContentLoaded', () => {
         if (resultNumbers) {
             resultNumbers.innerHTML = `<strong>${filtered.length}</strong> restaurants found`;
         }
+    }
+
+    // Clear all filters function
+    function clearAllFilters() {
+        // Clear checked cuisines
+        checkedCuisines = [];
+        cuisines.forEach(c => {
+            c.checked = false;
+        });
+
+        // Clear checked tags
+        checkedTags = [];
+        tags.forEach(t => {
+            t.checked = false;
+        });
+
+        // Reset dropdowns
+        selectedGuestCount = '';
+        guestCountSelect.value = '';
+
+        selectedOperatingDay = '';
+        operatingDaySelect.value = '';
+
+        // Reset sort
+        sortBy = 'newest';
+        sortOrder = 'asc';
+        const sortByRadios = Array.from(document.querySelectorAll('input[name="sort_by"]'));
+        sortByRadios.forEach(radio => {
+            if (radio.value === 'newest') {
+                radio.checked = true;
+            } else {
+                radio.checked = false;
+            }
+        });
+        const orderRadios = Array.from(document.querySelectorAll('input[name="order"]'));
+        orderRadios.forEach(radio => {
+            if (radio.value === 'asc') {
+                radio.checked = true;
+            } else {
+                radio.checked = false;
+            }
+        });
+
+        // Clear search
+        searchTerm = '';
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
+        // Reset address (if needed)
+        const addressElement = document.getElementById('address');
+        if (addressElement && addressElement.textContent !== 'Select Location') {
+            address = 'Select Location';
+            addressElement.textContent = 'Select Location';
+        } else {
+            address = 'Select Location';
+        }
+
+        // Apply filters to show all restaurants
+        applyFiltersAndSort();
+    }
+
+    // Add clear filter button event listener
+    const clearFilterBtn = document.getElementById('clearFiltersBtn');
+    if (clearFilterBtn) {
+        clearFilterBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearAllFilters();
+        });
     }
 
     setupPaginationControls(paginator);
