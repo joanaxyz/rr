@@ -2,41 +2,101 @@
 
 // ------------------------- Reservation Actions -------------------------
 function confirmReservation(form, name, table_numbers) {
+    if (!form) {
+        console.error('Form not found');
+        return;
+    }
     window.Modal.confirm(
         `Are you sure you want to confirm reservation by ${name} at table/s ${table_numbers}?`,
-        () => { form.querySelector('input[name="action"]').value = "confirm"; form.submit(); }
+        () => { 
+            const actionInput = form.querySelector('input[name="action"]');
+            if (actionInput) {
+                actionInput.value = "confirm";
+                form.submit();
+            } else {
+                console.error('Action input not found');
+            }
+        }
     );
 }
 
 function completeReservation(form, name, table_numbers) {
+    if (!form) {
+        console.error('Form not found');
+        return;
+    }
     window.Modal.confirm(
         `Are you sure you want to complete reservation by ${name} at table/s ${table_numbers}?`,
-        () => { form.querySelector('input[name="action"]').value = "complete"; form.submit(); }
+        () => { 
+            const actionInput = form.querySelector('input[name="action"]');
+            if (actionInput) {
+                actionInput.value = "complete";
+                form.submit();
+            } else {
+                console.error('Action input not found');
+            }
+        }
     );
 }
 
 function deleteReservation(form, name, table_numbers) {
+    if (!form) {
+        console.error('Form not found');
+        return;
+    }
     window.Modal.confirm(
         `Are you sure you want to delete reservation by ${name} at table/s ${table_numbers}?`,
-        () => { form.querySelector('input[name="action"]').value = "delete"; form.submit(); }
+        () => { 
+            const actionInput = form.querySelector('input[name="action"]');
+            if (actionInput) {
+                actionInput.value = "delete";
+                form.submit();
+            } else {
+                console.error('Action input not found');
+            }
+        }
     );
 }
 
 function cancelReservation(form, name, table_numbers) {
+    if (!form) {
+        console.error('Form not found');
+        return;
+    }
     window.Modal.confirm(
         `Are you sure you want to cancel reservation by ${name} at table/s ${table_numbers}?`,
-        () => { promptReason(reason => { 
-            form.querySelector('input[name="cancellation_reason"]').value = reason; 
-            form.querySelector('input[name="action"]').value = "cancel"; 
-            form.submit(); 
-        }); }
+        () => { 
+            promptReason(reason => { 
+                const reasonInput = form.querySelector('input[name="cancellation_reason"]');
+                const actionInput = form.querySelector('input[name="action"]');
+                if (reasonInput && actionInput) {
+                    reasonInput.value = reason; 
+                    actionInput.value = "cancel"; 
+                    form.submit();
+                } else {
+                    console.error('Form inputs not found');
+                }
+            }); 
+        }
     );
 }
 
 function confirmCancelReservation(form, name, table_numbers) {
+    if (!form) {
+        console.error('Form not found');
+        return;
+    }
     window.Modal.confirm(
         `Are you sure you want to confirm cancel reservation by ${name} at table/s ${table_numbers}?`,
-        () => { form.querySelector('input[name="action"]').value = "confirm_cancel"; form.submit(); }
+        () => { 
+            const actionInput = form.querySelector('input[name="action"]');
+            if (actionInput) {
+                actionInput.value = "confirm_cancel";
+                form.submit();
+            } else {
+                console.error('Action input not found');
+            }
+        }
     );
 }
 
@@ -148,26 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ------------------------- Reservation Modal -------------------------
-window.openReservationInfo = function(button) {
-    const row = button.closest("tr");
-
-    document.getElementById("infoName").innerText = row.dataset.name || "-";
-    document.getElementById("infoEmail").innerText = row.dataset.email || "-";
-    document.getElementById("infoGuestCount").innerText = row.dataset.guestCount || "-";
-    document.getElementById("infoStatus").innerText = row.dataset.status || "-";
-    document.getElementById("infoDate").innerText = row.dataset.date || "-";
-    document.getElementById("infoTime").innerText = row.dataset.time || "-";
-    document.getElementById("infoTables").innerText = row.dataset.tables || "-";
-    document.getElementById("infoCreatedAt").innerText = row.dataset.createdAt || "-";
-    document.getElementById("infoNotes").innerText = row.dataset.notes || "-";
-    document.getElementById("infoCancellationReason").innerText = row.dataset.cancellationReason || "-";
-
-    document.getElementById("reservationModal").style.display = "block";
-}
-
-window.closeReservationInfo = function() {
-    document.getElementById("reservationModal").style.display = "none";
-}
+// Reservation modal is now handled by info_modal.js using Modal.show()
 
 // ------------------------- Floor Plan -------------------------
 document.addEventListener('DOMContentLoaded', () => {

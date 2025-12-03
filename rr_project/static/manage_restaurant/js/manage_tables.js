@@ -111,13 +111,7 @@ class FloorPlanManager {
             applyDimensionsBtn.addEventListener('click', () => this.updateCanvasDimensions());
         }
 
-        // Element Modal
-        const elementCloseBtn = document.querySelector('.element-modal-close-btn');
-        const elementCancelBtn = document.querySelector('.element-modal-cancel');
-        const elementForm = document.getElementById('add-element-form');
-        if (elementCloseBtn) elementCloseBtn.addEventListener('click', () => this.closeAddElementModal());
-        if (elementCancelBtn) elementCancelBtn.addEventListener('click', () => this.closeAddElementModal());
-        if (elementForm) elementForm.addEventListener('submit', (e) => this.submitAddElement(e));
+        // Element Modal - now handled dynamically in openAddElementModal()
 
         // Floor plan mouse tracking
         this.floorPlan.addEventListener('mousemove', (e) => this.updateMousePosition(e));
@@ -425,34 +419,87 @@ class FloorPlanManager {
     }
 
     openAddElementModal() {
-        const modal = document.getElementById('add-element-modal');
-        if (modal) {
-            modal.style.display = 'flex';
-            document.getElementById('element-name')?.focus();
+        const modalContent = `
+            <form id="add-element-form">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div>
+                        <label for="element-name" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Name</label>
+                        <input type="text" id="element-name" placeholder="e.g., Bar Counter" required 
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 1rem;">
+                    </div>
+                    <div>
+                        <label for="element-width" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Width (px)</label>
+                        <input type="number" id="element-width" value="100" min="20" step="any"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 1rem;">
+                    </div>
+                    <div>
+                        <label for="element-height" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Height (px)</label>
+                        <input type="number" id="element-height" value="100" min="20" step="any"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 1rem;">
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                        <button type="button" class="btn-secondary" id="element-modal-cancel" style="padding: 0.5rem 1rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; background: var(--white); cursor: pointer;">Cancel</button>
+                        <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; background: var(--color-primary); color: var(--white); cursor: pointer;">Add Element</button>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        this.elementModalInstance = window.Modal.show({
+            title: 'Add Floor Element',
+            content: modalContent,
+            maxWidth: '500px',
+            showCloseButton: true,
+            closeOnOverlayClick: true,
+            onClose: () => {
+                this.elementModalInstance = null;
+            }
+        });
+
+        // Focus on name input
+        setTimeout(() => {
+            const nameInput = this.elementModalInstance.getElement('#element-name');
+            if (nameInput) nameInput.focus();
+        }, 100);
+
+        // Handle form submission
+        const form = this.elementModalInstance.getElement('#add-element-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.submitAddElement(e, this.elementModalInstance);
+            });
+        }
+
+        // Handle cancel button
+        const cancelBtn = this.elementModalInstance.getElement('#element-modal-cancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                this.closeAddElementModal();
+            });
         }
     }
-
-
 
     closeAddElementModal() {
-        const modal = document.getElementById('add-element-modal');
-        if (modal) {
-            modal.style.display = 'none';
-            document.getElementById('add-element-form')?.reset();
+        if (this.elementModalInstance) {
+            this.elementModalInstance.close();
+            this.elementModalInstance = null;
         }
     }
 
-    submitAddElement(e) {
-        e.preventDefault();
+    submitAddElement(e, modalInstance) {
+        const nameInput = modalInstance.getElement('#element-name');
+        const widthInput = modalInstance.getElement('#element-width');
+        const heightInput = modalInstance.getElement('#element-height');
 
-        const name = document.getElementById('element-name').value.trim();
+        const name = nameInput?.value.trim();
         if (!name) {
             window.Notification.warning('Please enter an element name');
             return;
         }
 
-        const width = parseFloat(document.getElementById('element-width').value) || 100;
-        const height = parseFloat(document.getElementById('element-height').value) || 100;
+        const width = parseFloat(widthInput?.value) || 100;
+        const height = parseFloat(heightInput?.value) || 100;
 
         const x = 300;
         const y = 250;
@@ -773,7 +820,7 @@ class FloorPlanManager {
     }
 
     resetLayout() {
-        if (confirm('Are you sure you want to reset the layout to default?')) {
+        window.Modal.confirm('Are you sure you want to reset the layout to default?', () => {
             this.tables = [];
             this.floorElements = [];
             this.selectedItem = null;
@@ -782,7 +829,7 @@ class FloorPlanManager {
             this.render();
             this.updateItemsList();
             this.updatePropertiesPanel();
-        }
+        });
     }
 
     showNotification(message, type = 'info') {

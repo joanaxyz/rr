@@ -165,18 +165,18 @@
                     <div class="action-buttons">
                       {% if reservation.status == 'CONFIRMED' %}
                       <button type="button" class="complete-btn" 
-                        onclick="completeReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Complete</button>
+                        onclick="completeReservation(this.closest('form'), '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Complete</button>
                       {% elif reservation.status == 'COMPLETED' %}
                       <button type="button" class="delete-btn" 
-                        onclick="deleteReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Delete</button>
+                        onclick="deleteReservation(this.closest('form'), '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Delete</button>
                       {% elif reservation.status == 'PENDING' %}
                       <button type="button" class="confirm-btn" 
-                        onclick="confirmReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm</button>
+                        onclick="confirmReservation(this.closest('form'), '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm</button>
                       <button type="button" class="cancel-btn"
-                        onclick="cancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Cancel</button>
+                        onclick="cancelReservation(this.closest('form'), '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Cancel</button>
                       {% else %}
                       <button type="button" class="delete-btn"
-                        onclick="confirmCancelReservation(this.form, '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm Cancellation</button>
+                        onclick="confirmCancelReservation(this.closest('form'), '{{ reservation.name }}', '{{ reservation.table_numbers|join:',' }}')">Confirm Cancellation</button>
                       {% endif %}
                   </form>
                 </td>
@@ -209,36 +209,12 @@
     </div>
   </section>
 
-  <!-- Reservation Info Modal -->
-  <div id="reservationModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Reservation Details</h2>
-        <button type="button" class="modal-close-btn" onclick="closeReservationInfo()">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="reservation-info-grid">
-          <div class="info-item"><label>Guest Name</label><p id="infoName">-</p></div>
-          <div class="info-item"><label>Email</label><p id="infoEmail">-</p></div>
-          <div class="info-item"><label>Guest Count</label><p id="infoGuestCount">-</p></div>
-          <div class="info-item"><label>Status</label><p id="infoStatus">-</p></div>
-          <div class="info-item"><label>Reservation Date</label><p id="infoDate">-</p></div>
-          <div class="info-item"><label>Reservation Time</label><p id="infoTime">-</p></div>
-          <div class="info-item"><label>Tables</label><p id="infoTables">-</p></div>
-          <div class="info-item"><label>Booked At</label><p id="infoCreatedAt">-</p></div>
-          <div class="info-item full-width"><label>Notes</label><p id="infoNotes">-</p></div>
-          <div class="info-item full-width"><label>Cancellation Reason</label><p id="infoCancellationReason">-</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'common/js/floor-plan-common.js' %}"></script>
-<script src="{% static '/manage_restaurant/js/manage_reservation.js' %}"></script>
+<script src="{% static 'manage_restaurant/js/info_modal.js' %}"></script>
+<script src="{% static 'manage_restaurant/js/manage_reservation.js' %}"></script>
 {% endblock %}

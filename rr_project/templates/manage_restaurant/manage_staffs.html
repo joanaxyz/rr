@@ -98,27 +98,6 @@
     </div>
   </section>
 
-  <!-- Invite Staff Modal -->
-  <div id="inviteModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Invite Staff</h2>
-        <button type="button" class="modal-close-btn" id="closeInviteModal">&times;</button>
-      </div>
-      <form method="post" class="modal-body">
-        <input type="hidden" name="modalOpened">
-        {% csrf_token %}
-        <label for="inviteEmail">Staff Email</label>
-        <input type="email" name="email" id="inviteEmail" placeholder="Enter staff email">
-        <label for="inviteRole">Role</label>
-        <select id="inviteRole" name="role">
-          <option value="HOST">Host</option>
-          <option value="MANAGER">Manager</option>
-        </select>
-        <button type="submit" class="btn btn-primary" id="sendInviteBtn">Send Invite</button>
-      </form>
-    </div>
-  </div>
 
 </div>
 {% endblock %}

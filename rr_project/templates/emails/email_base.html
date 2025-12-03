@@ -45,12 +45,17 @@
         }
         
         .email-logo {
-            max-width: 80px;
-            height: auto;
+            width: 80px;
+            height: 80px;
             margin: 0 auto 20px;
             display: block;
             position: relative;
             z-index: 1;
+        }
+        
+        .email-logo svg {
+            width: 100%;
+            height: 100%;
         }
         
         .email-brand {
@@ -314,7 +319,19 @@
     <div class="email-wrapper">
         <!-- Header -->
         <div class="email-header">
-            <img src="{{ logo_url }}" alt="Restaurant Reservation Logo" class="email-logo">
+            <div class="email-logo">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Cloche/Dome Icon -->
+                    <path d="M32 8C20.95 8 12 16.95 12 28V32C12 43.05 20.95 52 32 52C43.05 52 52 43.05 52 32V28C52 16.95 43.05 8 32 8Z" fill="#FF6B00" stroke="#FFFFFF" stroke-width="2"/>
+                    <path d="M32 12C23.16 12 16 19.16 16 28V30C16 38.84 23.16 46 32 46C40.84 46 48 38.84 48 30V28C48 19.16 40.84 12 32 12Z" fill="#FFFFFF" opacity="0.2"/>
+                    <!-- Handle -->
+                    <path d="M20 20C20 20 24 16 32 16C40 16 44 20 44 20" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Steam lines -->
+                    <path d="M24 36L22 32" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+                    <path d="M32 36L32 32" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+                    <path d="M40 36L42 32" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+                </svg>
+            </div>
             <h1 class="email-brand">RESTAURANT RESERVATION</h1>
             <p class="email-tagline">Your Perfect Table Awaits</p>
         </div>
