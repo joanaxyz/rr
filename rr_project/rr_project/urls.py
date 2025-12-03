@@ -25,7 +25,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('restaurants/', include('restaurants.urls')),
     path('reservations/', include('reservations.urls')),
-    path("manage-restaurant/", include("manage_restaurant.urls")),
+    path("rr-manage/", include("manage_restaurant.urls")),
     path("settings/", include("settings.urls", namespace="settings")),
     path("business/", include("owner_verification.urls", namespace="business")),
     path("rr-admin/", include("admin_panel.urls", namespace="admin_panel")),
