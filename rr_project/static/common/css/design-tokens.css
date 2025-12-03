@@ -114,11 +114,12 @@
   --color-info-text: #993F00;
   --color-info-border: #FFD9B3;
   
-  /* Table/Reservation States */
-  --table-available: #FF6B00;
-  --table-reserved: #CC5500;
-  --table-selected: #FF8533;
-  --table-hover: #FFA366;
+  /* Table/Reservation States - More Distinct Colors */
+  --table-available: #22C55E; /* Green - Available/Active */
+  --table-reserved: #EF4444; /* Red - Reserved/Unavailable */
+  --table-selected: #3B82F6; /* Blue - Selected */
+  --table-hover: #4ADE80; /* Light Green - Hover on available */
+  --table-deactivated: #D1D5DB; /* Light Gray - Deactivated/Inactive */
   
   /* Legacy Aliases */
   --primary-red: var(--color-primary);

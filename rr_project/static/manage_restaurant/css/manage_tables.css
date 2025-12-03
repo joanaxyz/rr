@@ -342,10 +342,16 @@ body {
   left: 0;
   width: 800px;
   height: 500px;
+  background: #F9FAFB;
+  /* Enhanced tile pattern */
   background-image: 
-    linear-gradient(0deg, transparent 19px, rgba(220, 38, 38, 0.15) 20px, rgba(220, 38, 38, 0.15) 21px, transparent 22px),
-    linear-gradient(90deg, transparent 19px, rgba(220, 38, 38, 0.15) 20px, rgba(220, 38, 38, 0.15) 21px, transparent 22px);
-  background-size: 40px 40px;
+    /* Grid lines */
+    linear-gradient(0deg, transparent 49%, rgba(209, 213, 219, 0.3) 49%, rgba(209, 213, 219, 0.3) 50%, transparent 50%),
+    linear-gradient(90deg, transparent 49%, rgba(209, 213, 219, 0.3) 49%, rgba(209, 213, 219, 0.3) 50%, transparent 50%),
+    /* Tile pattern */
+    linear-gradient(0deg, transparent 24%, rgba(229, 231, 235, 0.4) 25%, rgba(229, 231, 235, 0.4) 26%, transparent 27%, transparent 74%, rgba(229, 231, 235, 0.4) 75%, rgba(229, 231, 235, 0.4) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(229, 231, 235, 0.4) 25%, rgba(229, 231, 235, 0.4) 26%, transparent 27%, transparent 74%, rgba(229, 231, 235, 0.4) 75%, rgba(229, 231, 235, 0.4) 76%, transparent 77%, transparent);
+  background-size: 40px 40px, 40px 40px, 40px 40px, 40px 40px;
   cursor: crosshair;
   transition: background-color 0.2s ease, border-color 0.2s ease, background-image 0.3s ease;
   transform-origin: top left;
@@ -1000,10 +1006,16 @@ body {
   left: 0;
   width: 800px;
   height: 500px;
+  background: #F9FAFB;
+  /* Enhanced tile pattern */
   background-image: 
-    linear-gradient(0deg, transparent 19px, rgba(220, 38, 38, 0.15) 20px, rgba(220, 38, 38, 0.15) 21px, transparent 22px),
-    linear-gradient(90deg, transparent 19px, rgba(220, 38, 38, 0.15) 20px, rgba(220, 38, 38, 0.15) 21px, transparent 22px);
-  background-size: 40px 40px;
+    /* Grid lines */
+    linear-gradient(0deg, transparent 49%, rgba(209, 213, 219, 0.3) 49%, rgba(209, 213, 219, 0.3) 50%, transparent 50%),
+    linear-gradient(90deg, transparent 49%, rgba(209, 213, 219, 0.3) 49%, rgba(209, 213, 219, 0.3) 50%, transparent 50%),
+    /* Tile pattern */
+    linear-gradient(0deg, transparent 24%, rgba(229, 231, 235, 0.4) 25%, rgba(229, 231, 235, 0.4) 26%, transparent 27%, transparent 74%, rgba(229, 231, 235, 0.4) 75%, rgba(229, 231, 235, 0.4) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(229, 231, 235, 0.4) 25%, rgba(229, 231, 235, 0.4) 26%, transparent 27%, transparent 74%, rgba(229, 231, 235, 0.4) 75%, rgba(229, 231, 235, 0.4) 76%, transparent 77%, transparent);
+  background-size: 40px 40px, 40px 40px, 40px 40px, 40px 40px;
   cursor: crosshair;
   transition: background-color 0.2s ease, border-color 0.2s ease, background-image 0.3s ease;
   transform-origin: top left;

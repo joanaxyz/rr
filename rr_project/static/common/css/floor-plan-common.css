@@ -42,36 +42,42 @@
   pointer-events: none;
 }
 
-/* Table sizes */
+/* Table sizes - Default to available color, but can be overridden by status classes */
 .floor-item.table-2 {
   width: 65px;
   height: 75px;
-  color: var(--table-available);
 }
 
 .floor-item.table-4 {
   width: 80px;
   height: 90px;
-  color: var(--table-available);
 }
 
 .floor-item.table-6 {
   width: 95px;
   height: 105px;
-  color: var(--table-available);
 }
 
 .floor-item.table-8 {
   width: 110px;
   height: 125px;
+}
+
+/* Default table color (if no status class) */
+.floor-item.table:not(.available):not(.reserved):not(.selected):not(.deactivated) {
   color: var(--table-available);
 }
 
 /* Floor elements (bar, kitchen, etc.) */
 .floor-item.element {
-  background: var(--primary-red);
+  background: #6366F1; /* Indigo - Distinct from tables */
   color: var(--white);
-  border: 2px solid var(--primary-red-dark);
+  border: 2px solid #4F46E5;
+}
+
+.floor-item.element:hover {
+  background: #818CF8;
+  border-color: #6366F1;
 }
 
 /* Floor item content and label */
@@ -100,7 +106,7 @@
   pointer-events: none;
 }
 
-/* Table states */
+/* Table states - More distinct colors */
 .table {
   position: absolute;
   cursor: pointer;
@@ -114,9 +120,16 @@
   padding: 0.5rem;
 }
 
-.table:hover:not(.reserved) {
+/* Available/Active tables - Green */
+.table.available,
+.floor-item.table.available {
+  color: var(--table-available);
+}
+
+.table:hover:not(.reserved):not(.deactivated) {
   color: var(--table-hover);
   transform: scale(1.05);
+  filter: drop-shadow(0 4px 12px rgba(34, 197, 94, 0.4));
 }
 
 .reservation-wrapper .table.available {
@@ -126,28 +139,55 @@
 .reservation-wrapper .table.available:hover {
   color: var(--table-hover);
   transform: scale(1.05);
-  filter: drop-shadow(0 4px 12px rgba(34, 197, 94, 0.3));
+  filter: drop-shadow(0 4px 12px rgba(34, 197, 94, 0.4));
 }
 
-.reservation-wrapper .table.reserved {
+/* Reserved/Unavailable tables - Red */
+.reservation-wrapper .table.reserved,
+.floor-item.table.reserved {
   color: var(--table-reserved);
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.85;
   pointer-events: none;
 }
 
-.reservation-wrapper .table.reserved svg {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+.reservation-wrapper .table.reserved svg,
+.floor-item.table.reserved svg {
+  filter: drop-shadow(0 2px 4px rgba(239, 68, 68, 0.4));
 }
 
-.table.selected {
+/* Selected tables - Blue */
+.table.selected,
+.floor-item.table.selected {
   color: var(--table-selected);
   transform: scale(1.03);
-  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.3));
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
 }
 
-.table.selected:not(.reserved) {
+.table.selected:not(.reserved):not(.deactivated) {
   pointer-events: auto;
+}
+
+/* Deactivated/Inactive tables - Light Gray */
+.table.deactivated,
+.floor-item.table.deactivated {
+  color: #D1D5DB !important; /* Light grey */
+  opacity: 0.7;
+  cursor: not-allowed;
+  filter: grayscale(1) brightness(1.1);
+  pointer-events: none;
+}
+
+.table.deactivated:hover {
+  transform: none;
+  filter: grayscale(1) brightness(1.1);
+  color: #D1D5DB !important;
+}
+
+.table.deactivated svg,
+.floor-item.table.deactivated svg {
+  filter: grayscale(1) brightness(1.1);
 }
 
 .table svg {
@@ -172,18 +212,39 @@
   right: -8px;
 }
 
-/* Dragging state */
+/* Dragging state - More visible */
 .floor-item.dragging {
-  opacity: 0.6;
+  opacity: 0.8;
   cursor: grabbing;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--primary-red);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 3px #FF6B00;
   z-index: 200;
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
-/* Selection state for management view */
+.floor-item.table.dragging {
+  filter: brightness(1.1);
+}
+
+.floor-item.element.dragging {
+  background: #A5B4FC;
+  border-color: #818CF8;
+}
+
+/* Selection state for management view - More visible */
 .floor-item.selected {
-  box-shadow: 0 0 0 2px var(--primary-red), 0 0 0 4px rgba(220, 38, 38, 0.15);
+  box-shadow: 0 0 0 3px var(--table-selected), 0 0 0 6px rgba(59, 130, 246, 0.2);
   transform: scale(1.02);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+/* Selected tables get blue color */
+.floor-item.table.selected {
+  color: var(--table-selected);
+}
+
+/* Selected elements get a different highlight */
+.floor-item.element.selected {
+  box-shadow: 0 0 0 3px #818CF8, 0 0 0 6px rgba(99, 102, 241, 0.2);
+  background: #818CF8;
 }

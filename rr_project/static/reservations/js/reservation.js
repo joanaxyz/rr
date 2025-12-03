@@ -43,24 +43,30 @@ function updateTableStates(tables, selectedTables, guestCount) {
         const isSelected = table.classList.contains('selected');
         const isReserved = table.classList.contains('reserved');
 
-        // Reset previous styles
+        // Reset previous styles and classes
         table.style.filter = '';
         table.style.pointerEvents = ''; // enable by default
+        table.classList.remove('deactivated');
 
         if (isReserved) {
-            table.style.filter = 'brightness(0.5)';
+            // Reserved tables stay red, but dimmed
+            table.style.filter = 'brightness(0.6)';
             table.style.pointerEvents = 'none'; // cannot click reserved table
         } else if (isSelected) {
-            table.style.filter = 'brightness(1.2)'; // highlight selected
+            // Selected tables stay blue, no filter needed
+            table.style.filter = '';
         } else if (remainingGuests > 0) {
             if (tableCapacity <= remainingGuests + 1) {
-                table.style.filter = 'brightness(1.1)'; // suitable
+                // Suitable table - keep normal appearance
+                table.style.filter = '';
             } else {
-                table.style.filter = 'brightness(0.7)'; // too large to be useful alone
+                // Too large to be useful alone - make it greyish/deactivated
+                table.classList.add('deactivated');
                 table.style.pointerEvents = 'none';
             }
         } else {
-            table.style.filter = 'brightness(0.7)'; // no more guests needed
+            // No more guests needed - make it greyish/deactivated
+            table.classList.add('deactivated');
             table.style.pointerEvents = 'none';
         }
     });
