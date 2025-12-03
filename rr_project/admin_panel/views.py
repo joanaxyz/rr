@@ -1,21 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Count, Q, Avg
+from django.db.models import Count, Q, Avg, Sum
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from accounts.models import User, Owner, Customer
 from owner_verification.models import BusinessApplication
-from restaurants.models import RestaurantCreationRequest, Restaurant, Cuisine, Tags, Review
+from restaurants.models import RestaurantCreationRequest, Restaurant, Cuisine, Tags, Review, Bookmark
 from reservations.models import Reservation
 from django.contrib.auth.hashers import make_password
 from .decorators import admin_login_required
 from email_service.views import send_email
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 
 @admin_login_required
 def dashboard(request):
+    now = timezone.now()
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = today_start - timedelta(days=now.weekday())
+    month_start = today_start.replace(day=1)
+    
+    # Basic counts
     pending_owner_requests = BusinessApplication.objects.filter(state='PENDING').count()
     pending_restaurant_requests = RestaurantCreationRequest.objects.filter(status='PENDING').count()
     total_admins = User.objects.filter(is_staff=True).count()
@@ -25,6 +32,69 @@ def dashboard(request):
     pending_reservations = Reservation.objects.filter(status='PENDING').count()
     total_reviews = Review.objects.count()
     avg_rating = Review.objects.aggregate(Avg('rating'))['rating__avg'] or 0
+    total_bookmarks = Bookmark.objects.count()
+    
+    # Time-based statistics
+    users_today = User.objects.filter(date_joined__gte=today_start).count()
+    users_this_week = User.objects.filter(date_joined__gte=week_start).count()
+    users_this_month = User.objects.filter(date_joined__gte=month_start).count()
+    
+    restaurants_today = Restaurant.objects.filter(created_at__gte=today_start).count()
+    restaurants_this_week = Restaurant.objects.filter(created_at__gte=week_start).count()
+    restaurants_this_month = Restaurant.objects.filter(created_at__gte=month_start).count()
+    
+    reservations_today = Reservation.objects.filter(created_at__gte=today_start).count()
+    reservations_this_week = Reservation.objects.filter(created_at__gte=week_start).count()
+    reservations_this_month = Reservation.objects.filter(created_at__gte=month_start).count()
+    
+    reviews_today = Review.objects.filter(created_at__gte=today_start).count()
+    reviews_this_week = Review.objects.filter(created_at__gte=week_start).count()
+    reviews_this_month = Review.objects.filter(created_at__gte=month_start).count()
+    
+    # Reservation status breakdown
+    confirmed_reservations = Reservation.objects.filter(status='CONFIRMED').count()
+    cancelled_reservations = Reservation.objects.filter(status='CANCELLED').count()
+    completed_reservations = Reservation.objects.filter(status='COMPLETED').count()
+    
+    # User role breakdown
+    customers_count = User.objects.filter(role='CUSTOMER').count()
+    owners_count = User.objects.filter(role='OWNER').count()
+    hosts_count = User.objects.filter(role='HOST').count()
+    managers_count = User.objects.filter(role='MANAGER').count()
+    
+    # Active users (users who have made reservations or reviews)
+    active_users = User.objects.filter(
+        Q(customer_profile__reservations__isnull=False) | 
+        Q(customer_profile__reviews__isnull=False)
+    ).distinct().count()
+    
+    # Top restaurants by reservations
+    top_restaurants_by_reservations = Restaurant.objects.annotate(
+        reservation_count=Count('reservations')
+    ).order_by('-reservation_count')[:5]
+    
+    # Top restaurants by reviews
+    top_restaurants_by_reviews = Restaurant.objects.annotate(
+        review_count=Count('reviews'),
+        avg_rating=Avg('reviews__rating')
+    ).filter(review_count__gt=0).order_by('-avg_rating', '-review_count')[:5]
+    
+    # Recent activity
+    recent_users = User.objects.order_by('-date_joined')[:5]
+    recent_restaurants = Restaurant.objects.order_by('-created_at')[:5]
+    recent_reservations = Reservation.objects.order_by('-created_at')[:5]
+    recent_reviews = Review.objects.order_by('-created_at')[:5]
+    
+    # Total guest count (sum of all reservations)
+    total_guests = Reservation.objects.aggregate(Sum('guest_count'))['guest_count__sum'] or 0
+    
+    # Average guests per reservation
+    avg_guests_per_reservation = total_guests / total_reservations if total_reservations > 0 else 0
+    
+    # Restaurants with most bookmarks
+    top_bookmarked_restaurants = Restaurant.objects.annotate(
+        bookmark_count=Count('bookmarks')
+    ).filter(bookmark_count__gt=0).order_by('-bookmark_count')[:5]
     
     context = {
         'pending_owner_requests': pending_owner_requests,
@@ -38,6 +108,42 @@ def dashboard(request):
         'avg_rating': round(avg_rating, 2),
         'pending_owner_count': pending_owner_requests,
         'pending_restaurant_count': pending_restaurant_requests,
+        'total_bookmarks': total_bookmarks,
+        # Time-based stats
+        'users_today': users_today,
+        'users_this_week': users_this_week,
+        'users_this_month': users_this_month,
+        'restaurants_today': restaurants_today,
+        'restaurants_this_week': restaurants_this_week,
+        'restaurants_this_month': restaurants_this_month,
+        'reservations_today': reservations_today,
+        'reservations_this_week': reservations_this_week,
+        'reservations_this_month': reservations_this_month,
+        'reviews_today': reviews_today,
+        'reviews_this_week': reviews_this_week,
+        'reviews_this_month': reviews_this_month,
+        # Reservation status breakdown
+        'confirmed_reservations': confirmed_reservations,
+        'cancelled_reservations': cancelled_reservations,
+        'completed_reservations': completed_reservations,
+        # User role breakdown
+        'customers_count': customers_count,
+        'owners_count': owners_count,
+        'hosts_count': hosts_count,
+        'managers_count': managers_count,
+        'active_users': active_users,
+        # Top restaurants
+        'top_restaurants_by_reservations': top_restaurants_by_reservations,
+        'top_restaurants_by_reviews': top_restaurants_by_reviews,
+        'top_bookmarked_restaurants': top_bookmarked_restaurants,
+        # Recent activity
+        'recent_users': recent_users,
+        'recent_restaurants': recent_restaurants,
+        'recent_reservations': recent_reservations,
+        'recent_reviews': recent_reviews,
+        # Additional stats
+        'total_guests': total_guests,
+        'avg_guests_per_reservation': round(avg_guests_per_reservation, 1),
     }
     return render(request, 'admin_panel/dashboard.html', context)
 
