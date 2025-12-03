@@ -12,7 +12,7 @@
 <div class="admin-card">
   <div class="card-header">
     <h2><i class="fas fa-tags"></i> All Tags</h2>
-    <a href="{% url 'admin_panel:tag_create' %}" class="btn btn-success">
+    <a href="{% url 'admin_panel:tag_create' %}" class="btn btn-primary">
       <i class="fas fa-plus"></i> Add New Tag
     </a>
   </div>
@@ -48,12 +48,12 @@
             <td>{{ tag.restaurants.count }} restaurant{{ tag.restaurants.count|pluralize }}</td>
             <td>
               <div class="action-buttons">
-                <a href="{% url 'admin_panel:tag_edit' tag.id %}" class="btn btn-sm btn-secondary">
+                <a href="{% url 'admin_panel:tag_edit' tag.id %}" class="btn btn-sm btn-primary">
                   <i class="fas fa-edit"></i> Edit
                 </a>
                 <form method="POST" action="{% url 'admin_panel:tag_delete' tag.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this tag?');">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-danger">
+                  <button type="submit" class="btn btn-sm btn-secondary">
                     <i class="fas fa-trash"></i> Delete
                   </button>
                 </form>

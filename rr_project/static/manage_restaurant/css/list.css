@@ -43,7 +43,7 @@ body {
 
 .create-restaurant-btn {
   padding: var(--space-3) var(--space-6);
-  background: linear-gradient(135deg, rgba(212, 83, 10, 0.9) 0%, rgba(212, 83, 10, 0.7) 100%);
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.9) 0%, rgba(255, 133, 51, 0.9) 100%);
   color: var(--color-white);
   border: none;
   border-radius: var(--radius-lg);
@@ -58,9 +58,9 @@ body {
 }
 
 .create-restaurant-btn:hover {
-  background: linear-gradient(135deg, rgba(212, 83, 10, 1) 0%, rgba(212, 83, 10, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(255, 107, 0, 1) 0%, rgba(255, 133, 51, 1) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 83, 10, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
 }
 
 .create-restaurant-btn i {
@@ -137,7 +137,7 @@ body {
 
 .manage-btn {
   padding: var(--space-3) var(--space-6);
-  background: linear-gradient(135deg, rgba(212, 83, 10, 0.9) 0%, rgba(212, 83, 10, 0.7) 100%);
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.9) 0%, rgba(255, 133, 51, 0.9) 100%);
   color: var(--color-white);
   border: none;
   border-radius: var(--radius-lg);
@@ -155,9 +155,9 @@ body {
 }
 
 .manage-btn:hover {
-  background: linear-gradient(135deg, rgba(212, 83, 10, 1) 0%, rgba(212, 83, 10, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(255, 107, 0, 1) 0%, rgba(255, 133, 51, 1) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 83, 10, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
 }
 
 .manage-btn:active {
