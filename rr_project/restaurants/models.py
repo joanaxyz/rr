@@ -46,7 +46,7 @@ class Restaurant(models.Model):
     owner = models.ForeignKey(
         Owner,
         related_name='restaurants',
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True
     )
     hosts = models.ManyToManyField(
